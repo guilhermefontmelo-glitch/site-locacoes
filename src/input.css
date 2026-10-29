@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/* Cores e fonte da marca: use bg-fundo, text-ouro, font-sans etc. */
+@theme {
+  --color-fundo: #0e1828;
+  --color-azul: #1f3250;
+  --color-azul-claro: #2a4268;
+  --color-cartao: #16263f;
+  --color-ouro: #c9a45c;
+  --color-ouro-claro: #e2c58a;
+  --color-ouro-escuro: #8c6b2c;
+  --color-verde: #25d366;
+  --font-sans: "Outfit", "Segoe UI", Arial, sans-serif;
+}
+
+/* Onde o Tailwind procura as classes usadas no projeto */
+@source "../locacoes/templates";
+@source "../locacoes/static/locacoes/js";

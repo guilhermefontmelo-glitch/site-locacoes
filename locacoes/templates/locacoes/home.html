@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Locação de Equipamentos em Viçosa do Ceará | Rocha Construtora</title>
+  <meta name="description" content="Locação de andaimes, escoras, betoneiras e ferramentas para construção em Viçosa do Ceará - CE. Entrega e retirada na obra. Orçamento pelo WhatsApp.">
+  <meta name="theme-color" content="#0e1828">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'locacoes/css/tailwind.css' %}">
+  <link rel="stylesheet" href="{% static 'locacoes/css/estilo.css' %}?v=6">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Rocha Construtora - Locação de Equipamentos",
+    "description": "Locação de andaimes, escoras, betoneiras e ferramentas para construção em Viçosa do Ceará e região.",
+    "telephone": "+5588994248183",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Rua Vereador Luiz Carlos de Sampaio, 366",
+      "addressLocality": "Viçosa do Ceará",
+      "addressRegion": "CE",
+      "postalCode": "62300-000",
+      "addressCountry": "BR"
+    },
+    "areaServed": "Viçosa do Ceará - CE",
+    "sameAs": [
+      "https://www.instagram.com/rocha.locacoes_/",
+      "https://www.instagram.com/rocha.construtoraa_/"
+    ]
+  }
+  </script>
+</head>
+
+<body>
+
+  <div id="barra"></div>
+
+  <header class="topo">
+    <a class="logo" href="#inicio" aria-label="Rocha Construtora, início"><img src="{% static 'locacoes/img/logo.png' %}" alt="Rocha Construtora"></a>
+    <button class="hamburguer" id="abrirMenu" aria-label="Abrir menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <nav class="menu" id="menu" aria-label="Menu principal">
+    <button class="fechar" id="fecharMenu" aria-label="Fechar menu">&times;</button>
+    <a href="#inicio">Início</a>
+    <a href="#equipamentos">Equipamentos</a>
+    <a href="#como-alugar">Como alugar</a>
+    <a href="#contato">Contato</a>
+  </nav>
+
+  <main>
+
+    <section id="inicio" class="abertura">
+      <div class="abertura-fixa">
+        <p class="rotulo">Rocha Construtora / Locação de equipamentos</p>
+        <h1>Equipamento certo para cada etapa da obra.</h1>
+        <p class="sub">Andaimes, escoras, betoneiras e ferramentas para a sua obra.</p>
+
+        <div class="acoes">
+          <a class="pular" href="#equipamentos">Ver equipamentos &darr;</a>
+          <a class="botao-claro" data-zap="Olá! Gostaria de um orçamento de locação de equipamentos." href="#contato">Pedir orçamento &#8599;</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="equipamentos" class="equipamentos">
+      <div class="miolo">
+        <p class="rotulo">01 / O que locamos</p>
+        <h2>Tudo o que sua obra precisa.</h2>
+        <p>Equipamentos revisados, prontos para uso. Deslize para ver todos.</p>
+      </div>
+      <div class="trilho" id="trilho" tabindex="0" aria-label="Lista de equipamentos"></div>
+      <div class="controle">
+        <span>Deslize e descubra &rarr;</span>
+        <div class="setas">
+          <button id="anterior" aria-label="Equipamento anterior">&larr;</button>
+          <span id="contador">01 / 08</span>
+          <button id="proximo" aria-label="Próximo equipamento">&rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="miolo numeros">
+      <div><strong>00+</strong><span>Obras atendidas</span></div>
+      <div><strong>00+</strong><span>Clientes satisfeitos</span></div>
+      <div><strong>00+</strong><span>Anos de experiência</span></div>
+    </section>
+
+    <section class="impacto">
+      <p class="rotulo">Equipamento é o meio. Obra pronta é o objetivo.</p>
+      <h2>Não alugamos apenas <span class="contorno">equipamento.</span> <span class="destaque">Entregamos agilidade na sua obra.</span></h2>
+    </section>
+
+    <section id="como-alugar" class="etapas">
+      <div class="miolo">
+        <p class="rotulo">02 / Como alugar</p>
+        <h2>Simples do pedido à retirada.</h2>
+        <p class="intro">Três etapas, com atendimento direto pelo WhatsApp.</p>
+        <ol>
+          <li>
+            <b>01</b>
+            <div>
+              <h3>Orçamento</h3>
+              <p>Você informa o equipamento, a quantidade e o período. Respondemos com o valor.</p>
+              <span class="tags">Informar, receber, aprovar</span>
+            </div>
+          </li>
+          <li>
+            <b>02</b>
+            <div>
+              <h3>Entrega</h3>
+              <p>O equipamento chega revisado na sua obra, no dia combinado.</p>
+              <span class="tags">Revisar, entregar, orientar</span>
+            </div>
+          </li>
+          <li>
+            <b>03</b>
+            <div>
+              <h3>Retirada</h3>
+              <p>Ao fim do período, recolhemos o equipamento. Você segue com a obra.</p>
+              <span class="tags">Agendar, retirar, concluir</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="contato" class="chamada">
+      <div class="chamada-caixa">
+        <h2>Precisa de equipamento para sua obra?</h2>
+        <p>Fale direto com nossa equipe pelo WhatsApp e receba seu orçamento.</p>
+        <a class="botao-zap" data-zap="Olá! Gostaria de um orçamento de locação de equipamentos." href="#">Chamar no WhatsApp &#8599;</a>
+        <small>Uma conversa resolve.</small>
+
+        <div class="dados">
+          <div>
+            <h3>Onde estamos</h3>
+            <address>
+              Rua Vereador Luiz Carlos de Sampaio, 366<br>
+              Loteamento Conviver I, Santa Bárbara<br>
+              Viçosa do Ceará - CE &middot; CEP 62.300-000
+            </address>
+            <a class="link-dados" href="https://www.google.com/maps/search/?api=1&amp;query=Rua+Vereador+Luiz+Carlos+de+Sampaio+366+Vi%C3%A7osa+do+Cear%C3%A1+CE" target="_blank" rel="noopener">Ver no mapa &#8599;</a>
+          </div>
+
+          <div>
+            <h3>Telefones</h3>
+            <ul>
+              <li><b>Douglas</b> <a href="tel:+5588994248183">(88) 99424-8183</a></li>
+              <li><b>Rocha Construtora</b> <a href="tel:+5588992258807">(88) 99225-8807</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>Instagram</h3>
+            <ul>
+              <li><b>Locações</b> <a href="https://www.instagram.com/rocha.locacoes_/" target="_blank" rel="noopener">@rocha.locacoes_</a></li>
+              <li><b>Construtora</b> <a href="https://www.instagram.com/rocha.construtoraa_/" target="_blank" rel="noopener">@rocha.construtoraa_</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <img class="logo-rodape" src="{% static 'locacoes/img/logo.png' %}" alt="Rocha Construtora">
+    <p>Locação de equipamentos para construção</p>
+    <address class="endereco">
+      Rua Vereador Luiz Carlos de Sampaio, 366 &middot; Santa Bárbara<br>
+      Viçosa do Ceará - CE &middot; CEP 62.300-000
+    </address>
+    <p>&copy; 2026 Rocha Construtora. Todos os direitos reservados.</p>
+    <div class="links">
+      <a href="https://www.instagram.com/rocha.locacoes_/" target="_blank" rel="noopener">Instagram @rocha.locacoes_</a>
+      <a data-zap="Olá! Vim pelo site e gostaria de um orçamento de locação de equipamentos." href="#">WhatsApp</a>
+    </div>
+  </footer>
+
+  <script src="{% static 'locacoes/js/site.js' %}?v=6"></script>
+
+</body>
+</html>

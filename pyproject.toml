@@ -1,0 +1,11 @@
+[project]
+name = "site-locacoes"
+version = "1.0.0"
+description = "Landing page de locacao de equipamentos - Rocha Construtora"
+requires-python = ">=3.12"
+dependencies = [
+    "Django==6.1.2",
+]
+
+[tool.vercel]
+entrypoint = "config.wsgi:application"
