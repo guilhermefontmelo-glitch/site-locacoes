@@ -11,22 +11,37 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# True quando o site esta rodando na Vercel
+IS_VERCEL = bool(os.environ.get('VERCEL'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-+pwji)@4hf63yl^xu1s1s3(_z$$c(&bll939i!juywls^tpj^j'
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-+pwji)@4hf63yl^xu1s1s3(_z$$c(&bll939i!juywls^tpj^j',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Local continua True; na Vercel fica False.
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False' if IS_VERCEL else 'True') == 'True'
 
 ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', 'localhost']
+for chave in ('VERCEL_URL', 'VERCEL_PROJECT_PRODUCTION_URL'):
+    if os.environ.get(chave):
+        ALLOWED_HOSTS.append(os.environ[chave])
+ALLOWED_HOSTS += [h for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if h]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.vercel.app',
+] + [o for o in os.environ.get('DJANGO_CSRF_ORIGINS', '').split(',') if o]
 
 
 # Application definition
@@ -43,6 +58,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -116,7 +132,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
-STATIC_URL = 'static/'      
+STATIC_URL = '/static/'
+
+# Pasta onde o `collectstatic` junta os arquivos.
+# Com WhiteNoise + WHITENOISE_USE_FINDERS a Vercel coleta direto das pastas
+# `static/` do app, sem precisar de collectstatic manual.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = DEBUG
 
 
 # Email

@@ -5,6 +5,7 @@ description = "Landing page de locacao de equipamentos - Rocha Construtora"
 requires-python = ">=3.12"
 dependencies = [
     "Django==6.1.2",
+    "whitenoise==6.12.0",
 ]
 
 [tool.vercel]
