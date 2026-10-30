@@ -18,6 +18,11 @@ A plataforma unifica duas frentes sob a mesma identidade de marca em **Viçosa d
 
 ## Como Executar Localmente (Windows PowerShell)
 
+### Windows — mais rápido
+Dê **duplo clique em `iniciar.cmd`**. Ele cria o ambiente virtual se necessário,
+ativa, instala as dependências e sobe o servidor.
+
+### Manual
 ```powershell
 # 1. Criar ambiente virtual (caso ainda não exista) e instalar dependências de desenvolvimento
 python -m venv .venv
@@ -25,6 +30,17 @@ python -m venv .venv
 
 # 2. Copiar arquivo de variáveis de ambiente locais
 Copy-Item .env.example .env
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python manage.py runserver
+```
+
+> Se aparecer erro de política de execução no `Activate.ps1`, use:
+> `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
+
+No VS Code o ambiente ativa sozinho ao abrir o terminal (`.vscode/settings.json`).
+
+## CSS (Tailwind)
 
 # 3. Compilar utilitários do Tailwind CSS v4 (ou usar css:dev em modo watch)
 npm install

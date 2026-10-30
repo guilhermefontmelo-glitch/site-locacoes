@@ -3,3 +3,6 @@ node_modules/
 staticfiles/
 src/
 package-lock.json
+.vscode/
+iniciar.ps1
+iniciar.cmd

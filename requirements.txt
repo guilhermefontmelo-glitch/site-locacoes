@@ -1,2 +1,0 @@
-# Runtime de produção enxuto detectado automaticamente pelo builder Python da Vercel
--r requirements/production.txt
