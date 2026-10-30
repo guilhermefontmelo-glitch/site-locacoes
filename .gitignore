@@ -1,9 +1,30 @@
+# Ambientes & Deploy
 .vercel
 .venv/
-__pycache__/
-*.pyc
-node_modules/
-staticfiles/
-db.sqlite3
+venv/
+ENV/
+
+# Segredos & Variáveis de Ambiente (NUNCA versionar .env reais)
 .env
+.env.*
+!.env.example
+
+# Bytecode Python & Caches de Qualidade/Testes
+__pycache__/
+*.py[cod]
+*$py.class
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Django (Banco Local, Estáticos Compilados & Uploads Locais)
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+media/
+
+# Node / Ferramentas Auxiliares & Logs
+node_modules/
 *.log

@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block brand_unit %}locadora{% endblock %}
+
+{% block title %}Locação de Equipamentos em Viçosa do Ceará | Rocha Construtora{% endblock %}
+
+{% block meta_description %}Locação de andaimes, escoras metálicas, betoneiras, guinchos e ferramentas elétricas revisadas em Viçosa do Ceará - CE. Entrega e retirada na obra pela Rocha Construtora.{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/pages/locadora.css' %}">
+{% endblock %}
+
+{% block content %}
+  <!-- ======================================================================
+       HERO — ROCHA LOCAÇÕES (MESMA MARCA, FOCO OPERACIONAL DE OBRA)
+       ====================================================================== -->
+  <section class="hero-locadora" id="inicio-locadora">
+    <div class="container split-layout">
+      <div>
+        <p class="eyebrow">
+          {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon heroicon--sm" only %}
+          <span>Rocha Construtora &middot; Divisão de Locação de Equipamentos</span>
+        </p>
+
+        <h1 class="hero-locadora__title">
+          Equipamento revisado para cada <span class="editorial-accent">etapa da sua obra.</span>
+        </h1>
+
+        <p class="mb-6">
+          Andaimes, escoras metálicas, betoneiras, vibradores de concreto, guinchos e ferramentas elétricas prontos para uso, com entrega e retirada programada em Viçosa do Ceará e região.
+        </p>
+
+        <div class="flex flex-wrap gap-3">
+          <a class="btn btn--gold" href="#equipamentos">
+            {% include "components/_icon.html" with name="arrow-down" class="heroicon heroicon--sm" only %}
+            <span>Ver Catálogo Completo</span>
+          </a>
+          <a class="btn btn--whatsapp"
+             href="{{ cta_whatsapp_locadora }}"
+             target="_blank"
+             rel="noopener noreferrer">
+            {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
+            <span>Pedir Orçamento Rápido</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="eyebrow mb-2">Padrão de Manutenção Rocha</span>
+        <h2 class="heading-2xl mb-3">Não alugamos apenas máquinas. Entregamos ritmo no canteiro.</h2>
+        <ul class="grid gap-3 mt-4">
+          <li class="flex items-center gap-3 text-sm">
+            {% include "components/_icon.html" with name="shield-check" class="heroicon text-gold" only %}
+            <span>Revisão mecânica e elétrica preventiva antes de cada saída.</span>
+          </li>
+          <li class="flex items-center gap-3 text-sm">
+            {% include "components/_icon.html" with name="truck" class="heroicon text-gold" only %}
+            <span>Logística própria pontual para entrega e recolhimento na obra.</span>
+          </li>
+          <li class="flex items-center gap-3 text-sm">
+            {% include "components/_icon.html" with name="banknotes" class="heroicon text-gold" only %}
+            <span>Planos flexíveis por diária, semana, quinzena ou mês.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       SEÇÃO 01 — CATÁLOGO INTERATIVO FILTRÁVEL EM TEMPO REAL VIA HTMX
+       ====================================================================== -->
+  <section class="section" id="equipamentos">
+    <div class="container">
+      <div class="max-w-3xl mb-6" data-reveal>
+        <p class="eyebrow">01 / Catálogo Operacional</p>
+        <h2 class="heading-3xl mt-2 mb-2">Tudo o que sua obra precisa.</h2>
+        <p>Filtre por família de equipamento ou pesquise pelo serviço que vai executar.</p>
+      </div>
+
+      <!-- Barra de Filtragem Assíncrona HTMX -->
+      <form class="catalog-toolbar"
+            method="get"
+            action="{% url 'locadora:catalogo' %}"
+            hx-get="{% url 'locadora:catalogo' %}"
+            hx-target="#catalogo-grid-wrapper"
+            hx-trigger="submit, input delay:280ms from:#busca-equipamento">
+        <div class="filter-pills" role="group" aria-label="Filtrar por categoria">
+          {% for slug_grupo, nome_grupo in grupos_catalogo %}
+            <a href="?grupo={{ slug_grupo }}"
+               class="filter-pill {% if grupo_ativo == slug_grupo %}is-active{% endif %}"
+               hx-get="{% url 'locadora:catalogo' %}?grupo={{ slug_grupo }}"
+               hx-target="#catalogo-grid-wrapper">
+              {{ nome_grupo }}
+            </a>
+          {% endfor %}
+        </div>
+
+        <div class="catalog-search">
+          <label for="busca-equipamento" class="sr-only">Buscar equipamento</label>
+          <input type="search"
+                 id="busca-equipamento"
+                 name="q"
+                 value="{{ termo_busca }}"
+                 class="catalog-search__input"
+                 placeholder="Buscar andaime, betoneira, laje...">
+        </div>
+      </form>
+
+      <div id="catalogo-grid-wrapper" aria-live="polite">
+        {% include "pages/locadora/partials/_grid_equipamentos.html" with equipamentos=equipamentos only %}
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       SEÇÃO 02 — COMO ALUGAR EM 3 ETAPAS SIMPLES
+       ====================================================================== -->
+  <section class="section" id="como-alugar">
+    <div class="container">
+      <div class="max-w-3xl mb-8" data-reveal>
+        <p class="eyebrow">02 / Sem Burocracia</p>
+        <h2 class="heading-3xl mt-2 mb-2">Simples do pedido à retirada.</h2>
+        <p>Atendimento ágil para não deixar sua equipe parada esperando ferramenta.</p>
+      </div>
+
+      <ol class="grid-auto">
+        {% for passo in passos_aluguel %}
+          <li class="card" data-reveal>
+            <div class="flex items-center justify-between mb-3">
+              <span class="eyebrow">Etapa {{ passo.numero }}</span>
+              {% include "components/_icon.html" with name=passo.icone class="heroicon text-gold" only %}
+            </div>
+            <h3 class="heading-xl mb-2">{{ passo.titulo }}</h3>
+            <p class="text-sm mb-4">{{ passo.descricao }}</p>
+            <span class="text-xs text-gold font-bold">{{ passo.tags }}</span>
+          </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       SEÇÃO 03 — MONTADOR DE ORÇAMENTO (CRISPY FORMS + HTMX)
+       ====================================================================== -->
+  <section class="section" id="orcamento">
+    <div class="container split-layout">
+      <div data-reveal>
+        <p class="eyebrow">03 / Cotação Rápida</p>
+        <h2 class="heading-3xl mt-2 mb-4">
+          Receba o valor da locação direto no seu WhatsApp.
+        </h2>
+        <p class="mb-6">
+          Selecione um ou mais equipamentos ao lado, escolha o período e nós preparamos o atendimento completo com nossa equipe em Viçosa do Ceará.
+        </p>
+
+        <!-- Cross-link de retorno para a Construtora / Financiamento MCMV -->
+        <div class="card" id="contato">
+          <span class="eyebrow mb-2">Vai construir do zero?</span>
+          <h3 class="heading-lg mb-2">Conheça também nossa frente de Obras Financiadas Caixa</h3>
+          <p class="text-sm mb-4">
+            A <strong>Rocha Construtora</strong> projeta, aprova na Caixa / Minha Casa Minha Vida e entrega sua casa pronta para morar.
+          </p>
+          <a class="btn btn--outline" href="{% url 'construtora:home' %}">
+            {% include "components/_icon.html" with name="home-modern" class="heroicon heroicon--sm" only %}
+            <span>Ver Obras Financiadas &amp; Maquete 3D</span>
+          </a>
+        </div>
+      </div>
+
+      <div id="orcamento-locadora-box" data-reveal>
+        {% include "pages/locadora/partials/_form_orcamento.html" with form_orcamento=form_orcamento only %}
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

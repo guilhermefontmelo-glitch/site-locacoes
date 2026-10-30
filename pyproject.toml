@@ -1,12 +1,120 @@
 [project]
-name = "site-locacoes"
-version = "1.0.0"
-description = "Landing page de locacao de equipamentos - Rocha Construtora"
+name = "rocha-landing-platform"
+version = "0.2.0"
+description = "Landing Page interativa de alta performance — Rocha Construtora (Obras Financiadas Caixa/MCMV) & Rocha Locações (Vercel Serverless)."
+readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "Django==6.1.2",
-    "whitenoise==6.12.0",
+    "Django>=6.1,<6.2",
+    "argon2-cffi>=23.1.0",
+    "django-environ>=0.12.0",
+    "whitenoise[brotli]>=6.8.2",
+    "django-crispy-forms>=2.3",
+    "crispy-tailwind>=1.0.3",
 ]
 
-[tool.vercel]
-entrypoint = "config.wsgi:application"
+[project.optional-dependencies]
+dev = [
+    "django-debug-toolbar>=5.0.0",
+    "ruff>=0.9.0",
+    "djlint>=1.36.4",
+    "pytest>=8.3.0",
+    "pytest-django>=4.9.0",
+    "mypy>=1.14.0",
+    "django-stubs[compatible-mypy]>=5.1.0",
+    "pip-audit>=2.8.0",
+]
+
+# ==============================================================================
+# RUFF — Linter & Formatter Python Ultrarrápido (PEP 8 + Security + Django + Perf)
+# ==============================================================================
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+indent-width = 4
+extend-exclude = [
+    ".venv",
+    ".vercel",
+    "staticfiles",
+    "node_modules",
+    "*/migrations/*.py",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle (erros PEP 8)
+    "W",      # pycodestyle (avisos PEP 8)
+    "F",      # Pyflakes
+    "I",      # isort (ordenação de imports)
+    "N",      # pep8-naming
+    "UP",     # pyupgrade (Python 3.12+)
+    "ANN",    # flake8-annotations (Type Hints obrigatórios)
+    "S",      # flake8-bandit (análise estática de segurança)
+    "B",      # flake8-bugbear
+    "A",      # flake8-builtins
+    "C4",     # flake8-comprehensions
+    "DTZ",    # flake8-datetimez
+    "T20",    # flake8-print (proíbe print() em produção)
+    "DJ",     # flake8-django
+    "PT",     # flake8-pytest-style
+    "SIM",    # flake8-simplify
+    "TCH",    # flake8-type-checking
+    "ARG",    # flake8-unused-arguments
+    "PTH",    # flake8-use-pathlib
+    "PERF",   # Perflint (performance)
+    "RUF",    # Regras nativas do Ruff
+]
+ignore = [
+    "RUF012", # Atributos mutáveis de classe em Models/Forms/Admin do Django
+]
+
+[tool.ruff.lint.per-file-ignores]
+"manage.py" = ["ANN", "PLC0415"]
+"config/settings/*.py" = ["F405", "F403", "ANN"]
+"**/tests/**/*.py" = ["S101", "S105", "S106", "ANN"]
+"**/admin.py" = ["ANN"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["config", "core", "apps", "locacoes"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+combine-as-imports = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+docstring-code-format = true
+
+# ==============================================================================
+# DJLINT — Linter & Formatter de Templates HTML5 + Django + HTMX
+# ==============================================================================
+[tool.djlint]
+profile = "django"
+extension = "html"
+indent = 2
+max_line_length = 120
+max_attribute_length = 100
+format_attribute_template_tags = true
+close_void_tags = false
+preserve_blank_lines = true
+blank_line_after_tag = "load,extends,include"
+exclude = ".venv,.vercel,node_modules,staticfiles"
+ignore = "H021"
+
+# ==============================================================================
+# PYTEST & MYPY
+# ==============================================================================
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["test_*.py", "*_test.py"]
+pythonpath = ["."]
+addopts = "--strict-markers --tb=short"
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main"]
+strict = true
+exclude = ["migrations/", ".venv/", "staticfiles/"]
+
+[tool.django-stubs]
+django_settings_module = "config.settings.local"

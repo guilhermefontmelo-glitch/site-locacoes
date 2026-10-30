@@ -1,0 +1,48 @@
+<div class="card">
+  <div class="flex items-center gap-2 mb-3">
+    {% include "components/_icon.html" with name="check-circle" class="heroicon text-gold" only %}
+    <span class="eyebrow">Pré-Análise Concluída para {{ resultado.nome_cliente }}</span>
+  </div>
+
+  <h3 class="heading-xl mb-2">{{ resultado.faixa_titulo }}</h3>
+  <p class="mb-4">{{ resultado.beneficio_destaque }}</p>
+
+  <div class="grid-auto mb-4">
+    <div class="hero-pillar-item">
+      {% include "components/_icon.html" with name="banknotes" class="heroicon text-gold" only %}
+      <div>
+        <span class="text-xs block">Parcela Teto Estimada (30%)</span>
+        <strong class="heading-lg text-gold">{{ resultado.parcela_teto_formatada }}</strong>
+      </div>
+    </div>
+
+    <div class="hero-pillar-item">
+      {% include "components/_icon.html" with name="home-modern" class="heroicon text-gold" only %}
+      <div>
+        <span class="text-xs block">Potencial Construtivo Orientativo</span>
+        <strong class="heading-lg text-gold">{{ resultado.potencial_obra_formatado }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-pillar-item mb-6">
+    {% include "components/_icon.html" with name="sparkles" class="heroicon text-gold" only %}
+    <p class="text-sm">{{ resultado.orientacao_tecnica }}</p>
+  </div>
+
+  <div class="flex flex-col gap-3">
+    <a class="btn btn--whatsapp w-full"
+       href="{{ resultado.whatsapp_url }}"
+       target="_blank"
+       rel="noopener noreferrer">
+      {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
+      <span>Continuar Aprovação Oficial no WhatsApp</span>
+      {% include "components/_icon.html" with name="arrow-up-right" class="heroicon heroicon--sm" only %}
+    </a>
+
+    <a class="btn btn--outline w-full" href="#simulador">
+      Refazer simulação com outros valores
+    </a>
+  </div>
+</div>
+

@@ -1,0 +1,17 @@
+{% url 'construtora:simular_mcmv' as url_simular %}
+
+<div class="card">
+  <div class="mb-4">
+    <span class="eyebrow">
+      {% include "components/_icon.html" with name="calculator" class="heroicon heroicon--sm" only %}
+      <span>Pré-Análise Instantânea</span>
+    </span>
+    <h3 class="heading-xl mt-2">Descubra sua faixa no Minha Casa Minha Vida</h3>
+    <p class="text-sm mt-2">
+      Preencha os dados básicos para ver seu enquadramento estimado e falar com nossa engenharia já com o resumo pronto.
+    </p>
+  </div>
+
+  {% include "components/_crispy_form.html" with form=form_simulacao action_url=url_simular hx_target="#container-simulacao" submit_label="Calcular Meu Enquadramento Caixa" submit_icon="calculator" only %}
+</div>
+

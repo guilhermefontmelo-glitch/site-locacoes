@@ -1,0 +1,31 @@
+<div class="card mt-4" data-etapa-painel="{{ etapa_ativa.slug }}">
+  <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+    <span class="eyebrow">
+      {% include "components/_icon.html" with name=etapa_ativa.icone class="heroicon heroicon--sm" only %}
+      <span>Inspeção de Engenharia &middot; Etapa {{ etapa_ativa.codigo }}</span>
+    </span>
+    <span class="blueprint-status-pill">{{ etapa_ativa.progresso_percentual }}% da obra</span>
+  </div>
+
+  <h3 class="heading-xl mb-2">{{ etapa_ativa.titulo }}</h3>
+  <p class="mb-4">{{ etapa_ativa.detalhe_engenharia }}</p>
+
+  <div class="hero-pillar-item mb-4">
+    {% include "components/_icon.html" with name="shield-check" class="heroicon text-gold" only %}
+    <div>
+      <strong class="block text-sm">Controle Caixa Habitacional:</strong>
+      <span class="text-xs">{{ etapa_ativa.medicao_caixa }}</span>
+    </div>
+  </div>
+
+  {% if whatsapp_etapa_url %}
+    <a class="btn btn--outline w-full"
+       href="{{ whatsapp_etapa_url }}"
+       target="_blank"
+       rel="noopener noreferrer">
+      {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
+      <span>Tirar dúvida sobre esta etapa</span>
+    </a>
+  {% endif %}
+</div>
+

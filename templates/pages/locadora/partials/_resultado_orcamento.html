@@ -1,0 +1,41 @@
+<div class="card">
+  <div class="flex items-center gap-2 mb-3">
+    {% include "components/_icon.html" with name="check-circle" class="heroicon text-gold" only %}
+    <span class="eyebrow">Lista Pronta para Atendimento</span>
+  </div>
+
+  <h3 class="heading-xl mb-2">Orçamento preparado, {{ resumo.nome_cliente }}!</h3>
+  <p class="text-sm mb-4">
+    Confira os equipamentos selecionados abaixo e clique para enviar ao WhatsApp da Rocha Locações:
+  </p>
+
+  <ul class="grid gap-2 mb-4">
+    {% for nome_item in resumo.itens_nomes %}
+      <li class="flex items-center gap-2 text-sm">
+        {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon heroicon--sm text-gold" only %}
+        <strong>{{ nome_item }}</strong>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <p class="text-xs mb-6">
+    <strong>Período:</strong> {{ resumo.periodo_label }} &middot;
+    <strong>Logística:</strong> {{ resumo.entrega_label }}
+  </p>
+
+  <div class="flex flex-col gap-3">
+    <a class="btn btn--whatsapp w-full"
+       href="{{ resumo.whatsapp_url }}"
+       target="_blank"
+       rel="noopener noreferrer">
+      {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
+      <span>Enviar Lista para o WhatsApp Agora</span>
+      {% include "components/_icon.html" with name="arrow-up-right" class="heroicon heroicon--sm" only %}
+    </a>
+
+    <a class="btn btn--outline w-full" href="{% url 'locadora:catalogo' %}#orcamento">
+      Montar outra lista de equipamentos
+    </a>
+  </div>
+</div>
+

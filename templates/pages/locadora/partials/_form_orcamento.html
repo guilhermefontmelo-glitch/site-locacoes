@@ -1,0 +1,17 @@
+{% url 'locadora:solicitar_orcamento' as url_orcamento %}
+
+<div class="card">
+  <div class="mb-4">
+    <span class="eyebrow">
+      {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon heroicon--sm" only %}
+      <span>Cotação Multi-Equipamento</span>
+    </span>
+    <h3 class="heading-xl mt-2">Monte sua lista de locação</h3>
+    <p class="text-sm mt-1">
+      Marque todos os itens necessários para sua obra e envie seu pedido estruturado direto para nossa equipe.
+    </p>
+  </div>
+
+  {% include "components/_crispy_form.html" with form=form_orcamento action_url=url_orcamento hx_target="#orcamento-locadora-box" submit_label="Gerar Pedido de Orçamento" submit_icon="truck" only %}
+</div>
+

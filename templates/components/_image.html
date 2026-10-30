@@ -1,0 +1,15 @@
+{% comment %}
+  Componente de imagem responsiva otimizada (anti-CLS, lazy-load / LCP priority)
+  Uso:
+  {% include "components/_image.html" with src=img_url alt="Obra Rocha" width=800 height=600 priority=False only %}
+{% endcomment %}
+<figure class="media-frame {{ wrapper_class|default:'' }}">
+  <img class="media-frame__img {{ class|default:'' }}"
+       src="{{ src }}"
+       alt="{{ alt }}"
+       width="{{ width|default:'800' }}"
+       height="{{ height|default:'600' }}"
+       {% if priority %}loading="eager" fetchpriority="high"{% else %}loading="lazy" decoding="async"{% endif %}>
+  {% if caption %}<figcaption class="sr-only">{{ caption }}</figcaption>{% endif %}
+</figure>
+

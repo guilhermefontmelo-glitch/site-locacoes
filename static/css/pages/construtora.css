@@ -1,0 +1,400 @@
+/* ==========================================================================
+   ROCHA CONSTRUTORA — PÁGINA PRINCIPAL (HERO 3D, PALCO ISOMÉTRICO & MCMV)
+   100% GPU Compositor Animations (transform + opacity)
+   ========================================================================== */
+
+/* Hero Imersivo com Card 3D Reativo */
+.hero-construtora {
+  position: relative;
+  padding-block: clamp(3.5rem, 7vw, 6.5rem) var(--space-section);
+  overflow: hidden;
+}
+
+.hero-construtora__glow {
+  position: absolute;
+  top: -12%;
+  right: -8%;
+  width: min(44rem, 90vw);
+  height: min(44rem, 90vw);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 164, 92, 0.16) 0%, transparent 68%);
+  pointer-events: none;
+}
+
+.hero-construtora__title {
+  font-size: var(--text-display);
+  margin-block: var(--space-4) var(--space-5);
+}
+
+.hero-construtora__lead {
+  font-size: var(--text-lg);
+  max-width: 52ch;
+  margin-bottom: var(--space-6);
+}
+
+.hero-construtora__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.hero-metrics__value {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--color-gold-400);
+}
+
+.hero-metrics__label {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+/* Card Flutuante 3D no Hero */
+.hero-card-3d-wrap {
+  perspective: 1100px;
+}
+
+.hero-card-3d {
+  position: relative;
+  background: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--color-bg-elevated) 92%, var(--color-gold-500)) 0%,
+    var(--color-bg-surface) 100%
+  );
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+  transform: rotateX(var(--hero-rx, 0deg)) rotateY(var(--hero-ry, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 240ms var(--ease-out-expo);
+}
+
+.hero-card-3d__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  background-color: rgba(56, 189, 248, 0.14);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: var(--color-caixa-accent);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+}
+
+.hero-card-3d__pillars {
+  display: grid;
+  gap: var(--space-3);
+  margin-block: var(--space-5);
+}
+
+.hero-pillar-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background-color: color-mix(in srgb, var(--color-bg-canvas) 65%, transparent);
+  border: 1px solid var(--color-border-subtle);
+}
+
+/* ==========================================================================
+   PALCO ARQUITETÔNICO ISOMÉTRICO 3D DAS ETAPAS DA OBRA
+   ========================================================================== */
+.obra-3d-grid {
+  display: grid;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+@media (min-width: 64rem) {
+  .obra-3d-grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  }
+
+  .obra-3d-sticky {
+    position: sticky;
+    top: calc(var(--header-height) + 1.5rem);
+  }
+}
+
+.blueprint-viewport {
+  position: relative;
+  min-height: 25rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-strong);
+  background:
+    radial-gradient(circle at 50% 38%, rgba(201, 164, 92, 0.14), transparent 65%),
+    linear-gradient(180deg, var(--color-bg-surface), var(--color-bg-canvas));
+  box-shadow: var(--shadow-md);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  perspective: 1100px;
+}
+
+.blueprint-viewport__toolbar {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.blueprint-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-pill);
+  background-color: rgba(201, 164, 92, 0.14);
+  border: 1px solid var(--color-border-strong);
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-gold-400);
+}
+
+.iso-scene-wrap {
+  position: relative;
+  height: 17.5rem;
+  display: grid;
+  place-items: center;
+  perspective: 1000px;
+  cursor: grab;
+}
+
+.iso-scene-wrap:active {
+  cursor: grabbing;
+}
+
+.iso-house-model {
+  --explode: 1;
+  position: relative;
+  width: 13.5rem;
+  height: 13.5rem;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--iso-rx, 58deg)) rotateZ(var(--iso-rz, -42deg));
+  transition: transform 220ms var(--ease-out-expo);
+}
+
+.iso-house-model.is-exploded {
+  --explode: 1.75;
+}
+
+.iso-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.5rem;
+  transform-style: preserve-3d;
+  opacity: 0.14;
+  transition:
+    transform 520ms var(--ease-out-expo),
+    opacity 420ms var(--ease-standard),
+    border-color 320ms var(--ease-standard),
+    box-shadow 320ms var(--ease-standard);
+}
+
+.iso-layer.is-built {
+  opacity: 1;
+}
+
+.iso-layer.is-current {
+  box-shadow: 0 0 28px rgba(226, 197, 138, 0.38);
+}
+
+/* Camada 1: Terreno & Gabarito Técnico */
+.iso-layer--terreno {
+  background-image:
+    linear-gradient(to right, rgba(201, 164, 92, 0.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(201, 164, 92, 0.22) 1px, transparent 1px);
+  background-size: 1.35rem 1.35rem;
+  background-color: rgba(23, 40, 68, 0.72);
+  border: 2px dashed var(--color-gold-500);
+  transform: translate3d(0, 0, 0);
+}
+
+/* Camada 2: Fundação & Vigas Baldrame */
+.iso-layer--fundacao {
+  inset: 1.2rem;
+  background-color: rgba(148, 163, 184, 0.28);
+  border: 3px solid #94a3b8;
+  transform: translate3d(0, 0, calc(18px * var(--explode)));
+}
+
+/* Camada 3: Pilares & Laje Estrutural */
+.iso-layer--estrutura {
+  inset: 1.2rem;
+  background:
+    radial-gradient(circle at 10% 10%, var(--color-gold-400) 4px, transparent 5px),
+    radial-gradient(circle at 90% 10%, var(--color-gold-400) 4px, transparent 5px),
+    radial-gradient(circle at 10% 90%, var(--color-gold-400) 4px, transparent 5px),
+    radial-gradient(circle at 90% 90%, var(--color-gold-400) 4px, transparent 5px),
+    rgba(30, 58, 95, 0.75);
+  border: 2px solid var(--color-gold-400);
+  transform: translate3d(0, 0, calc(42px * var(--explode)));
+}
+
+/* Camada 4: Alvenaria & Divisões Internas */
+.iso-layer--alvenaria {
+  inset: 1.5rem;
+  background:
+    linear-gradient(90deg, transparent 48%, rgba(226, 197, 138, 0.55) 49%, transparent 51%),
+    linear-gradient(0deg, transparent 54%, rgba(226, 197, 138, 0.55) 55%, transparent 57%),
+    rgba(201, 164, 92, 0.2);
+  border: 3px solid var(--color-gold-300);
+  transform: translate3d(0, 0, calc(66px * var(--explode)));
+}
+
+/* Camada 5: Cobertura & Redes Elétrica/Hidráulica */
+.iso-layer--instalacoes {
+  inset: 0.95rem;
+  background: linear-gradient(
+    135deg,
+    rgba(56, 189, 248, 0.28) 0%,
+    rgba(23, 40, 68, 0.88) 65%
+  );
+  border: 2px solid var(--color-caixa-accent);
+  transform: translate3d(0, 0, calc(92px * var(--explode)));
+}
+
+/* Camada 6: Acabamento Nobre & Entrega das Chaves */
+.iso-layer--entrega {
+  inset: 2.3rem;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle, rgba(226, 197, 138, 0.92), rgba(201, 164, 92, 0.45));
+  border: 2px solid #ffffff;
+  color: #0b1320;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transform: translate3d(0, 0, calc(118px * var(--explode)));
+}
+
+/* Barra de progresso da obra dentro do palco 3D */
+.obra-progress-track {
+  width: 100%;
+  height: 0.45rem;
+  border-radius: var(--radius-pill);
+  background-color: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  margin-top: var(--space-3);
+}
+
+.obra-progress-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--color-gold-600), var(--color-gold-300));
+  transform-origin: 0 50%;
+  transform: scaleX(var(--stage-progress, 0.15));
+  transition: transform 420ms var(--ease-out-expo);
+}
+
+/* Lista de Etapas Interativas */
+.stage-selector-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.stage-step-card {
+  width: 100%;
+  text-align: left;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  cursor: pointer;
+  transition:
+    transform var(--duration-base) var(--ease-out-expo),
+    border-color var(--duration-base) var(--ease-standard),
+    background-color var(--duration-base) var(--ease-standard);
+}
+
+.stage-step-card:hover,
+.stage-step-card.is-active {
+  border-color: var(--color-gold-400);
+  background-color: var(--color-bg-elevated);
+  transform: translate3d(4px, 0, 0);
+}
+
+.stage-step-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.stage-step-card__num {
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background-color: rgba(201, 164, 92, 0.16);
+  color: var(--color-gold-400);
+}
+
+/* Jornada Financiamento Caixa / MCMV */
+.mcmv-timeline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-4);
+}
+
+.mcmv-step-card {
+  position: relative;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.mcmv-step-card__badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 0.22rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background-color: rgba(56, 189, 248, 0.12);
+  color: var(--color-caixa-accent);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+
+/* Banner de Sinergia Locadora */
+.locadora-synergy-banner {
+  border-radius: var(--radius-lg);
+  padding: clamp(2rem, 5vw, 3.25rem);
+  background: linear-gradient(
+    125deg,
+    var(--color-bg-elevated) 0%,
+    color-mix(in srgb, var(--color-bg-surface) 82%, var(--color-gold-600)) 100%
+  );
+  border: 1px solid var(--color-border-strong);
+  box-shadow: var(--shadow-md);
+}
+

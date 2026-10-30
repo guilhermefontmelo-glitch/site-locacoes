@@ -1,0 +1,114 @@
+{% load static %}
+
+<footer class="site-footer" id="rodape">
+  <div class="container site-footer__grid">
+    <!-- Coluna 1: Identidade Institucional -->
+    <div class="site-footer__brand">
+      <img class="site-footer__logo"
+           src="{% static 'locacoes/img/logo.png' %}"
+           alt="{{ rocha.nome_marca }}"
+           width="160"
+           height="44"
+           loading="lazy"
+           decoding="async">
+      <p class="site-footer__tagline">
+        Engenharia de confiança do alicerce às chaves pela <strong>Caixa Habitacional / Minha Casa Minha Vida</strong> e locação completa de equipamentos para sua obra.
+      </p>
+    </div>
+
+    <!-- Coluna 2: Unidades da Marca -->
+    <div class="site-footer__col">
+      <h2 class="site-footer__heading">Áreas de Atuação</h2>
+      <ul class="site-footer__list">
+        <li>
+          <a class="site-footer__item-link" href="{{ rocha.url_construtora }}">
+            {% include "components/_icon.html" with name="home-modern" class="heroicon heroicon--sm text-gold" only %}
+            <span>Construtora &amp; Financiamento Caixa</span>
+          </a>
+        </li>
+        <li>
+          <a class="site-footer__item-link" href="{{ rocha.url_construtora }}#etapas-obra">
+            {% include "components/_icon.html" with name="cube-transparent" class="heroicon heroicon--sm text-gold" only %}
+            <span>Etapas Construtivas em 3D</span>
+          </a>
+        </li>
+        <li>
+          <a class="site-footer__item-link" href="{{ rocha.url_locadora }}">
+            {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon heroicon--sm text-gold" only %}
+            <span>Locadora de Equipamentos</span>
+          </a>
+        </li>
+        <li>
+          <a class="site-footer__item-link" href="{{ rocha.url_locadora }}#como-alugar">
+            {% include "components/_icon.html" with name="truck" class="heroicon heroicon--sm text-gold" only %}
+            <span>Entrega e Retirada na Obra</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Coluna 3: Canais Diretos -->
+    <div class="site-footer__col">
+      <h2 class="site-footer__heading">Atendimento Direto</h2>
+      <ul class="site-footer__list">
+        <li>
+          <span class="site-footer__label">Construtora (Obras &amp; MCMV):</span>
+          <a class="site-footer__item-link" href="tel:+{{ rocha.whatsapp_construtora }}">
+            {% include "components/_icon.html" with name="phone" class="heroicon heroicon--sm text-gold" only %}
+            <span>{{ rocha.tel_construtora_display }}</span>
+          </a>
+        </li>
+        <li>
+          <span class="site-footer__label">Locadora (Douglas):</span>
+          <a class="site-footer__item-link" href="tel:+{{ rocha.whatsapp_locadora }}">
+            {% include "components/_icon.html" with name="phone" class="heroicon heroicon--sm text-gold" only %}
+            <span>{{ rocha.tel_locadora_display }}</span>
+          </a>
+        </li>
+        <li>
+          <a class="site-footer__item-link"
+             href="{{ rocha.instagram_construtora }}"
+             target="_blank"
+             rel="noopener noreferrer">
+            <span>Instagram Construtora (@rocha.construtoraa_)</span>
+            {% include "components/_icon.html" with name="arrow-up-right" class="heroicon heroicon--sm" only %}
+          </a>
+        </li>
+        <li>
+          <a class="site-footer__item-link"
+             href="{{ rocha.instagram_locadora }}"
+             target="_blank"
+             rel="noopener noreferrer">
+            <span>Instagram Locações (@rocha.locacoes_)</span>
+            {% include "components/_icon.html" with name="arrow-up-right" class="heroicon heroicon--sm" only %}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Coluna 4: Localização -->
+    <div class="site-footer__col">
+      <h2 class="site-footer__heading">Onde Estamos</h2>
+      <address class="site-footer__address">
+        {{ rocha.endereco_linha_1 }}<br>
+        {{ rocha.endereco_linha_2 }}<br>
+        {{ rocha.cidade_uf }} &middot; CEP {{ rocha.cep }}
+      </address>
+      <a class="site-footer__map-link"
+         href="{{ rocha.maps_url }}"
+         target="_blank"
+         rel="noopener noreferrer">
+        {% include "components/_icon.html" with name="map-pin" class="heroicon heroicon--sm" only %}
+        <span>Abrir no Google Maps</span>
+        {% include "components/_icon.html" with name="arrow-up-right" class="heroicon heroicon--sm" only %}
+      </a>
+    </div>
+  </div>
+
+  <div class="container site-footer__bottom">
+    <p>&copy; {% now "Y" %} {{ rocha.nome_marca }}. Todos os direitos reservados.</p>
+    <p class="site-footer__legal">
+      Simulações no site possuem caráter prévio orientativo; aprovação de crédito sujeita à análise oficial da Caixa Econômica Federal.
+    </p>
+  </div>
+</footer>
