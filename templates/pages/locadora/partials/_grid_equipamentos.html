@@ -1,0 +1,55 @@
+{% if equipamentos %}
+  <div class="grid-auto">
+    {% for item in equipamentos %}
+      <article class="card card--interactive equip-card">
+        <div>
+          {% include "components/_image.html" with src=item.imagem_url alt=item.nome width=800 height=500 wrapper_class="equip-card__media mb-4" only %}
+
+          <div class="equip-card__meta">
+            <span>{{ item.grupo_nome }}</span>
+            <span>#{{ item.codigo }}</span>
+          </div>
+
+          <h3 class="heading-xl mt-1 mb-2">{{ item.nome }}</h3>
+          <p class="text-sm">{{ item.resumo }}</p>
+
+          <span class="equip-card__stage">
+            Etapa: {{ item.etapa_obra }}
+          </span>
+        </div>
+
+        <div class="equip-card__actions">
+          <button type="button"
+                  class="btn btn--outline text-xs flex-1"
+                  hx-get="{% url 'locadora:equipamento_modal' item.slug %}"
+                  hx-target="#modal-conteudo"
+                  hx-swap="innerHTML">
+            {% include "components/_icon.html" with name="clipboard-document-check" class="heroicon heroicon--sm" only %}
+            <span>Ficha Técnica</span>
+          </button>
+
+          <a class="btn btn--gold text-xs flex-1"
+             href="{{ item.whatsapp_url }}"
+             target="_blank"
+             rel="noopener noreferrer">
+            {% include "components/_icon.html" with name="whatsapp" class="heroicon heroicon--sm" only %}
+            <span>Cotar Agora</span>
+          </a>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card text-center">
+    <p class="eyebrow mb-2">Nenhum resultado encontrado</p>
+    <h3 class="heading-xl mb-2">Não encontramos equipamentos para este filtro.</h3>
+    <p class="text-sm mb-4">Limpe a busca ou consulte diretamente nossa equipe de locações pelo WhatsApp.</p>
+    <a class="btn btn--outline"
+       href="{% url 'locadora:catalogo' %}"
+       hx-get="{% url 'locadora:catalogo' %}"
+       hx-target="#catalogo-grid-wrapper">
+      Exibir todos os equipamentos
+    </a>
+  </div>
+{% endif %}
+

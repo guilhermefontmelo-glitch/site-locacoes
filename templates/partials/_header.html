@@ -1,0 +1,111 @@
+{% load static %}
+
+<header class="site-header" id="site-header">
+  <div class="container site-header__inner">
+    <!-- Assinatura de Marca Rocha Construtora -->
+    <a class="brand-logo"
+       href="{{ rocha.url_construtora }}"
+       aria-label="Rocha Construtora — Voltar ao início">
+      <img class="brand-logo__img"
+           src="{% static 'locacoes/img/logo.png' %}"
+           alt="Logo Rocha Construtora"
+           width="148"
+           height="40"
+           decoding="async">
+    </a>
+
+    <!-- Seletor de Frente de Negócio (Mesma Marca: Construtora <-> Locadora com Heroicons) -->
+    <nav class="unit-switcher" aria-label="Alternar área de atuação da Rocha Construtora">
+      <a href="{{ rocha.url_construtora }}"
+         class="unit-switcher__item {% if active_unit != 'locadora' %}is-active{% endif %}"
+         {% if active_unit != 'locadora' %}aria-current="page"{% endif %}>
+        {% include "components/_icon.html" with name="home-modern" class="heroicon heroicon--sm" only %}
+        <span>Construtora &middot; MCMV</span>
+      </a>
+      <a href="{{ rocha.url_locadora }}"
+         class="unit-switcher__item {% if active_unit == 'locadora' %}is-active{% endif %}"
+         {% if active_unit == 'locadora' %}aria-current="page"{% endif %}>
+        {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon heroicon--sm" only %}
+        <span>Locadora de Equipamentos</span>
+      </a>
+    </nav>
+
+    <!-- Navegação Rápida Desktop -->
+    <nav class="primary-nav" aria-label="Seções da página">
+      {% if active_unit == 'locadora' %}
+        <a class="primary-nav__link" href="#equipamentos">Equipamentos</a>
+        <a class="primary-nav__link" href="#como-alugar">Como Alugar</a>
+        <a class="primary-nav__link" href="#orcamento">Orçamento</a>
+      {% else %}
+        <a class="primary-nav__link" href="#etapas-obra">Etapas da Obra</a>
+        <a class="primary-nav__link" href="#financiamento-caixa">Financiamento Caixa</a>
+        <a class="primary-nav__link" href="#simulador">Simular Minha Obra</a>
+      {% endif %}
+      <a class="primary-nav__link" href="#contato">Contato</a>
+    </nav>
+
+    <!-- Ações Globais: Alternância de Tema (Heroicons Sol/Lua) + Menu Mobile -->
+    <div class="site-header__actions">
+      <button type="button"
+              class="btn btn--icon"
+              id="theme-toggle"
+              aria-label="Alternar entre modo escuro e claro"
+              aria-pressed="false"
+              title="Alternar tema visual">
+        {% include "components/_icon.html" with name="sun" class="heroicon theme-icon--sun" only %}
+        {% include "components/_icon.html" with name="moon" class="heroicon theme-icon--moon" only %}
+      </button>
+
+      <button type="button"
+              class="menu-toggle"
+              id="menu-toggle"
+              aria-label="Abrir menu de navegação"
+              aria-expanded="false"
+              aria-controls="mobile-drawer">
+        {% include "components/_icon.html" with name="bars-3" class="heroicon" only %}
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Gaveta de Navegação Mobile Acessível -->
+<div class="mobile-drawer" id="mobile-drawer" hidden>
+  <div class="mobile-drawer__backdrop" data-drawer-close tabindex="-1"></div>
+  <nav class="mobile-drawer__panel" aria-label="Menu móvel principal">
+    <div class="mobile-drawer__top">
+      <span class="eyebrow">Rocha Construtora</span>
+      <button type="button"
+              class="btn btn--icon"
+              data-drawer-close
+              aria-label="Fechar menu de navegação">
+        {% include "components/_icon.html" with name="x-mark" class="heroicon" only %}
+      </button>
+    </div>
+
+    <div class="mobile-drawer__units">
+      <a href="{{ rocha.url_construtora }}"
+         class="btn {% if active_unit != 'locadora' %}btn--gold{% else %}btn--outline{% endif %}">
+        {% include "components/_icon.html" with name="home-modern" class="heroicon" only %}
+        <span>Obras &amp; Financiamento Caixa</span>
+      </a>
+      <a href="{{ rocha.url_locadora }}"
+         class="btn {% if active_unit == 'locadora' %}btn--gold{% else %}btn--outline{% endif %}">
+        {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon" only %}
+        <span>Locadora de Equipamentos</span>
+      </a>
+    </div>
+
+    <ul class="mobile-drawer__links">
+      {% if active_unit == 'locadora' %}
+        <li><a href="#equipamentos" data-drawer-link>Equipamentos</a></li>
+        <li><a href="#como-alugar" data-drawer-link>Como Alugar</a></li>
+        <li><a href="#orcamento" data-drawer-link>Montar Orçamento</a></li>
+      {% else %}
+        <li><a href="#etapas-obra" data-drawer-link>Etapas da Obra em 3D</a></li>
+        <li><a href="#financiamento-caixa" data-drawer-link>Processo Caixa / MCMV</a></li>
+        <li><a href="#simulador" data-drawer-link>Pré-Análise Gratuita</a></li>
+      {% endif %}
+      <li><a href="#contato" data-drawer-link>Falar com Especialista</a></li>
+    </ul>
+  </nav>
+</div>

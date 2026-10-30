@@ -1,6 +1,0 @@
-# Dependencias do site-locacoes - instale com: pip install -r requirements.txt
-asgiref==3.13.0
-Django==6.1.2
-sqlparse==0.6.0
-tzdata==2026.6
-whitenoise==6.12.0

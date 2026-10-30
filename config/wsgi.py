@@ -1,16 +1,16 @@
-"""
-WSGI config for config project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/6.1/howto/deployment/wsgi/
-"""
+"""Configuração WSGI para produção (Vercel Serverless / Gunicorn) e execução local."""
 
 import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+default_settings = (
+    "config.settings.production"
+    if os.environ.get("VERCEL")
+    else "config.settings.local"
+)
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", default_settings)
 
 application = get_wsgi_application()
+# Alias `app` garantido para total compatibilidade com runtimes serverless da Vercel
+app = application

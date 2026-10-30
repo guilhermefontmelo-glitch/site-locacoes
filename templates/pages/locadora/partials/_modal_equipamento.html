@@ -1,0 +1,32 @@
+<div>
+  <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+    <span class="eyebrow">{{ equipamento.grupo_nome }} &middot; Item {{ equipamento.codigo }}</span>
+    <span class="equip-card__stage">{{ equipamento.etapa_obra }}</span>
+  </div>
+
+  <h3 class="heading-2xl mb-3">{{ equipamento.nome }}</h3>
+  <p class="mb-4">{{ equipamento.resumo }}</p>
+
+  <h4 class="heading-lg mb-2">Especificações &amp; Diferenciais Rocha:</h4>
+  <ul class="grid gap-2 mb-5">
+    {% for spec in equipamento.especificacoes %}
+      <li class="flex items-center gap-2 text-sm">
+        {% include "components/_icon.html" with name="check-circle" class="heroicon heroicon--sm text-gold" only %}
+        <span>{{ spec }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <p class="text-xs mb-5">
+    <strong>Aplicação recomendada:</strong> {{ equipamento.orientacao_uso }}
+  </p>
+
+  <a class="btn btn--whatsapp w-full"
+     href="{{ equipamento.whatsapp_url }}"
+     target="_blank"
+     rel="noopener noreferrer">
+    {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
+    <span>Pedir Orçamento de {{ equipamento.nome }}</span>
+  </a>
+</div>
+

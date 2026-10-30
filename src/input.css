@@ -1,18 +1,40 @@
 @import "tailwindcss";
 
-/* Cores e fonte da marca: use bg-fundo, text-ouro, font-sans etc. */
+/* ==========================================================================
+   TOKENS TAILWIND CSS v4 — ROCHA CONSTRUTORA & ROCHA LOCAÇÕES
+   Uso nos templates: bg-rocha-canvas, bg-rocha-surface, text-rocha-gold,
+   border-rocha-gold/30, font-heading, font-sans, font-serif, etc.
+   ========================================================================== */
 @theme {
-  --color-fundo: #0e1828;
+  --color-rocha-canvas: #0b1320;
+  --color-rocha-surface: #111e33;
+  --color-rocha-elevated: #172844;
+  --color-rocha-card: #16263f;
+  --color-rocha-gold-light: #e2c58a;
+  --color-rocha-gold: #c9a45c;
+  --color-rocha-gold-dark: #8c6b2c;
+  --color-rocha-caixa: #38bdf8;
+  --color-rocha-whatsapp: #22c55e;
+
+  /* Aliases de retrocompatibilidade durante a migração do MVP */
+  --color-fundo: #0b1320;
   --color-azul: #1f3250;
   --color-azul-claro: #2a4268;
   --color-cartao: #16263f;
   --color-ouro: #c9a45c;
   --color-ouro-claro: #e2c58a;
   --color-ouro-escuro: #8c6b2c;
-  --color-verde: #25d366;
-  --font-sans: "Outfit", "Segoe UI", Arial, sans-serif;
+  --color-verde: #22c55e;
+
+  --font-heading: "Outfit", system-ui, -apple-system, sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Outfit", system-ui, -apple-system, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
 }
 
-/* Onde o Tailwind procura as classes usadas no projeto */
+/* Fontes rastreadas pelo compilador Zero-Bloat do Tailwind v4 */
+@source "../templates";
+@source "../apps";
+@source "../core";
+@source "../static/js";
 @source "../locacoes/templates";
-@source "../locacoes/static/locacoes/js";
+@source "../.venv/Lib/site-packages/crispy_tailwind";

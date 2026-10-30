@@ -1,13 +1,22 @@
-# Site de Locação de Equipamentos — Rocha Construtora
+# Rocha Construtora & Rocha Locações — Plataforma Institucional Interativa
 
-Landing page em Django para locação de andaimes, escoras, betoneiras e ferramentas
-de construção em Viçosa do Ceará - CE.
+Landing Page dinâmica de alta conversão desenvolvida com **Python 3.12 + Django 6.1**, **Tailwind CSS v4 + CSS3 3D Moderno**, **Django Crispy Forms**, **Heroicons SVG** e **HTMX 2**, hospedada na **Vercel**.
 
-- **Site publicado:** https://site-locacoes.vercel.app
-- **Stack:** Django 6.1 + Tailwind CSS 4
-- **Hospedagem:** Vercel (deploy automático a cada push na branch `main`)
+A plataforma unifica duas frentes sob a mesma identidade de marca em **Viçosa do Ceará - CE e Serra da Ibiapaba**:
+1. **Rocha Construtora (`/`)**: Maquete arquitetônica isométrica 3D sincronizada ao scroll com as **6 etapas da obra**, passo a passo do financiamento **Caixa Habitacional / Minha Casa Minha Vida (MCMV)**, pré-simulador interativo e conversão direta para WhatsApp.
+2. **Rocha Locações (`/locadora/`)**: Catálogo técnico de andaimes, escoras, betoneiras, guinchos e ferramentas elétricas com filtragem em tempo real via HTMX, ficha técnica em `<dialog>` nativo e montador de lista de orçamento para WhatsApp.
 
-## Rodar localmente
+---
+
+## Governança & Arquitetura
+
+- [`AI_RULES.md`](./AI_RULES.md): Regras estritas de código (PEP 8, Type Hints, Crispy Forms, Zero N+1 e animações GPU).
+- [`ARCHITECTURE.md`](./ARCHITECTURE.md): Estrutura modular (`config/settings/`, `core/`, `apps/construtora/`, `apps/locadora/`) e padrão Service Layer + Selectors.
+- [`SECURITY_CHECKLIST.md`](./SECURITY_CHECKLIST.md): Hardening de produção (Argon2, CSP com Nonce criptográfico, HSTS, Cookies `HttpOnly`/`Secure`, Honeypot e Rate Limit).
+
+---
+
+## Como Executar Localmente (Windows PowerShell)
 
 ### Windows — mais rápido
 Dê **duplo clique em `iniciar.cmd`**. Ele cria o ambiente virtual se necessário,
@@ -15,7 +24,12 @@ ativa, instala as dependências e sobe o servidor.
 
 ### Manual
 ```powershell
+# 1. Criar ambiente virtual (caso ainda não exista) e instalar dependências de desenvolvimento
 python -m venv .venv
+.\.venv\Scripts\pip install -r requirements/local.txt
+
+# 2. Copiar arquivo de variáveis de ambiente locais
+Copy-Item .env.example .env
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python manage.py runserver
@@ -28,34 +42,48 @@ No VS Code o ambiente ativa sozinho ao abrir o terminal (`.vscode/settings.json`
 
 ## CSS (Tailwind)
 
-```powershell
+# 3. Compilar utilitários do Tailwind CSS v4 (ou usar css:dev em modo watch)
 npm install
-npm run css:dev     # durante o desenvolvimento (watch)
-npm run css:build   # antes de publicar
+npm run css:build
+
+# 4. Iniciar o servidor local (usa config.settings.local por padrão)
+.\.venv\Scripts\python manage.py runserver
 ```
 
-## Estrutura
+Acesse:
+- **Construtora & Financiamento Caixa/MCMV**: `http://127.0.0.1:8000/`
+- **Locadora de Equipamentos**: `http://127.0.0.1:8000/locadora/`
+- **Healthcheck**: `http://127.0.0.1:8000/healthz/`
 
-| Pasta | Conteúdo |
-|---|---|
-| `config/` | Configuração do Django (`settings.py`, `urls.py`, `wsgi.py`) |
-| `locacoes/templates/` | `home.html` (página única) |
-| `locacoes/static/` | CSS, JS e imagens |
-| `src/input.css` | Fonte do Tailwind |
+---
 
-## Publicar
-
-Depois de alterar o código:
+## Qualidade de Código & Testes
 
 ```powershell
-npm run css:build        # se mexeu em classes Tailwind
-git add -A
-git commit -m "descrição da mudança"
-git push                 # a Vercel publica sozinha
+# Linter e Formatter Python ultrarrápido (Ruff)
+.\.venv\Scripts\ruff check .
+.\.venv\Scripts\ruff format --check .
+
+# Linter de Templates Django + HTML5 (djLint)
+.\.venv\Scripts\djlint templates/ --lint
+
+# Suíte de Testes Automatizados (Pytest)
+.\.venv\Scripts\pytest
 ```
 
-## Contato
+---
 
-- Douglas: (88) 99424-8183
-- Rocha Construtora: (88) 99225-8807
-- Rua Vereador Luiz Carlos de Sampaio, 366 — Santa Bárbara, Viçosa do Ceará - CE
+## Deploy na Vercel
+
+O projeto detecta automaticamente `VERCEL=1` em `config/wsgi.py` e `manage.py`, ativando `config.settings.production` com **WhiteNoise + Brotli** e sessões serverless-safe.
+
+1. No painel da Vercel (*Project Settings → Environment Variables*), configure:
+   - `DJANGO_SECRET_KEY`: chave gerada com `python -c "import secrets; print(secrets.token_urlsafe(64))"`
+   - *(Opcional)* `DJANGO_ALLOWED_HOSTS` e `DJANGO_CSRF_TRUSTED_ORIGINS` ao conectar domínio próprio.
+2. Antes de enviar alterações de classes Tailwind:
+   ```powershell
+   npm run css:build
+   git add -A
+   git commit -m "feat: nova landing page interativa construtora e locadora"
+   git push
+   ```

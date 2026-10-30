@@ -1,0 +1,127 @@
+/* ==========================================================================
+   ROCHA LOCAÇÕES — PÁGINA DO CATÁLOGO DE EQUIPAMENTOS & ORÇAMENTO RÁPIDO
+   Compartilha 100% dos Design Tokens da Rocha Construtora
+   ========================================================================== */
+
+.hero-locadora {
+  padding-block: clamp(3rem, 6vw, 5.5rem) var(--space-8);
+}
+
+.hero-locadora__title {
+  font-size: var(--text-display);
+  margin-block: var(--space-3) var(--space-4);
+}
+
+/* Barra de Filtros HTMX */
+.catalog-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.filter-pill {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-neutral);
+  background-color: transparent;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+.filter-pill:hover,
+.filter-pill.is-active {
+  background-color: var(--color-gold-500);
+  border-color: var(--color-gold-500);
+  color: var(--color-text-on-gold);
+}
+
+.catalog-search {
+  position: relative;
+  flex: 1 1 16rem;
+  max-width: 22rem;
+}
+
+.catalog-search__input {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-neutral);
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  font-size: var(--text-sm);
+}
+
+.catalog-search__input:focus {
+  outline: none;
+  border-color: var(--color-gold-400);
+}
+
+/* Card de Equipamento */
+.equip-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-4);
+  height: 100%;
+}
+
+.equip-card__media {
+  aspect-ratio: 16 / 10;
+}
+
+.equip-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-gold-400);
+  font-weight: 700;
+}
+
+.equip-card__stage {
+  display: inline-block;
+  margin-top: var(--space-2);
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  background-color: rgba(201, 164, 92, 0.12);
+  color: var(--color-text-secondary);
+}
+
+.equip-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-neutral);
+}
+
+/* Checkboxes múltiplos de equipamentos no formulário Crispy */
+.rocha-crispy-form input[type="checkbox"] {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--color-gold-500);
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
