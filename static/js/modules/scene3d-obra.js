@@ -74,6 +74,11 @@ const initIsometricObraStage = () => {
       const ratio = Math.min(1, Math.max(0.1, Number(progressPct) / 100));
       progressBar.style.setProperty("--stage-progress", ratio.toFixed(2));
     }
+
+    // Notifica a maquete 3D real (Three.js) sobre a etapa ativa
+    document.dispatchEvent(
+      new CustomEvent("rocha:etapa-3d", { detail: { order: orderNum } }),
+    );
   };
 
   // Inicializa com a Etapa 01 ativa
@@ -121,13 +126,18 @@ const initIsometricObraStage = () => {
       if (labelSpan) {
         labelSpan.textContent = exploded ? "Compactar Camadas" : "Explodir Camadas 3D";
       }
+      document.dispatchEvent(
+        new CustomEvent("rocha:explodir-3d", { detail: { exploded } }),
+      );
     });
   }
 
-  // Rotação Interativa do Palco Isométrico via ponteiro
+  // Rotação Interativa do Palco Isométrico via ponteiro (fallback CSS)
   if (sceneWrap && !prefersReducedMotion()) {
     let rAF = null;
     sceneWrap.addEventListener("pointermove", (event) => {
+      // A maquete WebGL controla a órbita quando está ativa
+      if (sceneWrap.classList.contains("has-webgl")) return;
       const rect = sceneWrap.getBoundingClientRect();
       const nx = (event.clientX - rect.left) / rect.width - 0.5;
       const ny = (event.clientY - rect.top) / rect.height - 0.5;
