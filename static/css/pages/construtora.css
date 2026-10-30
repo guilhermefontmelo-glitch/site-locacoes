@@ -192,11 +192,15 @@
   height: 13.5rem;
   transform-style: preserve-3d;
   transform: rotateX(var(--iso-rx, 58deg)) rotateZ(var(--iso-rz, -42deg));
-  transition: transform 220ms var(--ease-out-expo);
+  transition:
+    transform 220ms var(--ease-out-expo),
+    translate 420ms var(--ease-out-expo);
 }
 
 .iso-house-model.is-exploded {
-  --explode: 1.75;
+  --explode: 1.6;
+  /* Desce o conjunto para a cobertura explodida não invadir a barra de controles */
+  translate: 0 3.2rem;
 }
 
 .iso-layer {
@@ -277,10 +281,16 @@
 
 /* Camada 6: Acabamento Nobre & Entrega das Chaves */
 .iso-layer--entrega {
-  inset: 2.3rem;
+  inset: auto;
+  left: 50%;
+  top: 50%;
+  width: 5.2rem;
+  height: 2rem;
+  margin: -1rem 0 0 -2.6rem;
   display: grid;
   place-items: center;
-  background: radial-gradient(circle, rgba(226, 197, 138, 0.92), rgba(201, 164, 92, 0.45));
+  border-radius: var(--radius-pill);
+  background: radial-gradient(circle, rgba(226, 197, 138, 0.92), rgba(201, 164, 92, 0.55));
   border: 2px solid #ffffff;
   color: #0b1320;
   font-family: var(--font-heading);
@@ -288,7 +298,276 @@
   font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  transform: translate3d(0, 0, calc(118px * var(--explode)));
+  transform: translate3d(0, 4.55rem, calc(6px * var(--explode))) scale(0.82);
+}
+
+/* O selo da entrega só existe a partir da etapa 06 */
+.iso-layer--entrega:not(.is-built) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   HOLOGRAMA 3D — RESIDÊNCIA MINHA CASA MINHA VIDA
+   Estrutura leve (laje, pilares, paredes, telhado e esquadrias) revelada
+   etapa por etapa, com material translúcido de projeção.
+   ========================================================================== */
+.iso-hologram {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+/* Base de projeção luminosa no piso */
+.iso-hologram::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9.5rem;
+  height: 8.5rem;
+  margin: -4.25rem 0 0 -4.75rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(56, 189, 248, 0.26),
+    rgba(56, 189, 248, 0.08) 55%,
+    transparent 72%
+  );
+  filter: blur(5px);
+  transform: translateZ(calc(2px * var(--explode)));
+}
+
+.holo-part {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-style: preserve-3d;
+}
+
+.holo-face {
+  width: 100%;
+  height: 100%;
+  opacity: 0.07;
+  border: 1px solid rgba(125, 211, 252, 0.45);
+  background-color: rgba(56, 189, 248, 0.1);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.16);
+  transform: scaleY(0.06);
+  transform-origin: 50% 100%;
+  transition:
+    opacity 520ms var(--ease-standard),
+    transform 680ms var(--ease-out-expo),
+    border-color 420ms var(--ease-standard),
+    box-shadow 420ms var(--ease-standard);
+}
+
+.holo-part.is-built .holo-face {
+  opacity: 0.92;
+  transform: scaleY(1);
+}
+
+.holo-part.is-current .holo-face {
+  border-color: rgba(226, 197, 138, 0.85);
+  box-shadow: 0 0 22px rgba(226, 197, 138, 0.32);
+}
+
+/* Camada 03 — laje de piso */
+.holo-part--slab {
+  width: 7.6rem;
+  height: 6.2rem;
+  margin: -3.1rem 0 0 -3.8rem;
+  transform: translateZ(calc(46px * var(--explode)));
+}
+
+.holo-face--slab {
+  border-width: 2px;
+  background-image:
+    linear-gradient(to right, rgba(125, 211, 252, 0.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(125, 211, 252, 0.22) 1px, transparent 1px);
+  background-size: 1.1rem 1.1rem;
+}
+
+/* Camada 03 — pilares estruturais */
+.holo-part--pillar {
+  width: 0.34rem;
+  height: 42px;
+  margin: -42px 0 0 -0.17rem;
+  transform-origin: 50% 100%;
+  transform: translateZ(calc(46px * var(--explode)))
+    translateX(var(--px, 0)) translateY(var(--py, 0)) rotateX(-90deg);
+}
+
+.holo-face--pillar {
+  background-color: rgba(226, 197, 138, 0.28);
+  border-color: rgba(226, 197, 138, 0.7);
+  box-shadow: 0 0 10px rgba(226, 197, 138, 0.25);
+}
+
+.holo-part--pillar-nw { --px: -3.55rem; --py: -2.85rem; }
+.holo-part--pillar-ne { --px: 3.55rem; --py: -2.85rem; }
+.holo-part--pillar-sw { --px: -3.55rem; --py: 2.85rem; }
+.holo-part--pillar-se { --px: 3.55rem; --py: 2.85rem; }
+
+/* Camada 04 — paredes de alvenaria */
+.holo-part--wall {
+  height: 42px;
+  margin-top: -42px;
+  transform-origin: 50% 100%;
+}
+
+.holo-face--wall {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.07) 0 1px,
+      transparent 1px 4px
+    ),
+    linear-gradient(180deg, rgba(56, 189, 248, 0.24), rgba(56, 189, 248, 0.07));
+}
+
+.holo-part--wall-front {
+  width: 7.6rem;
+  margin-left: -3.8rem;
+  transform: translateZ(calc(46px * var(--explode))) translateY(3.1rem)
+    rotateX(-90deg);
+}
+
+.holo-part--wall-back {
+  width: 7.6rem;
+  margin-left: -3.8rem;
+  transform: translateZ(calc(46px * var(--explode))) translateY(-3.1rem)
+    rotateX(-90deg);
+}
+
+.holo-part--wall-left {
+  width: 6.2rem;
+  margin-left: -3.1rem;
+  transform: translateZ(calc(46px * var(--explode))) translateX(-3.8rem)
+    rotateZ(90deg) rotateX(-90deg);
+}
+
+.holo-part--wall-right {
+  width: 6.2rem;
+  margin-left: -3.1rem;
+  transform: translateZ(calc(46px * var(--explode))) translateX(3.8rem)
+    rotateZ(90deg) rotateX(-90deg);
+}
+
+/* Camada 05 — telhado em duas águas */
+.holo-part--roof {
+  width: 8.2rem;
+  height: 3.4rem;
+  margin-left: -4.1rem;
+  transform-style: preserve-3d;
+}
+
+.holo-face--roof {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(226, 197, 138, 0.16) 0 1px,
+      transparent 1px 6px
+    ),
+    linear-gradient(180deg, rgba(201, 164, 92, 0.34), rgba(56, 189, 248, 0.12));
+  border-color: rgba(226, 197, 138, 0.75);
+}
+
+.holo-part--roof-front {
+  transform-origin: 50% 0;
+  transform: translateZ(calc(112px * var(--explode))) rotateX(-26deg);
+}
+
+.holo-part--roof-front .holo-face {
+  transform-origin: 50% 0;
+}
+
+.holo-part--roof-back {
+  margin-top: -3.4rem;
+  transform-origin: 50% 100%;
+  transform: translateZ(calc(112px * var(--explode))) rotateX(26deg);
+}
+
+/* Camada 05 — luz interna das instalações */
+.holo-part--glow {
+  width: 7rem;
+  height: 5.6rem;
+  margin: -2.8rem 0 0 -3.5rem;
+  transform: translateZ(calc(50px * var(--explode)));
+}
+
+.holo-face--glow {
+  border: 0;
+  background: radial-gradient(
+    circle,
+    rgba(226, 197, 138, 0.4),
+    rgba(56, 189, 248, 0.16) 60%,
+    transparent 75%
+  );
+  box-shadow: none;
+}
+
+/* Camada 06 — porta e janelas */
+.holo-part--door {
+  width: 1.15rem;
+  height: 26px;
+  margin: -26px 0 0 -1.8rem;
+  transform-origin: 50% 100%;
+  transform: translateZ(calc(46px * var(--explode))) translateY(3.08rem)
+    rotateX(-90deg);
+}
+
+.holo-face--door {
+  background-color: rgba(201, 164, 92, 0.45);
+  border-color: rgba(235, 211, 162, 0.9);
+  box-shadow: 0 0 14px rgba(226, 197, 138, 0.35);
+}
+
+.holo-part--window {
+  height: 15px;
+  margin-top: -15px;
+  transform-origin: 50% 100%;
+}
+
+.holo-face--window {
+  border-width: 2px;
+  background-color: rgba(186, 230, 253, 0.35);
+  border-color: rgba(186, 230, 253, 0.85);
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.45);
+}
+
+.holo-part--window-front {
+  width: 1.35rem;
+  margin-left: 0.45rem;
+  transform: translateZ(calc(62px * var(--explode))) translateY(3.08rem)
+    rotateX(-90deg);
+}
+
+.holo-part--window-side {
+  width: 1.2rem;
+  margin-left: -0.6rem;
+  transform: translateZ(calc(62px * var(--explode))) translateX(3.82rem)
+    rotateZ(90deg) rotateX(-90deg);
+}
+
+/* Selo do modelo holográfico */
+.holo-spec {
+  position: absolute;
+  left: 50%;
+  bottom: 0.15rem;
+  transform: translateX(-50%);
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  background-color: rgba(8, 47, 73, 0.55);
+  color: #bae6fd;
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
 }
 
 /* Barra de progresso da obra dentro do palco 3D */
