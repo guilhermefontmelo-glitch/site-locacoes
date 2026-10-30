@@ -9,11 +9,22 @@ de construção em Viçosa do Ceará - CE.
 
 ## Rodar localmente
 
+### Windows — mais rápido
+Dê **duplo clique em `iniciar.cmd`**. Ele cria o ambiente virtual se necessário,
+ativa, instala as dependências e sobe o servidor.
+
+### Manual
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\pip install -r requirements.txt
-.\.venv\Scripts\python manage.py runserver
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python manage.py runserver
 ```
+
+> Se aparecer erro de política de execução no `Activate.ps1`, use:
+> `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
+
+No VS Code o ambiente ativa sozinho ao abrir o terminal (`.vscode/settings.json`).
 
 ## CSS (Tailwind)
 
