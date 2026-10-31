@@ -174,15 +174,157 @@
 
 .iso-scene-wrap {
   position: relative;
-  height: 17.5rem;
+  height: 19rem;
   display: grid;
   place-items: center;
   perspective: 1000px;
   cursor: grab;
+  touch-action: pan-y;
 }
 
 .iso-scene-wrap:active {
   cursor: grabbing;
+}
+
+/* Palco WebGL: assume a cena quando o Three.js inicializa com sucesso */
+.iso-webgl {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 620ms var(--ease-standard);
+}
+
+.iso-webgl canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+}
+
+.iso-scene-wrap.has-webgl .iso-webgl {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.iso-scene-wrap.has-webgl .iso-house-model {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Controles de câmera da maquete 3D */
+.iso-hud {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.6rem;
+  z-index: 4;
+  display: none;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.iso-scene-wrap.has-webgl .iso-hud {
+  display: flex;
+}
+
+.iso-hud__btn {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-strong);
+  background-color: rgba(11, 17, 26, 0.72);
+  color: var(--color-gold-400);
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition:
+    background-color 200ms var(--ease-standard),
+    transform 200ms var(--ease-out-expo),
+    border-color 200ms var(--ease-standard);
+}
+
+.iso-hud__btn:hover {
+  background-color: rgba(201, 164, 92, 0.22);
+  border-color: var(--color-gold-400);
+  transform: translateY(-1px);
+}
+
+.iso-hud__btn:focus-visible {
+  outline: 2px solid var(--color-gold-400);
+  outline-offset: 2px;
+}
+
+/* Vistas rápidas da maquete */
+.iso-views {
+  position: absolute;
+  left: 50%;
+  bottom: 0.65rem;
+  z-index: 4;
+  display: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.3rem;
+  max-width: calc(100% - 8rem);
+  transform: translateX(-50%);
+}
+
+.iso-scene-wrap.has-webgl .iso-views {
+  display: flex;
+}
+
+.iso-views__btn {
+  padding: 0.32rem 0.58rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-strong);
+  background-color: rgba(11, 17, 26, 0.72);
+  color: var(--color-gold-400);
+  font-family: var(--font-heading);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition:
+    background-color 200ms var(--ease-standard),
+    border-color 200ms var(--ease-standard),
+    color 200ms var(--ease-standard);
+}
+
+.iso-views__btn:hover {
+  background-color: rgba(201, 164, 92, 0.22);
+  border-color: var(--color-gold-400);
+}
+
+.iso-views__btn.is-active {
+  background-color: rgba(201, 164, 92, 0.92);
+  border-color: var(--color-gold-400);
+  color: #10151d;
+}
+
+.iso-views__btn:focus-visible {
+  outline: 2px solid var(--color-gold-400);
+  outline-offset: 2px;
+}
+
+@media (max-width: 30rem) {
+  .iso-views__btn {
+    padding: 0.28rem 0.45rem;
+    font-size: 0.56rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .iso-scene-wrap {
+    height: 27rem;
+  }
 }
 
 .iso-house-model {
@@ -194,7 +336,8 @@
   transform: rotateX(var(--iso-rx, 58deg)) rotateZ(var(--iso-rz, -42deg));
   transition:
     transform 220ms var(--ease-out-expo),
-    translate 420ms var(--ease-out-expo);
+    translate 420ms var(--ease-out-expo),
+    opacity 420ms var(--ease-standard);
 }
 
 .iso-house-model.is-exploded {
@@ -548,26 +691,6 @@
   margin-left: -0.6rem;
   transform: translateZ(calc(62px * var(--explode))) translateX(3.82rem)
     rotateZ(90deg) rotateX(-90deg);
-}
-
-/* Selo do modelo holográfico */
-.holo-spec {
-  position: absolute;
-  left: 50%;
-  bottom: 0.15rem;
-  transform: translateX(-50%);
-  padding: 0.2rem 0.65rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  background-color: rgba(8, 47, 73, 0.55);
-  color: #bae6fd;
-  font-family: var(--font-heading);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  pointer-events: none;
 }
 
 /* Barra de progresso da obra dentro do palco 3D */

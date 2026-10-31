@@ -143,8 +143,13 @@
             <!-- Cena Isométrica 3D Acelerada por GPU -->
             <div class="iso-scene-wrap"
                  id="iso-scene-wrap"
-                 role="img"
-                 aria-label="Holograma 3D interativo de uma residência Minha Casa Minha Vida sendo construída em seis etapas: terreno, fundação, estrutura, alvenaria, instalações e entrega das chaves">
+                 role="group"
+                 aria-label="Maquete 3D interativa de uma residência Minha Casa Minha Vida sendo construída em seis etapas: terreno, fundação, estrutura, alvenaria, instalações e entrega das chaves. Arraste para girar e use os botões para aproximar.">
+              <!-- Renderizador WebGL (Three.js) — assume o palco quando disponível -->
+              <div class="iso-webgl"
+                   id="iso-webgl"
+                   data-three-url="{% static 'vendor/three/three.module.min.js' %}"></div>
+
               <div class="iso-house-model" id="iso-house-model">
                 <!-- Holograma da residência Minha Casa Minha Vida (construído por etapa) -->
                 <div class="iso-hologram" aria-hidden="true">
@@ -212,13 +217,59 @@
                 </div>
               </div>
 
-              <span class="holo-spec">Holograma &middot; MCMV 48 m&sup2;</span>
+              <div class="iso-views" role="group" aria-label="Vistas rápidas da maquete 3D">
+                <button type="button"
+                        class="iso-views__btn"
+                        data-view-action="front"
+                        aria-pressed="false">
+                  Frontal
+                </button>
+                <button type="button"
+                        class="iso-views__btn"
+                        data-view-action="side"
+                        aria-pressed="false">
+                  Lateral
+                </button>
+                <button type="button"
+                        class="iso-views__btn"
+                        data-view-action="top"
+                        aria-pressed="false">
+                  A&eacute;rea
+                </button>
+                <button type="button"
+                        class="iso-views__btn is-active"
+                        data-view-action="iso"
+                        aria-pressed="true">
+                  Isom&eacute;trica
+                </button>
+              </div>
+
+              <div class="iso-hud" role="group" aria-label="Controles da maquete 3D">
+                <button type="button"
+                        class="iso-hud__btn"
+                        data-view-action="zoom-in"
+                        aria-label="Aproximar a maquete">
+                  <span aria-hidden="true">+</span>
+                </button>
+                <button type="button"
+                        class="iso-hud__btn"
+                        data-view-action="zoom-out"
+                        aria-label="Afastar a maquete">
+                  <span aria-hidden="true">&minus;</span>
+                </button>
+                <button type="button"
+                        class="iso-hud__btn"
+                        data-view-action="reset"
+                        aria-label="Restaurar a vista isométrica">
+                  <span aria-hidden="true">&#8634;</span>
+                </button>
+              </div>
             </div>
 
             <div>
               <div class="flex justify-between text-xs mb-1">
                 <span>Evolução física auditada</span>
-                <span class="text-gold">Arraste / mova para girar em 3D</span>
+                <span class="text-gold">Arraste para girar &middot; vistas rápidas e zoom</span>
               </div>
               <div class="obra-progress-track" aria-hidden="true">
                 <div class="obra-progress-fill" id="obra-progress-fill"></div>
