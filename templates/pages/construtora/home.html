@@ -4,10 +4,6 @@
 
 {% block brand_unit %}construtora{% endblock %}
 
-{% block extra_css %}
-  <link rel="stylesheet" href="{% static 'css/pages/construtora.css' %}">
-{% endblock %}
-
 {% block content %}
   <!-- ======================================================================
        HERO IMERSIVO 3D — ROCHA CONSTRUTORA (CAIXA / MINHA CASA MINHA VIDA)
@@ -36,7 +32,7 @@
         <div class="hero-construtora__actions">
           <a class="btn btn--gold" href="#simulador">
             {% include "components/_icon.html" with name="calculator" class="heroicon" only %}
-            <span>Simular Minha Obra MCMV</span>
+            <span>Simular Minha Obra</span>
           </a>
           <a class="btn btn--outline" href="#etapas-obra">
             {% include "components/_icon.html" with name="cube-transparent" class="heroicon" only %}
@@ -65,7 +61,7 @@
         <aside class="hero-card-3d" id="hero-card-3d" aria-label="Diferenciais do financiamento Caixa">
           <span class="hero-card-3d__badge">
             {% include "components/_icon.html" with name="shield-check" class="heroicon heroicon--sm" only %}
-            <span>Especialista Caixa Habitacional &amp; MCMV</span>
+            <span>Especialista Caixa &amp; Minha Casa Minha Vida</span>
           </span>
 
           <h2 class="heading-2xl mb-3">Por que construir financiado é mais vantajoso?</h2>
@@ -387,7 +383,7 @@
   </section>
 
   <!-- ======================================================================
-       SEÇÃO 04 — PRÉ-SIMULADOR INTERATIVO MCMV (CRISPY FORMS + HTMX)
+       SEÇÃO 04 — PRÉ-SIMULADOR INTERATIVO MINHA CASA MINHA VIDA (CRISPY + HTMX)
        ====================================================================== -->
   <section class="section" id="simulador">
     <div class="container split-layout">
@@ -440,9 +436,11 @@
             Conheça a área da <strong>Rocha Locações</strong>: andaimes, escoras metálicas, betoneiras, guinchos e ferramentas elétricas revisadas com entrega e retirada direto na sua obra em Viçosa do Ceará.
           </p>
           <div class="flex flex-wrap gap-3">
-            <a class="btn btn--gold" href="{% url 'locadora:catalogo' %}">
+            <a class="btn btn--gold"
+               href="{% url 'locadora:catalogo' %}"
+               data-unit-target="locadora">
               {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon" only %}
-              <span>Acessar Área da Locadora</span>
+              <span>Acessar Rocha Locações</span>
               {% include "components/_icon.html" with name="arrow-right" class="heroicon heroicon--sm" only %}
             </a>
             <a class="btn btn--whatsapp"
@@ -475,13 +473,4 @@
       </div>
     </div>
   </section>
-{% endblock %}
-
-{% block extra_js %}
-  <script type="module"
-          src="{% static 'js/modules/scene3d-obra.js' %}"
-          nonce="{{ csp_nonce }}"></script>
-  <script type="module"
-          src="{% static 'js/modules/scene3d-three.js' %}"
-          nonce="{{ csp_nonce }}"></script>
 {% endblock %}

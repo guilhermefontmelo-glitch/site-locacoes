@@ -9,7 +9,8 @@ const prefersReducedMotion = () =>
 
 const initHeroCardTilt = () => {
   const card = document.getElementById("hero-card-3d");
-  if (!card || prefersReducedMotion()) return;
+  if (!card || card.dataset.tiltBound === "true" || prefersReducedMotion()) return;
+  card.dataset.tiltBound = "true";
 
   let frameId = null;
 
@@ -39,7 +40,8 @@ const initIsometricObraStage = () => {
   const progressBar = document.getElementById("obra-progress-fill");
   const stepCards = Array.from(document.querySelectorAll("[data-stage-order]"));
 
-  if (!model || !stepCards.length) return;
+  if (!model || !stepCards.length || model.dataset.stageBound === "true") return;
+  model.dataset.stageBound = "true";
 
   const layers = Array.from(model.querySelectorAll("[data-layer-order]"));
   const holoParts = Array.from(model.querySelectorAll("[data-holo-order]"));
@@ -158,8 +160,15 @@ const initIsometricObraStage = () => {
   }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
+export const initScene3dObra = () => {
   initHeroCardTilt();
   initIsometricObraStage();
-});
+};
 
+window.initScene3dObra = initScene3dObra;
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initScene3dObra);
+} else {
+  initScene3dObra();
+}

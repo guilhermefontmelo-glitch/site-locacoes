@@ -2,17 +2,26 @@
 
 <footer class="site-footer" id="rodape">
   <div class="container site-footer__grid">
-    <!-- Coluna 1: Identidade Institucional -->
+    <!-- Coluna 1: Identidade Institucional Única e Dinâmica (Construtora <-> Locações) -->
     <div class="site-footer__brand">
       <img class="site-footer__logo"
-           src="{% static 'locacoes/img/logo.png' %}"
-           alt="{{ rocha.nome_marca }}"
-           width="160"
+           id="footer-brand-logo"
+           data-theme-logo
+           data-construtora-dark="{% static 'img/brand/logo-construtora-dark.png' %}"
+           data-construtora-light="{% static 'img/brand/logo-construtora-light.png' %}"
+           data-locadora-dark="{% static 'img/brand/logo-locacoes-dark.png' %}"
+           data-locadora-light="{% static 'img/brand/logo-locacoes-light.png' %}"
+           src="{% if active_unit == 'locadora' %}{% static 'img/brand/logo-locacoes-dark.png' %}{% else %}{% static 'img/brand/logo-construtora-dark.png' %}{% endif %}"
+           alt="{% if active_unit == 'locadora' %}{{ rocha.nome_locadora }}{% else %}{{ rocha.nome_construtora }}{% endif %}"
+           width="168"
            height="44"
-           loading="lazy"
            decoding="async">
       <p class="site-footer__tagline">
-        Engenharia de confiança do alicerce às chaves pela <strong>Caixa Habitacional / Minha Casa Minha Vida</strong> e locação completa de equipamentos para sua obra.
+        {% if active_unit == 'locadora' %}
+          <strong>Rocha Locações</strong>: locação de andaimes, escoras metálicas, betoneiras e equipamentos revisados para construção civil, integrada à engenharia da <strong>Rocha Construtora</strong>.
+        {% else %}
+          Engenharia de confiança do alicerce às chaves pela <strong>Caixa Habitacional / Minha Casa Minha Vida</strong> e locação completa de equipamentos pela <strong>Rocha Locações</strong>.
+        {% endif %}
       </p>
     </div>
 
@@ -21,9 +30,11 @@
       <h2 class="site-footer__heading">Áreas de Atuação</h2>
       <ul class="site-footer__list">
         <li>
-          <a class="site-footer__item-link" href="{{ rocha.url_construtora }}">
+          <a class="site-footer__item-link"
+             href="{{ rocha.url_construtora }}"
+             data-unit-target="construtora">
             {% include "components/_icon.html" with name="home-modern" class="heroicon heroicon--sm text-gold" only %}
-            <span>Construtora &amp; Financiamento Caixa</span>
+            <span>Rocha Construtora &middot; Financiamento Caixa</span>
           </a>
         </li>
         <li>
@@ -33,9 +44,11 @@
           </a>
         </li>
         <li>
-          <a class="site-footer__item-link" href="{{ rocha.url_locadora }}">
+          <a class="site-footer__item-link"
+             href="{{ rocha.url_locadora }}"
+             data-unit-target="locadora">
             {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon heroicon--sm text-gold" only %}
-            <span>Locadora de Equipamentos</span>
+            <span>Rocha Locações &middot; Equipamentos</span>
           </a>
         </li>
         <li>
@@ -52,14 +65,14 @@
       <h2 class="site-footer__heading">Atendimento Direto</h2>
       <ul class="site-footer__list">
         <li>
-          <span class="site-footer__label">Construtora (Obras &amp; MCMV):</span>
+          <span class="site-footer__label">Rocha Construtora (Obras &amp; Financiamento Caixa):</span>
           <a class="site-footer__item-link" href="tel:+{{ rocha.whatsapp_construtora }}">
             {% include "components/_icon.html" with name="phone" class="heroicon heroicon--sm text-gold" only %}
             <span>{{ rocha.tel_construtora_display }}</span>
           </a>
         </li>
         <li>
-          <span class="site-footer__label">Locadora (Douglas):</span>
+          <span class="site-footer__label">Rocha Locações (Douglas):</span>
           <a class="site-footer__item-link" href="tel:+{{ rocha.whatsapp_locadora }}">
             {% include "components/_icon.html" with name="phone" class="heroicon heroicon--sm text-gold" only %}
             <span>{{ rocha.tel_locadora_display }}</span>
@@ -106,7 +119,11 @@
   </div>
 
   <div class="container site-footer__bottom">
-    <p>&copy; {% now "Y" %} {{ rocha.nome_marca }}. Todos os direitos reservados.</p>
+    <p>
+      &copy; {% now "Y" %}
+      {% if active_unit == 'locadora' %}{{ rocha.nome_locadora }}{% else %}{{ rocha.nome_construtora }}{% endif %}.
+      Todos os direitos reservados.
+    </p>
     <p class="site-footer__legal">
       Simulações no site possuem caráter prévio orientativo; aprovação de crédito sujeita à análise oficial da Caixa Econômica Federal.
     </p>

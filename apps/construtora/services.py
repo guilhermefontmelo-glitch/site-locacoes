@@ -56,8 +56,8 @@ def calcular_pre_analise_mcmv(
     elif renda_familiar <= Decimal("4700.00"):
         faixa_titulo = "Minha Casa Minha Vida — Faixa 2"
         beneficio_destaque = (
-            "Excelente equilíbrio entre potencial construtivo, taxas reduzidas MCMV Regional "
-            "e possibilidade de subsídio complementar na entrada."
+            "Excelente equilíbrio entre potencial construtivo, taxas reduzidas do Minha Casa "
+            "Minha Vida Regional e possibilidade de subsídio complementar na entrada."
         )
         fator_multiplicador = Decimal("175")
     elif renda_familiar <= Decimal("8600.00"):

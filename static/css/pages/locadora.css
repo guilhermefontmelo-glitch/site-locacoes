@@ -94,7 +94,7 @@
   justify-content: space-between;
   gap: var(--space-2);
   font-size: var(--text-xs);
-  color: var(--color-gold-400);
+  color: var(--color-gold-text);
   font-weight: 700;
 }
 
@@ -104,8 +104,16 @@
   padding: 0.2rem 0.65rem;
   border-radius: var(--radius-pill);
   font-size: var(--text-xs);
-  background-color: rgba(201, 164, 92, 0.12);
+  font-weight: 600;
+  background-color: rgba(201, 164, 92, 0.14);
+  border: 1px solid var(--color-border-subtle);
   color: var(--color-text-secondary);
+}
+
+:root[data-theme="light"] .equip-card__stage {
+  background-color: rgba(139, 98, 25, 0.13);
+  border-color: rgba(118, 82, 17, 0.35);
+  color: var(--color-text-primary);
 }
 
 .equip-card__actions {

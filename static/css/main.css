@@ -1,10 +1,10 @@
 /* ==========================================================================
    ROCHA CONSTRUTORA & ROCHA LOCAÇÕES — DESIGN SYSTEM CSS3 + TAILWIND v4
-   Camadas sincronizadas com Tailwind CSS v4: @layer theme, base, components, animations, utilities;
+   Camadas sincronizadas com Tailwind CSS v4: @layer properties, theme, base, components, animations, utilities;
    Inclui Design Tokens Dark/Light, Crispy Forms Tailwind Harmonics & Palco 3D GPU
    ========================================================================== */
 
-@layer theme, base, components, animations, utilities;
+@layer properties, theme, base, components, animations, utilities;
 
 /* ==========================================================================
    1. DESIGN TOKENS (CSS CUSTOM PROPERTIES — DARK & LIGHT MODE)
@@ -23,6 +23,7 @@
     --color-gold-500: #c9a45c;
     --color-gold-600: #a8843e;
     --color-gold-700: #8c6b2c;
+    --color-gold-text: #e2c58a;
 
     /* Textos & Contraste WCAG AA */
     --color-text-primary: #f8fafc;
@@ -90,29 +91,37 @@
     --scroll-ratio: 0;
   }
 
-  /* Tema Claro de Alto Contraste (Leitura sob luz solar direta no canteiro de obras) */
+  /* Tema Claro de Alto Contraste (Leitura sob luz solar direta no canteiro de obras — WCAG AAA) */
   :root[data-theme="light"] {
-    --color-bg-canvas: #f6f7f9;
+    --color-bg-canvas: #f2f4f8;
     --color-bg-surface: #ffffff;
-    --color-bg-elevated: #eceff4;
-    --color-bg-glass: rgba(246, 247, 249, 0.9);
+    --color-bg-elevated: #e5e9f1;
+    --color-bg-glass: rgba(255, 255, 255, 0.94);
 
-    --color-gold-400: #8a6421;
-    --color-gold-500: #9f752a;
-    --color-gold-600: #7a571a;
+    --color-gold-300: #93691d;
+    --color-gold-400: #765211;
+    --color-gold-500: #8b6219;
+    --color-gold-600: #6b4a0f;
+    --color-gold-700: #523809;
+    --color-gold-text: #68470c;
     --color-text-on-gold: #ffffff;
 
-    --color-text-primary: #0e1828;
-    --color-text-secondary: #2b3b54;
-    --color-text-muted: #52637a;
-    --color-caixa-accent: #0369a1;
+    --color-text-primary: #091220;
+    --color-text-secondary: #1e2d44;
+    --color-text-muted: #3b4d68;
+    --color-caixa-accent: #075985;
+    --color-whatsapp: #15803d;
+    --color-whatsapp-hover: #14532d;
+    --color-danger: #b91c1c;
+    --color-success: #15803d;
 
-    --color-border-subtle: rgba(14, 24, 40, 0.12);
-    --color-border-strong: rgba(159, 117, 42, 0.45);
-    --color-border-neutral: rgba(14, 24, 40, 0.14);
+    --color-border-subtle: rgba(9, 18, 32, 0.18);
+    --color-border-strong: rgba(118, 82, 17, 0.56);
+    --color-border-neutral: rgba(9, 18, 32, 0.24);
 
-    --shadow-sm: 0 4px 14px rgba(14, 24, 40, 0.06);
-    --shadow-md: 0 16px 36px rgba(14, 24, 40, 0.1);
+    --shadow-sm: 0 4px 14px rgba(9, 18, 32, 0.08);
+    --shadow-md: 0 18px 38px rgba(9, 18, 32, 0.14);
+    --shadow-gold: 0 10px 26px rgba(118, 82, 17, 0.24);
   }
 }
 
@@ -182,7 +191,7 @@
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 600;
-    color: var(--color-gold-400);
+    color: var(--color-gold-text);
   }
 
   p {
@@ -266,10 +275,10 @@
     gap: var(--space-2);
     font-family: var(--font-heading);
     font-size: var(--text-xs);
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--color-gold-400);
+    color: var(--color-gold-text);
   }
 
   .grid-auto {
@@ -323,14 +332,42 @@
     height: 1.65rem;
   }
 
-  /* Alternância de ícone Sol/Lua conforme tema ativo */
+  /* Alternância animada de ícone Sol/Lua conforme tema ativo */
+  #theme-toggle {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .theme-icon--sun,
+  .theme-icon--moon {
+    position: absolute;
+    transition:
+      opacity 380ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  :root[data-theme="dark"] .theme-icon--sun,
+  :root:not([data-theme="light"]) .theme-icon--sun {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
   :root[data-theme="dark"] .theme-icon--moon,
   :root:not([data-theme="light"]) .theme-icon--moon {
-    display: none;
+    opacity: 0;
+    transform: rotate(-75deg) scale(0.5);
+    pointer-events: none;
   }
 
   :root[data-theme="light"] .theme-icon--sun {
-    display: none;
+    opacity: 0;
+    transform: rotate(75deg) scale(0.5);
+    pointer-events: none;
+  }
+
+  :root[data-theme="light"] .theme-icon--moon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
   }
 
   /* Skip Link (WCAG 2.4.1) */
@@ -372,40 +409,165 @@
     gap: var(--space-4);
   }
 
+  .brand-logo {
+    display: inline-flex;
+    align-items: center;
+    width: 11.25rem;
+    flex-shrink: 0;
+    overflow: visible;
+  }
+
+  .brand-logo__img,
+  .site-footer__logo {
+    will-change: transform, opacity;
+    transform-origin: left center;
+    transition:
+      opacity 140ms cubic-bezier(0.33, 1, 0.68, 1),
+      transform 140ms cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
   .brand-logo__img {
-    height: 2.35rem;
+    height: 2.45rem;
     width: auto;
+    max-width: 100%;
     object-fit: contain;
   }
 
-  /* Switcher Construtora <-> Locadora */
-  .unit-switcher {
+  /* Transição equilibrada e elegante da Logo (suave, perceptível na medida certa) */
+  .brand-logo__img.is-logo-out-right,
+  .site-footer__logo.is-logo-out-right {
+    opacity: 0.08;
+    transform: translate3d(-0.38rem, 0, 0) scale(0.968);
+  }
+
+  .brand-logo__img.is-logo-out-left,
+  .site-footer__logo.is-logo-out-left {
+    opacity: 0.08;
+    transform: translate3d(0.38rem, 0, 0) scale(0.968);
+  }
+
+  .brand-logo__img.is-logo-out-theme,
+  .site-footer__logo.is-logo-out-theme {
+    opacity: 0.08;
+    transform: translate3d(0, -0.22rem, 0) scale(0.972);
+  }
+
+  .brand-logo__img.is-logo-in-right,
+  .site-footer__logo.is-logo-in-right {
+    animation: rocha-logo-in-from-right 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .brand-logo__img.is-logo-in-left,
+  .site-footer__logo.is-logo-in-left {
+    animation: rocha-logo-in-from-left 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .brand-logo__img.is-logo-in-theme,
+  .site-footer__logo.is-logo-in-theme {
+    animation: rocha-logo-in-theme 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes rocha-logo-in-from-right {
+    from {
+      opacity: 0.08;
+      transform: translate3d(0.42rem, 0, 0) scale(0.968);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+
+  @keyframes rocha-logo-in-from-left {
+    from {
+      opacity: 0.08;
+      transform: translate3d(-0.42rem, 0, 0) scale(0.968);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+
+  @keyframes rocha-logo-in-theme {
+    from {
+      opacity: 0.08;
+      transform: translate3d(0, 0.22rem, 0) scale(0.972);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+
+  /* Alternância automática de Logo conforme Tema Escuro / Claro */
+  :root[data-theme="dark"] .brand-logo__img--light,
+  :root:not([data-theme="light"]) .brand-logo__img--light {
     display: none;
+  }
+
+  :root[data-theme="light"] .brand-logo__img--dark {
+    display: none;
+  }
+
+  /* Switcher Construtora <-> Locadora com Posição Invariante e Bolha Deslizante */
+  .unit-switcher {
+    position: relative;
+    isolation: isolate;
+    display: none;
+    width: 22rem;
+    flex-shrink: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: center;
-    gap: 0.2rem;
     padding: 0.25rem;
     background-color: var(--color-bg-surface);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .unit-switcher__bubble {
+    position: absolute;
+    top: 0.25rem;
+    bottom: 0.25rem;
+    left: 0.25rem;
+    width: calc(50% - 0.25rem);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-gold-500);
+    box-shadow: var(--shadow-gold);
+    z-index: 0;
+    pointer-events: none;
+    will-change: transform;
+    transform: translate3d(0%, 0, 0);
+    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .unit-switcher[data-active-unit="locadora"] .unit-switcher__bubble {
+    transform: translate3d(100%, 0, 0);
   }
 
   .unit-switcher__item {
+    position: relative;
+    z-index: 1;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.38rem 0.9rem;
+    justify-content: center;
+    gap: 0.42rem;
+    padding: 0.42rem 0.9rem;
     border-radius: var(--radius-pill);
     font-family: var(--font-heading);
     font-size: var(--text-xs);
-    font-weight: 600;
+    font-weight: 700;
+    white-space: nowrap;
     color: var(--color-text-secondary);
-    transition:
-      background-color var(--duration-fast) var(--ease-standard),
-      color var(--duration-fast) var(--ease-standard);
+    transition: color 240ms var(--ease-standard);
+  }
+
+  .unit-switcher__item:hover {
+    color: var(--color-text-primary);
   }
 
   .unit-switcher__item.is-active {
-    background-color: var(--color-gold-500);
     color: var(--color-text-on-gold);
   }
 
@@ -413,6 +575,20 @@
     display: none;
     align-items: center;
     gap: var(--space-5);
+    will-change: transform, opacity;
+    transition:
+      opacity 135ms cubic-bezier(0.33, 1, 0.68, 1),
+      transform 135ms cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .primary-nav.is-nav-out-left {
+    opacity: 0;
+    transform: translate3d(-0.45rem, 0, 0);
+  }
+
+  .primary-nav.is-nav-out-right {
+    opacity: 0;
+    transform: translate3d(0.45rem, 0, 0);
   }
 
   .primary-nav__link {
@@ -426,10 +602,71 @@
     color: var(--color-gold-400);
   }
 
+  .primary-nav.is-nav-in-right .primary-nav__link {
+    animation: rocha-nav-link-in-right 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .primary-nav.is-nav-in-left .primary-nav__link {
+    animation: rocha-nav-link-in-left 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .primary-nav.is-nav-in-right .primary-nav__link:nth-child(1),
+  .primary-nav.is-nav-in-left .primary-nav__link:nth-child(1) {
+    animation-delay: 0ms;
+  }
+
+  .primary-nav.is-nav-in-right .primary-nav__link:nth-child(2),
+  .primary-nav.is-nav-in-left .primary-nav__link:nth-child(2) {
+    animation-delay: 32ms;
+  }
+
+  .primary-nav.is-nav-in-right .primary-nav__link:nth-child(3),
+  .primary-nav.is-nav-in-left .primary-nav__link:nth-child(3) {
+    animation-delay: 64ms;
+  }
+
+  .primary-nav.is-nav-in-right .primary-nav__link:nth-child(4),
+  .primary-nav.is-nav-in-left .primary-nav__link:nth-child(4) {
+    animation-delay: 96ms;
+  }
+
+  @keyframes rocha-nav-link-in-right {
+    from {
+      opacity: 0;
+      transform: translate3d(0.48rem, 0, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes rocha-nav-link-in-left {
+    from {
+      opacity: 0;
+      transform: translate3d(-0.48rem, 0, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
   @media (min-width: 64rem) {
-    .unit-switcher,
+    .site-header__inner {
+      display: grid;
+      grid-template-columns: 11.25rem 22rem 1fr auto;
+      align-items: center;
+      gap: var(--space-5);
+    }
+
+    .unit-switcher {
+      display: inline-grid;
+    }
+
     .primary-nav {
       display: flex;
+      justify-self: end;
     }
 
     .menu-toggle {
@@ -494,6 +731,10 @@
   .btn--whatsapp {
     background-color: var(--color-whatsapp);
     color: #052e16;
+  }
+
+  :root[data-theme="light"] .btn--whatsapp {
+    color: #ffffff;
   }
 
   .btn--whatsapp:hover {
@@ -762,7 +1003,7 @@
     font-size: var(--text-sm);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--color-gold-400);
+    color: var(--color-gold-text);
     margin-bottom: var(--space-4);
   }
 
@@ -804,7 +1045,7 @@
     gap: 0.35rem;
     font-size: var(--text-sm);
     font-weight: 600;
-    color: var(--color-gold-400);
+    color: var(--color-gold-text);
   }
 
   .site-footer__bottom {
@@ -829,6 +1070,139 @@
 @layer animations {
   @view-transition {
     navigation: auto;
+  }
+
+  /* Transição suave global ao alternar entre Modo Escuro e Modo Claro */
+  html.is-theme-transitioning,
+  html.is-theme-transitioning body,
+  html.is-theme-transitioning .site-header,
+  html.is-theme-transitioning .unit-switcher,
+  html.is-theme-transitioning .unit-switcher__item,
+  html.is-theme-transitioning .unit-switcher__bubble,
+  html.is-theme-transitioning .primary-nav__link,
+  html.is-theme-transitioning .btn,
+  html.is-theme-transitioning .card,
+  html.is-theme-transitioning .media-frame,
+  html.is-theme-transitioning .hero-card-3d,
+  html.is-theme-transitioning .hero-card-3d__badge,
+  html.is-theme-transitioning .hero-pillar-item,
+  html.is-theme-transitioning .blueprint-viewport,
+  html.is-theme-transitioning .blueprint-status-pill,
+  html.is-theme-transitioning .iso-layer,
+  html.is-theme-transitioning .obra-progress-track,
+  html.is-theme-transitioning .stage-step-card,
+  html.is-theme-transitioning .stage-step-card__num,
+  html.is-theme-transitioning .mcmv-step-card,
+  html.is-theme-transitioning .mcmv-step-card__badge,
+  html.is-theme-transitioning .locadora-synergy-banner,
+  html.is-theme-transitioning .catalog-toolbar,
+  html.is-theme-transitioning .filter-pill,
+  html.is-theme-transitioning .catalog-search__input,
+  html.is-theme-transitioning .equip-card__stage,
+  html.is-theme-transitioning .equip-card__actions,
+  html.is-theme-transitioning .rocha-crispy-form label,
+  html.is-theme-transitioning .rocha-crispy-form input,
+  html.is-theme-transitioning .rocha-crispy-form select,
+  html.is-theme-transitioning .rocha-crispy-form textarea,
+  html.is-theme-transitioning .site-footer,
+  html.is-theme-transitioning .site-footer__grid,
+  html.is-theme-transitioning .mobile-drawer__panel,
+  html.is-theme-transitioning h1,
+  html.is-theme-transitioning h2,
+  html.is-theme-transitioning h3,
+  html.is-theme-transitioning h4,
+  html.is-theme-transitioning p,
+  html.is-theme-transitioning span,
+  html.is-theme-transitioning strong,
+  html.is-theme-transitioning a,
+  html.is-theme-transitioning address {
+    transition:
+      background-color 400ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 400ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 400ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 400ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+
+  .site-header {
+    view-transition-name: site-header;
+  }
+
+  .main-content {
+    view-transition-name: main-stage;
+    will-change: opacity, transform;
+    transition:
+      opacity 160ms var(--ease-standard),
+      transform 180ms var(--ease-out-expo);
+  }
+
+  .main-content.is-exiting-to-locadora {
+    opacity: 0;
+    transform: translate3d(-1.1rem, 0, 0);
+  }
+
+  .main-content.is-exiting-to-construtora {
+    opacity: 0;
+    transform: translate3d(1.1rem, 0, 0);
+  }
+
+  .main-content.is-entering-from-right {
+    animation: rocha-unit-enter-from-right 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .main-content.is-entering-from-left {
+    animation: rocha-unit-enter-from-left 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes rocha-unit-enter-from-right {
+    from {
+      opacity: 0;
+      transform: translate3d(1.25rem, 0, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes rocha-unit-enter-from-left {
+    from {
+      opacity: 0;
+      transform: translate3d(-1.25rem, 0, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  ::view-transition-old(main-stage) {
+    animation: 220ms var(--ease-standard) both rocha-vt-fade-out;
+  }
+
+  ::view-transition-new(main-stage) {
+    animation: 340ms var(--ease-out-expo) both rocha-vt-slide-in;
+  }
+
+  @keyframes rocha-vt-fade-out {
+    from {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      opacity: 0;
+      transform: translate3d(-1.25rem, 0, 0);
+    }
+  }
+
+  @keyframes rocha-vt-slide-in {
+    from {
+      opacity: 0;
+      transform: translate3d(1.25rem, 0, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
   }
 
   /* Barra de Progresso no Topo: 100% GPU via transform: scaleX() */
@@ -925,6 +1299,12 @@
   }
 
   .text-gold {
-    color: var(--color-gold-400);
+    color: var(--color-gold-text);
+  }
+
+  .container {
+    width: min(var(--container-max), 100% - var(--gutter));
+    max-width: var(--container-max);
+    margin-inline: auto;
   }
 }

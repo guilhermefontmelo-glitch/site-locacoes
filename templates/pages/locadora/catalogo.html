@@ -4,24 +4,24 @@
 
 {% block brand_unit %}locadora{% endblock %}
 
-{% block title %}Locação de Equipamentos em Viçosa do Ceará | Rocha Construtora{% endblock %}
+{% block title %}Rocha Locações | Locação de Equipamentos para Construção Civil em Viçosa do Ceará{% endblock %}
 
-{% block meta_description %}Locação de andaimes, escoras metálicas, betoneiras, guinchos e ferramentas elétricas revisadas em Viçosa do Ceará - CE. Entrega e retirada na obra pela Rocha Construtora.{% endblock %}
+{% block meta_description %}Rocha Locações: locação de andaimes, escoras metálicas, betoneiras, guinchos e ferramentas elétricas revisadas em Viçosa do Ceará - CE, com entrega e retirada na obra.{% endblock %}
 
-{% block extra_css %}
-  <link rel="stylesheet" href="{% static 'css/pages/locadora.css' %}">
-{% endblock %}
+{% block og_title %}Rocha Locações — Locação de Equipamentos para Construção Civil{% endblock %}
+
+{% block og_description %}Andaimes, escoras metálicas, betoneiras e ferramentas revisadas prontas para o seu canteiro de obras em Viçosa do Ceará e região.{% endblock %}
 
 {% block content %}
   <!-- ======================================================================
-       HERO — ROCHA LOCAÇÕES (MESMA MARCA, FOCO OPERACIONAL DE OBRA)
+       HERO — ROCHA LOCAÇÕES (IDENTIDADE PRÓPRIA DE LOCAÇÃO DE EQUIPAMENTOS)
        ====================================================================== -->
   <section class="hero-locadora" id="inicio-locadora">
     <div class="container split-layout">
       <div>
         <p class="eyebrow">
           {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon heroicon--sm" only %}
-          <span>Rocha Construtora &middot; Divisão de Locação de Equipamentos</span>
+          <span>Rocha Locações &middot; Locação de Equipamentos para Construção Civil</span>
         </p>
 
         <h1 class="hero-locadora__title">
@@ -48,7 +48,7 @@
       </div>
 
       <div class="card">
-        <span class="eyebrow mb-2">Padrão de Manutenção Rocha</span>
+        <span class="eyebrow mb-2">Padrão de Manutenção Rocha Locações</span>
         <h2 class="heading-2xl mb-3">Não alugamos apenas máquinas. Entregamos ritmo no canteiro.</h2>
         <ul class="grid gap-3 mt-4">
           <li class="flex items-center gap-3 text-sm">
@@ -155,16 +155,18 @@
           Selecione um ou mais equipamentos ao lado, escolha o período e nós preparamos o atendimento completo com nossa equipe em Viçosa do Ceará.
         </p>
 
-        <!-- Cross-link de retorno para a Construtora / Financiamento MCMV -->
+        <!-- Cross-link de retorno para a Construtora / Financiamento Minha Casa Minha Vida -->
         <div class="card" id="contato">
           <span class="eyebrow mb-2">Vai construir do zero?</span>
-          <h3 class="heading-lg mb-2">Conheça também nossa frente de Obras Financiadas Caixa</h3>
+          <h3 class="heading-lg mb-2">Conheça também a Rocha Construtora</h3>
           <p class="text-sm mb-4">
             A <strong>Rocha Construtora</strong> projeta, aprova na Caixa / Minha Casa Minha Vida e entrega sua casa pronta para morar.
           </p>
-          <a class="btn btn--outline" href="{% url 'construtora:home' %}">
+          <a class="btn btn--outline"
+             href="{% url 'construtora:home' %}"
+             data-unit-target="construtora">
             {% include "components/_icon.html" with name="home-modern" class="heroicon heroicon--sm" only %}
-            <span>Ver Obras Financiadas &amp; Maquete 3D</span>
+            <span>Ir para Rocha Construtora &amp; Maquete 3D</span>
           </a>
         </div>
       </div>
