@@ -1,0 +1,2 @@
+# Runtime de producao (detectado automaticamente pelo builder Python da Vercel)
+-r requirements/production.txt
