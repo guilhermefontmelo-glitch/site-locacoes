@@ -18,7 +18,8 @@
     <!-- Open Graph / Compartilhamento Social -->
     <meta property="og:locale" content="pt_BR">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="{{ rocha.nome_marca }}">
+    <meta property="og:site_name"
+          content="{% if active_unit == 'locadora' %}{{ rocha.nome_locadora }}{% else %}{{ rocha.nome_construtora }}{% endif %}">
     <meta property="og:title"
           content="{% block og_title %}Rocha Construtora — Construção Financiada Caixa &amp; Locações{% endblock %}">
     <meta property="og:description"
@@ -31,8 +32,10 @@
           rel="stylesheet">
 
     <!-- Framework CSS Moderno (Tailwind CSS v4 Compilado) + Design System 3D/Tokens -->
-    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}?v=7">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=7">
+    <link rel="stylesheet" href="{% static 'css/pages/construtora.css' %}?v=7">
+    <link rel="stylesheet" href="{% static 'css/pages/locadora.css' %}?v=7">
     {% block extra_css %}{% endblock %}
 
     <!-- Prevenção de FOUC de Tema (Assinado via CSP Nonce) -->
@@ -82,7 +85,7 @@
 
     <!-- Cabeçalho Global Unificado (Construtora <-> Locadora) -->
     {% block header %}
-      {% include "partials/_header.html" with active_unit=active_unit|default:"construtora" rocha=rocha only %}
+      {% include "partials/_header.html" with active_unit=active_unit|default:"construtora" rocha=rocha csp_nonce=csp_nonce only %}
     {% endblock %}
 
     <!-- Conteúdo Principal Semântico (DRY Template Inheritance) -->
@@ -115,7 +118,7 @@
 
     <!-- Rodapé Institucional Unificado -->
     {% block footer %}
-      {% include "partials/_footer.html" with rocha=rocha only %}
+      {% include "partials/_footer.html" with active_unit=active_unit|default:"construtora" rocha=rocha only %}
     {% endblock %}
 
     <!-- Interatividade Fluida (HTMX 2) + Bootstrap Modular ES6+ (CSP Nonce) -->
@@ -123,7 +126,10 @@
             nonce="{{ csp_nonce }}"
             defer></script>
     <script type="module"
-            src="{% static 'js/modules/app.js' %}"
+            src="{% static 'js/modules/scene3d-obra.js' %}?v=7"
+            nonce="{{ csp_nonce }}"></script>
+    <script type="module"
+            src="{% static 'js/modules/app.js' %}?v=7"
             nonce="{{ csp_nonce }}"></script>
     {% block extra_js %}{% endblock %}
   </body>

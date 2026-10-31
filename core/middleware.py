@@ -40,6 +40,7 @@ class ContentSecurityPolicyMiddleware:
             "default-src 'self'",
             f"script-src 'self' 'nonce-{nonce}' https://cdn.jsdelivr.net",
             f"style-src 'self' 'nonce-{nonce}' https://fonts.googleapis.com",
+            "style-src-attr 'unsafe-inline'",
             "font-src 'self' https://fonts.gstatic.com",
             "img-src 'self' data: https:",
             "connect-src 'self'",

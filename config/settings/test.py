@@ -3,7 +3,9 @@
 from .base import *
 
 DEBUG: bool = False
-SECRET_KEY: str = "test-suite-secret-key-exclusiva-para-pytest-com-entropia-suficiente-64b"
+SECRET_KEY: str = (
+    "test-suite-secret-key-exclusiva-para-pytest-com-entropia-suficiente-64b"  # noqa: S105
+)
 ALLOWED_HOSTS: list[str] = ["testserver", "127.0.0.1", "localhost"]
 
 DATABASES = {

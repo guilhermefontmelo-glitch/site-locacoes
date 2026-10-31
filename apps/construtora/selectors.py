@@ -228,7 +228,7 @@ def listar_projetos_referencia() -> list[ProjetoReferencia]:
     specs: list[dict[str, str | int]] = [
         {
             "slug": "residencia-aurora-mcmv",
-            "titulo": "Padrão Essencial MCMV",
+            "titulo": "Padrão Essencial Minha Casa Minha Vida",
             "modalidade": "Terreno + Construção",
             "area_m2": 64,
             "quartos": "2 Quartos (1 Suíte)",
@@ -264,7 +264,7 @@ def listar_projetos_referencia() -> list[ProjetoReferencia]:
             "modalidade": "Construção Sob Medida",
             "area_m2": 138,
             "quartos": "3 Suítes + Garagem Dupla",
-            "faixa_indicada": "MCMV Faixa 3 / Caixa SBPE",
+            "faixa_indicada": "Minha Casa Minha Vida Faixa 3 / Caixa SBPE",
             "descricao": (
                 "Arquitetura autoral de alto padrão construtivo, esquadrias amplas de vidro, "
                 "infraestrutura para energia solar/climatização e acabamento nobre."

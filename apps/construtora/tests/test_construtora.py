@@ -25,12 +25,17 @@ def test_calculo_mcmv_faixa_1_decimal() -> None:
 
 
 def test_home_construtora_headers_seguranca(client: Client) -> None:
-    """Verifica renderização da home e presença de CSP Nonce e X-Frame-Options."""
+    """Verifica renderização da home, logos dark/light, zero sigla MCMV e CSP Nonce."""
     response = client.get(reverse("construtora:home"))
     assert response.status_code == 200
     assert "Content-Security-Policy" in response.headers
     assert "nonce-" in response.headers["Content-Security-Policy"]
     assert response.headers["X-Frame-Options"] == "DENY"
+    html = response.content.decode("utf-8")
+    assert "logo-construtora-dark.png" in html
+    assert "logo-construtora-light.png" in html
+    assert "unit-switcher__bubble" in html
+    assert "MCMV" not in html
 
 
 def test_etapa_detalhe_htmx_parcial(client: Client) -> None:

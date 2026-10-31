@@ -15,6 +15,12 @@ def site_context(request: HttpRequest) -> dict[str, Any]:
         "csp_nonce": getattr(request, "csp_nonce", ""),
         "rocha": {
             "nome_marca": "Rocha Construtora",
+            "nome_construtora": "Rocha Construtora",
+            "nome_locadora": "Rocha Locações",
+            "logo_construtora_dark": "img/brand/logo-construtora-dark.png",
+            "logo_construtora_light": "img/brand/logo-construtora-light.png",
+            "logo_locadora_dark": "img/brand/logo-locacoes-dark.png",
+            "logo_locadora_light": "img/brand/logo-locacoes-light.png",
             "slogan_construtora": "Obras financiadas Caixa Habitacional & Minha Casa Minha Vida",
             "slogan_locadora": "Locação de equipamentos para construção civil",
             "cidade_uf": "Viçosa do Ceará - CE",

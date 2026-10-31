@@ -2,36 +2,50 @@
 
 <header class="site-header" id="site-header">
   <div class="container site-header__inner">
-    <!-- Assinatura de Marca Rocha Construtora -->
+    <!-- Assinatura de Marca Única e Instantânea: Rocha Construtora <-> Rocha Locações -->
     <a class="brand-logo"
-       href="{{ rocha.url_construtora }}"
-       aria-label="Rocha Construtora — Voltar ao início">
+       id="header-brand-link"
+       href="{% if active_unit == 'locadora' %}{{ rocha.url_locadora }}{% else %}{{ rocha.url_construtora }}{% endif %}"
+       aria-label="{% if active_unit == 'locadora' %}Rocha Locações{% else %}Rocha Construtora{% endif %} — Voltar ao início">
       <img class="brand-logo__img"
-           src="{% static 'locacoes/img/logo.png' %}"
-           alt="Logo Rocha Construtora"
-           width="148"
-           height="40"
-           decoding="async">
+           id="header-brand-logo"
+           data-theme-logo
+           data-construtora-dark="{% static 'img/brand/logo-construtora-dark.png' %}"
+           data-construtora-light="{% static 'img/brand/logo-construtora-light.png' %}"
+           data-locadora-dark="{% static 'img/brand/logo-locacoes-dark.png' %}"
+           data-locadora-light="{% static 'img/brand/logo-locacoes-light.png' %}"
+           src="{% if active_unit == 'locadora' %}{% static 'img/brand/logo-locacoes-dark.png' %}{% else %}{% static 'img/brand/logo-construtora-dark.png' %}{% endif %}"
+           alt="{% if active_unit == 'locadora' %}Logo Rocha Locações{% else %}Logo Rocha Construtora{% endif %}"
+           width="164"
+           height="42"
+           decoding="sync"
+           fetchpriority="high">
     </a>
 
-    <!-- Seletor de Frente de Negócio (Mesma Marca: Construtora <-> Locadora com Heroicons) -->
-    <nav class="unit-switcher" aria-label="Alternar área de atuação da Rocha Construtora">
+    <!-- Seletor de Frente de Negócio com Posição Fixa e Bolha Deslizante -->
+    <nav class="unit-switcher"
+         id="unit-switcher"
+         data-active-unit="{% if active_unit == 'locadora' %}locadora{% else %}construtora{% endif %}"
+         aria-label="Alternar entre Rocha Construtora e Rocha Locações">
+      <span class="unit-switcher__bubble" aria-hidden="true"></span>
       <a href="{{ rocha.url_construtora }}"
+         data-unit-target="construtora"
          class="unit-switcher__item {% if active_unit != 'locadora' %}is-active{% endif %}"
          {% if active_unit != 'locadora' %}aria-current="page"{% endif %}>
         {% include "components/_icon.html" with name="home-modern" class="heroicon heroicon--sm" only %}
-        <span>Construtora &middot; MCMV</span>
+        <span>Rocha Construtora</span>
       </a>
       <a href="{{ rocha.url_locadora }}"
+         data-unit-target="locadora"
          class="unit-switcher__item {% if active_unit == 'locadora' %}is-active{% endif %}"
          {% if active_unit == 'locadora' %}aria-current="page"{% endif %}>
         {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon heroicon--sm" only %}
-        <span>Locadora de Equipamentos</span>
+        <span>Rocha Locações</span>
       </a>
     </nav>
 
     <!-- Navegação Rápida Desktop -->
-    <nav class="primary-nav" aria-label="Seções da página">
+    <nav class="primary-nav" id="primary-nav" aria-label="Seções da página">
       {% if active_unit == 'locadora' %}
         <a class="primary-nav__link" href="#equipamentos">Equipamentos</a>
         <a class="primary-nav__link" href="#como-alugar">Como Alugar</a>
@@ -73,7 +87,9 @@
   <div class="mobile-drawer__backdrop" data-drawer-close tabindex="-1"></div>
   <nav class="mobile-drawer__panel" aria-label="Menu móvel principal">
     <div class="mobile-drawer__top">
-      <span class="eyebrow">Rocha Construtora</span>
+      <span class="eyebrow" id="mobile-drawer-brand">
+        {% if active_unit == 'locadora' %}{{ rocha.nome_locadora }}{% else %}{{ rocha.nome_construtora }}{% endif %}
+      </span>
       <button type="button"
               class="btn btn--icon"
               data-drawer-close
@@ -84,28 +100,43 @@
 
     <div class="mobile-drawer__units">
       <a href="{{ rocha.url_construtora }}"
+         data-unit-target="construtora"
          class="btn {% if active_unit != 'locadora' %}btn--gold{% else %}btn--outline{% endif %}">
         {% include "components/_icon.html" with name="home-modern" class="heroicon" only %}
-        <span>Obras &amp; Financiamento Caixa</span>
+        <span>Rocha Construtora</span>
       </a>
       <a href="{{ rocha.url_locadora }}"
+         data-unit-target="locadora"
          class="btn {% if active_unit == 'locadora' %}btn--gold{% else %}btn--outline{% endif %}">
         {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon" only %}
-        <span>Locadora de Equipamentos</span>
+        <span>Rocha Locações</span>
       </a>
     </div>
 
-    <ul class="mobile-drawer__links">
+    <ul class="mobile-drawer__links" id="mobile-drawer-links">
       {% if active_unit == 'locadora' %}
         <li><a href="#equipamentos" data-drawer-link>Equipamentos</a></li>
         <li><a href="#como-alugar" data-drawer-link>Como Alugar</a></li>
         <li><a href="#orcamento" data-drawer-link>Montar Orçamento</a></li>
       {% else %}
         <li><a href="#etapas-obra" data-drawer-link>Etapas da Obra em 3D</a></li>
-        <li><a href="#financiamento-caixa" data-drawer-link>Processo Caixa / MCMV</a></li>
+        <li><a href="#financiamento-caixa" data-drawer-link>Processo Minha Casa Minha Vida</a></li>
         <li><a href="#simulador" data-drawer-link>Pré-Análise Gratuita</a></li>
       {% endif %}
       <li><a href="#contato" data-drawer-link>Falar com Especialista</a></li>
     </ul>
   </nav>
 </div>
+
+<script nonce="{{ csp_nonce }}">
+  (function () {
+    var theme = document.documentElement.getAttribute("data-theme") || "dark";
+    var unit = document.documentElement.getAttribute("data-unit") || "construtora";
+    var logo = document.getElementById("header-brand-logo");
+    if (logo) {
+      var attr = "data-" + (unit === "locadora" ? "locadora" : "construtora") + "-" + (theme === "light" ? "light" : "dark");
+      var src = logo.getAttribute(attr);
+      if (src) logo.setAttribute("src", src);
+    }
+  })();
+</script>

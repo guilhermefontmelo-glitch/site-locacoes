@@ -15,11 +15,17 @@ def test_filtro_equipamentos_por_grupo() -> None:
 
 
 def test_catalogo_locadora_ssr_e_parcial_htmx(client: Client) -> None:
-    """Valida renderização completa SSR e resposta enxuta quando acionado via HTMX."""
+    """Valida renderização completa SSR, identidade Rocha Locações, logos e resposta HTMX."""
     url = reverse("locadora:catalogo")
     full_resp = client.get(url)
     assert full_resp.status_code == 200
-    assert b"<!DOCTYPE html>" in full_resp.content
+    html = full_resp.content.decode("utf-8")
+    assert "<!DOCTYPE html>" in html
+    assert "Rocha Locações | Locação de Equipamentos" in html
+    assert "logo-locacoes-dark.png" in html
+    assert "logo-locacoes-light.png" in html
+    assert "unit-switcher__bubble" in html
+    assert "MCMV" not in html
 
     htmx_resp = client.get(f"{url}?grupo=estruturas", HTTP_HX_REQUEST="true")
     assert htmx_resp.status_code == 200

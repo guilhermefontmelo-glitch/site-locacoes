@@ -12,7 +12,7 @@ def get_client_ip(request: HttpRequest) -> str:
     forwarded_for: str = str(request.META.get("HTTP_X_FORWARDED_FOR", "")).strip()
     if forwarded_for:
         return forwarded_for.split(",")[0].strip()
-    return str(request.META.get("REMOTE_ADDR", "0.0.0.0")).strip()
+    return str(request.META.get("REMOTE_ADDR", "127.0.0.1")).strip()
 
 
 def is_rate_limited(

@@ -52,7 +52,9 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "grupo_slug": "estruturas",
         "grupo_nome": "Estruturas e Acesso",
         "etapa_obra": "Alvenaria, Reboco & Fachada",
-        "resumo": "Acesso seguro e estável para fachadas, pinturas, reboco e acabamentos em altura.",
+        "resumo": (
+            "Acesso seguro e estável para fachadas, pinturas, reboco e acabamentos em altura."
+        ),
         "especificacoes": (
             "Painéis metálicos de encaixe rápido e alta rigidez",
             "Compatível com plataformas antiderrapantes, sapatas e rodízios",
@@ -198,7 +200,9 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
             "Guarda retrátil inferior de proteção integral",
             "Precisão de carpintaria para vigas, caibros, ripas e fôrmas",
         ),
-        "orientacao_uso": "Essencial na montagem de fôrmas de vigas/pilares e estrutura do telhado.",
+        "orientacao_uso": (
+            "Essencial na montagem de fôrmas de vigas/pilares e estrutura do telhado."
+        ),
         "icone": "wrench-screwdriver",
         "imagem_url": (
             "https://images.unsplash.com/photo-1504148455328-c376907d081c"
