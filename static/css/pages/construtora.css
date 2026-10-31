@@ -263,13 +263,15 @@
 /* Vistas rápidas da maquete */
 .iso-views {
   position: absolute;
-  left: 0.6rem;
-  bottom: 0.6rem;
+  left: 50%;
+  bottom: 0.65rem;
   z-index: 4;
   display: none;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.3rem;
-  max-width: calc(100% - 3.4rem);
+  max-width: calc(100% - 8rem);
+  transform: translateX(-50%);
 }
 
 .iso-scene-wrap.has-webgl .iso-views {
@@ -689,26 +691,6 @@
   margin-left: -0.6rem;
   transform: translateZ(calc(62px * var(--explode))) translateX(3.82rem)
     rotateZ(90deg) rotateX(-90deg);
-}
-
-/* Selo do modelo holográfico */
-.holo-spec {
-  position: absolute;
-  left: 50%;
-  bottom: 0.15rem;
-  transform: translateX(-50%);
-  padding: 0.2rem 0.65rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  background-color: rgba(8, 47, 73, 0.55);
-  color: #bae6fd;
-  font-family: var(--font-heading);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  pointer-events: none;
 }
 
 /* Barra de progresso da obra dentro do palco 3D */

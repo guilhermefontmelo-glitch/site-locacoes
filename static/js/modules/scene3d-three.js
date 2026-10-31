@@ -586,6 +586,7 @@ const init = (THREE, host, wrap) => {
   const registry = [];
   const tweens = [];
   const wallSwaps = [];
+  const embeddedPillars = [];
 
   const collectMaterials = (object) => {
     const list = [];
@@ -601,11 +602,13 @@ const init = (THREE, host, wrap) => {
     return list;
   };
 
-  const add = (mesh, stage, layer = stage) => {
+  const add = (mesh, stage, layer = stage, until = 6, grow = false) => {
     const item = {
       obj: mesh,
       stage,
       layer,
+      until,
+      grow,
       mats: null,
       shown: false,
       delay: 0,
@@ -747,7 +750,9 @@ const init = (THREE, host, wrap) => {
     contact.renderOrder = 1;
     group.add(contact);
 
-    /* Gabarito de implantação: eixos e locação da obra */
+    /* Gabarito de implantação: eixos e locação da obra (só na ETAPA 01) */
+    const markers = new THREE.Group();
+    markers.userData.role = "markers";
     const gridTexture = canvasTex(THREE, 256, (ctx, w) => {
       ctx.clearRect(0, 0, w, w);
       ctx.strokeStyle = "rgba(226, 197, 138, 0.85)";
@@ -777,7 +782,7 @@ const init = (THREE, host, wrap) => {
     gridMaterial.map.repeat.set(2, 2);
     const grid = plane(9.4, 7.6, gridMaterial, -1.9, 0.042, -0.9);
     grid.receiveShadow = false;
-    group.add(grid);
+    markers.add(grid);
 
     /* Piquetes e linhas de marcação */
     const stakeMat = M.wood;
@@ -794,10 +799,10 @@ const init = (THREE, host, wrap) => {
       [A.x0 - 0.3, A.z1 + 0.3],
     ];
     corners.forEach(([x, z]) => {
-      group.add(cylinder(0.028, 0.62, stakeMat, x, 0.31, z, { segments: 6 }));
+      markers.add(cylinder(0.028, 0.62, stakeMat, x, 0.31, z, { segments: 6 }));
     });
     const stringY = 0.55;
-    group.add(
+    markers.add(
       box(
         0.018,
         0.018,
@@ -809,7 +814,7 @@ const init = (THREE, host, wrap) => {
         { cast: false },
       ),
     );
-    group.add(
+    markers.add(
       box(
         0.018,
         0.018,
@@ -821,7 +826,7 @@ const init = (THREE, host, wrap) => {
         { cast: false },
       ),
     );
-    group.add(
+    markers.add(
       box(
         corners[1][0] - corners[0][0],
         0.018,
@@ -833,7 +838,7 @@ const init = (THREE, host, wrap) => {
         { cast: false },
       ),
     );
-    group.add(
+    markers.add(
       box(
         corners[1][0] - corners[0][0],
         0.018,
@@ -846,6 +851,7 @@ const init = (THREE, host, wrap) => {
       ),
     );
 
+    add(markers, 1, 1, 1);
     add(group, 1, 1);
   };
 
@@ -853,33 +859,87 @@ const init = (THREE, host, wrap) => {
      Fundação: escavação, sapatas, baldrames e impermeabilização (ETAPA 02)
      --------------------------------------------------------------------- */
   const columnsA = [
-    [-4.4, -4.4], [-1.9, -4.4], [0.6, -4.4],
-    [-4.4, -1.4], [-1.9, -1.4], [0.6, -1.4],
+    [-4.4, -4.4], [-0.3, -4.4], [0.6, -4.4],
+    [-4.4, -1.4], [-1.9, -1.4], [0.6, 0.3],
     [-4.4, 1.6], [-1.9, 1.6], [0.6, 1.6],
   ];
   const columnsB = [
-    [0.6, -3.6], [2.5, -3.6], [4.4, -3.6],
-    [0.6, -0.6], [2.5, -0.6], [4.4, -0.6],
-    [0.6, 2.4], [2.5, 2.4], [4.4, 2.4],
+    [0.6, -3.6], [3.75, -3.6], [4.4, -3.6],
+    [0.6, -0.6], [2.5, -0.6], [4.4, 1.4],
+    [0.6, 2.4], [3.75, 2.4], [4.4, 2.4],
   ];
 
   const buildFoundation = () => {
     const group = new THREE.Group();
+    group.userData.role = "foundation";
     const columns = [...columnsA, ...columnsB];
 
-    columns.forEach(([x, z]) => {
-      group.add(box(0.86, 0.16, 0.86, M.dirt, x, 0.09, z, { cast: false }));
-      group.add(box(0.58, 0.26, 0.58, M.concreteDark, x, 0.26, z));
-      group.add(box(0.26, 0.16, 0.26, M.concrete, x, 0.42, z));
-    });
-
-    const baldrame = (w, d, x, z) => {
-      group.add(box(w, 0.32, d, M.concrete, x, 0.34, z));
+    /* Escavação: valas corridas sob os baldrames + covas das sapatas */
+    const trench = (w, d, x, z, y) => {
       group.add(
-        box(w + 0.04, 0.025, d + 0.04, M.black, x, 0.51, z, {
+        box(w, 0.022, d, M.dirt, x, y, z, {
           cast: false,
+          receive: false,
         }),
       );
+    };
+    const v = 0.036;
+    trench(5.5, 0.46, -1.9, -4.4, v);
+    trench(5.5, 0.46, -1.9, 1.6, v);
+    trench(0.46, 6.5, -4.4, -1.4, v);
+    trench(0.46, 6.5, 0.6, -1.4, v);
+    trench(4.1, 0.46, 2.5, -3.6, v);
+    trench(4.1, 0.46, 2.5, 2.4, v);
+    trench(0.46, 6.5, 4.4, -0.6, v);
+
+    columns.forEach(([x, z]) => {
+      /* Cova da sapata */
+      trench(0.96, 0.96, x, z, 0.04);
+      /* Lastro de concreto magro no fundo da vala */
+      group.add(
+        box(0.8, 0.05, 0.8, M.concreteDark, x, 0.045, z, { cast: false }),
+      );
+      /* Sapata isolada (dimensão conceitual), maior que o pilar */
+      group.add(box(0.64, 0.2, 0.64, M.concrete, x, 0.17, z));
+      /* Arranque do pilar: nasce da sapata e sobe acima do baldrame */
+      group.add(box(0.18, 0.4, 0.18, M.concrete, x, 0.44, z));
+
+      /* Barras de espera saindo do topo do arranque */
+      const barY = 0.68;
+      [
+        [-0.06, -0.06],
+        [0.06, -0.06],
+        [-0.06, 0.06],
+        [0.06, 0.06],
+      ].forEach(([dx, dz]) => {
+        group.add(
+          cylinder(0.01, 0.17, M.steel, x + dx, barY, z + dz, {
+            segments: 6,
+            cast: false,
+          }),
+        );
+      });
+      /* Estribo quadrado no topo da armadura */
+      group.add(box(0.15, 0.018, 0.018, M.steel, x, barY + 0.07, z - 0.06, { cast: false }));
+      group.add(box(0.15, 0.018, 0.018, M.steel, x, barY + 0.07, z + 0.06, { cast: false }));
+      group.add(box(0.018, 0.018, 0.14, M.steel, x - 0.06, barY + 0.07, z, { cast: false }));
+      group.add(box(0.018, 0.018, 0.14, M.steel, x + 0.06, barY + 0.07, z, { cast: false }));
+    });
+
+    /* Vigas baldrames ligando os arranques */
+    const baldrame = (w, d, x, z) => {
+      group.add(box(w, 0.26, d, M.concrete, x, 0.37, z));
+      /* Impermeabilização asfáltica: manta no topo e pintura nas laterais */
+      group.add(
+        box(w + 0.05, 0.025, d + 0.05, M.black, x, 0.51, z, { cast: false }),
+      );
+      if (w > d) {
+        group.add(box(w, 0.28, 0.02, M.black, x, 0.36, z - d / 2 - 0.01, { cast: false }));
+        group.add(box(w, 0.28, 0.02, M.black, x, 0.36, z + d / 2 + 0.01, { cast: false }));
+      } else {
+        group.add(box(0.02, 0.28, d, M.black, x - w / 2 - 0.01, 0.36, z, { cast: false }));
+        group.add(box(0.02, 0.28, d, M.black, x + w / 2 + 0.01, 0.36, z, { cast: false }));
+      }
     };
 
     baldrame(5.2, 0.26, -1.9, -4.4);
@@ -890,15 +950,15 @@ const init = (THREE, host, wrap) => {
     baldrame(3.8, 0.26, 2.5, 2.4);
     baldrame(0.26, 6.2, 4.4, -0.6);
 
-    /* Contrapiso interno nivelado */
-    group.add(box(4.9, 0.1, 5.9, M.concreteDark, -1.9, 0.5, -1.4, {
+    /* Contrapiso interno nivelado com o piso acabado */
+    group.add(box(4.86, 0.08, 5.86, M.concreteDark, -1.9, 0.46, -1.4, {
       cast: false,
     }));
-    group.add(box(3.7, 0.1, 5.9, M.concreteDark, 2.5, 0.5, -0.6, {
+    group.add(box(3.66, 0.08, 5.86, M.concreteDark, 2.5, 0.46, -0.6, {
       cast: false,
     }));
 
-    add(group, 2, 2);
+    add(group, 2, 2, 3);
   };
 
   /* ---------------------------------------------------------------------
@@ -907,12 +967,26 @@ const init = (THREE, host, wrap) => {
   const buildStructure = () => {
     const group = new THREE.Group();
 
+    const onWall = (x, z) =>
+      WALLS.some((spec) => {
+        const half = spec.width / 2 + 0.11;
+        if (Math.abs(spec.ry) < 0.5) {
+          return Math.abs(z - spec.z) < 0.12 && Math.abs(x - spec.x) <= half;
+        }
+        return Math.abs(x - spec.x) < 0.12 && Math.abs(z - spec.z) <= half;
+      });
+
     const pillar = (x, z, top) => {
-      group.add(box(0.2, top - FLOOR, 0.2, M.concrete, x, (top + FLOOR) / 2, z));
-      /* Armadura aparente no topo do pilar (conceitual) */
-      group.add(box(0.24, 0.05, 0.24, M.concreteDark, x, top - 0.02, z, {
+      const shaft = box(0.2, top - FLOOR, 0.2, M.concrete, x, (top + FLOOR) / 2, z);
+      const cap = box(0.24, 0.05, 0.24, M.concreteDark, x, top - 0.02, z, {
         cast: false,
-      }));
+      });
+      group.add(shaft);
+      group.add(cap);
+      shaft.userData.role = "pillar";
+      cap.userData.role = "pillar";
+      /* Pilares internos não têm parede para embutir: somem no acabamento */
+      embeddedPillars.push({ shaft, cap, interior: !onWall(x, z) });
     };
 
     columnsA.forEach(([x, z]) => pillar(x, z, A.top));
@@ -974,7 +1048,20 @@ const init = (THREE, host, wrap) => {
       [-3.1, -0.6, 1.9].forEach((z) => shore(x, z, B.top));
     });
 
-    add(group, 3, 3);
+    /* Escoramentos, formas, vigas e laje são temporários: somem na alvenaria */
+    const temporary = new THREE.Group();
+    const permanent = new THREE.Group();
+    temporary.userData.role = "structure-temp";
+    [...group.children].forEach((child) => {
+      if (embeddedPillars.some((entry) => entry.shaft === child || entry.cap === child)) {
+        permanent.add(child);
+      } else {
+        temporary.add(child);
+      }
+    });
+
+    add(temporary, 3, 3, 3);
+    add(permanent, 3, 3, 6);
   };
 
   /* ---------------------------------------------------------------------
@@ -1060,6 +1147,7 @@ const init = (THREE, host, wrap) => {
 
   const buildMasonry = () => {
     const group = new THREE.Group();
+    group.userData.role = "masonry";
 
     WALLS.forEach((spec) => {
       const brick = brickMaterial(spec.width, spec.height);
@@ -1078,22 +1166,8 @@ const init = (THREE, host, wrap) => {
         }
       });
 
-      spec.openings.forEach((opening) => {
-        const w = opening.x1 - opening.x0;
-        const cx = (opening.x0 + opening.x1) / 2;
-        wallGroup.add(
-          box(w + 0.34, 0.09, 0.26, M.concrete, cx, opening.y1 + 0.045, 0, {
-            cast: false,
-          }),
-        );
-        if (opening.y0 > 0.05) {
-          wallGroup.add(
-            box(w + 0.34, 0.08, 0.26, M.concrete, cx, opening.y0 - 0.04, 0, {
-              cast: false,
-            }),
-          );
-        }
-      });
+      /* Vergas e peitoris são resolvidos pela própria alvenaria e pelos
+         acabamentos da Etapa 05, sem faixas cinzas aparentes na fachada. */
 
       place(wallGroup, spec);
       group.add(wallGroup);
@@ -1161,7 +1235,24 @@ const init = (THREE, host, wrap) => {
       group.add(box(0.05, 0.05, 0.7, M.steel, x, 2.52, 2.2, { cast: false }));
     });
 
-    add(group, 4, 4);
+    /* Embasamento contínuo (socle) que cobre a fundação nas etapas 04–06 */
+    const socle = (x0, x1, z0, z1) => {
+      /* Cobre a espessura das paredes (0,2 m) e fica 4 cm saliente */
+      const w = x1 - x0 + 0.24;
+      const d = z1 - z0 + 0.24;
+      const cx = (x0 + x1) / 2;
+      const cz = (z0 + z1) / 2;
+      group.add(box(w, 0.5, d, M.concreteDark, cx, 0.25, cz, { cast: false }));
+      group.add(
+        box(w + 0.05, 0.07, d + 0.05, M.concrete, cx, 0.465, cz, {
+          cast: false,
+        }),
+      );
+    };
+    socle(A.x0, A.x1, A.z0, A.z1);
+    socle(B.x0, B.x1, B.z0, B.z1);
+
+    add(group, 4, 4, 6, true);
   };
 
   /* ---------------------------------------------------------------------
@@ -1291,18 +1382,6 @@ const init = (THREE, host, wrap) => {
     group.add(box(3.1, 0.12, 0.6, M.concrete, -0.7, 0.44, 3.55, { cast: false }));
     group.add(box(3.1, 0.04, 0.6, M.porcelain, -0.7, 0.52, 3.55, { cast: false }));
 
-    /* Instalações hidráulicas e elétricas aparentes (conceitual) */
-    const pipeRuns = [
-      { x: -4.52, z: 0.95, radius: 0.036, height: 2.3, material: M.water },
-      { x: -4.52, z: -2.45, radius: 0.05, height: 2.2, material: M.paint },
-      { x: -4.52, z: 0.35, radius: 0.022, height: 2.6, material: M.conduit },
-    ];
-    pipeRuns.forEach((pipe) => {
-      group.add(cylinder(pipe.radius, pipe.height, pipe.material, pipe.x, 1.65, pipe.z, { segments: 10 }));
-    });
-    group.add(box(0.09, 0.05, 0.3, M.conduit, -4.52, 2.9, 0.35, { cast: false }));
-    group.add(box(0.26, 0.34, 0.16, M.paint, -4.56, 1.1, 0.9, { cast: false }));
-
     /* Condensadora de ar-condicionado */
     group.add(box(0.32, 0.55, 0.72, M.paint, -4.58, 1.15, -0.7));
     group.add(cylinder(0.2, 0.03, M.black, -4.75, 1.15, -0.7, { rz: Math.PI / 2, segments: 20, cast: false }));
@@ -1312,6 +1391,30 @@ const init = (THREE, host, wrap) => {
     group.add(box(0.1, 0.18, 1.9, M.alu, B.x1 + 0.02, B.top + 0.1, 1.3, { cast: false }));
 
     add(group, 5, 4);
+
+    /* Eletrodutos e tubulações embutidos em rasgos (somente ETAPA 05) */
+    const pipes = new THREE.Group();
+    pipes.userData.role = "pipes";
+    const chase = standard({ color: 0x2f2d2a, roughness: 0.96, metalness: 0 });
+    [
+      { z: 0.95, r: 0.03, h: 2.3, material: M.water },
+      { z: -2.45, r: 0.04, h: 2.2, material: M.paint },
+      { z: 0.35, r: 0.018, h: 2.6, material: M.conduit },
+    ].forEach((pipe) => {
+      pipes.add(
+        box(0.014, pipe.h + 0.16, 0.17, chase, -4.497, 1.62, pipe.z, {
+          cast: false,
+        }),
+      );
+      pipes.add(
+        cylinder(pipe.r, pipe.h, pipe.material, -4.492, 1.65, pipe.z, {
+          segments: 10,
+          cast: false,
+        }),
+      );
+    });
+    pipes.add(box(0.08, 0.3, 0.2, M.paint, -4.46, 1.1, 0.9, { cast: false }));
+    add(pipes, 5, 5, 5);
   };
 
   /* ---------------------------------------------------------------------
@@ -1319,6 +1422,7 @@ const init = (THREE, host, wrap) => {
      --------------------------------------------------------------------- */
   const buildDelivery = () => {
     const group = new THREE.Group();
+    group.userData.role = "delivery";
 
     /* Garagem / carport — pilares robustos e laje espessa */
     group.add(box(3.7, 0.1, 5.2, M.paver, -2.85, 0.05, 3.6, { cast: false }));
@@ -1820,11 +1924,16 @@ const init = (THREE, host, wrap) => {
 
     let index = 0;
     registry.forEach((item) => {
-      if (item.stage <= currentStage) {
+      const active = item.stage <= currentStage && currentStage <= item.until;
+      if (active) {
         if (item.shown) return;
         item.shown = true;
         item.obj.visible = true;
-        item.obj.scale.setScalar(0.965);
+        if (item.grow) {
+          item.obj.scale.set(1, 0.76, 1);
+        } else {
+          item.obj.scale.setScalar(0.965);
+        }
         item.mats.forEach((material) => {
           material.userData.baseTransparent = material.transparent;
           material.userData.baseDepthWrite = material.depthWrite;
@@ -1854,6 +1963,21 @@ const init = (THREE, host, wrap) => {
       if (item) item.mats = [mesh.material];
     });
 
+    /* A partir da ETAPA 04 os pilares ficam embutidos nas paredes:
+       reduzem para dentro da espessura da alvenaria e recebem reboco,
+       sem faixa cinza aparente na fachada. */
+    const embedded = currentStage >= 4;
+    embeddedPillars.forEach(({ shaft, cap, interior }) => {
+      const hide = embedded && interior;
+      shaft.visible = !hide;
+      cap.visible = !hide;
+      const s = embedded ? 0.6 : 1;
+      shaft.scale.set(s, 1, s);
+      cap.scale.set(s, 1, s);
+      shaft.material = embedded ? M.plaster : M.concrete;
+      cap.material = embedded ? M.plaster : M.concreteDark;
+    });
+
     document.documentElement.dataset.obraStage = String(currentStage);
     sun.shadow.needsUpdate = true;
   };
@@ -1881,7 +2005,11 @@ const init = (THREE, host, wrap) => {
         1,
       );
       const eased = easeOutCubic(progress);
-      tween.item.obj.scale.setScalar(lerp(0.965, 1, eased));
+      if (tween.item.grow) {
+        tween.item.obj.scale.set(1, lerp(0.76, 1, eased), 1);
+      } else {
+        tween.item.obj.scale.setScalar(lerp(0.965, 1, eased));
+      }
       tween.item.mats.forEach((material) => {
         material.opacity = material.userData.baseOpacity * eased;
       });
