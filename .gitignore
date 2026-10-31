@@ -11,6 +11,7 @@ ENV/
 
 # Bytecode Python & Caches de Qualidade/Testes
 __pycache__/
+*.egg-info/
 *.py[cod]
 *$py.class
 .ruff_cache/

@@ -144,8 +144,64 @@
             <div class="iso-scene-wrap"
                  id="iso-scene-wrap"
                  role="img"
-                 aria-label="Maquete 3D interativa mostrando as seis camadas construtivas da residência">
+                 aria-label="Holograma 3D interativo de uma residência Minha Casa Minha Vida sendo construída em seis etapas: terreno, fundação, estrutura, alvenaria, instalações e entrega das chaves">
               <div class="iso-house-model" id="iso-house-model">
+                <!-- Holograma da residência Minha Casa Minha Vida (construído por etapa) -->
+                <div class="iso-hologram" aria-hidden="true">
+                  <!-- Etapa 03: laje e pilares -->
+                  <div class="holo-part holo-part--slab" data-holo-order="3">
+                    <div class="holo-face holo-face--slab"></div>
+                  </div>
+                  <div class="holo-part holo-part--pillar holo-part--pillar-nw" data-holo-order="3">
+                    <div class="holo-face holo-face--pillar"></div>
+                  </div>
+                  <div class="holo-part holo-part--pillar holo-part--pillar-ne" data-holo-order="3">
+                    <div class="holo-face holo-face--pillar"></div>
+                  </div>
+                  <div class="holo-part holo-part--pillar holo-part--pillar-sw" data-holo-order="3">
+                    <div class="holo-face holo-face--pillar"></div>
+                  </div>
+                  <div class="holo-part holo-part--pillar holo-part--pillar-se" data-holo-order="3">
+                    <div class="holo-face holo-face--pillar"></div>
+                  </div>
+
+                  <!-- Etapa 04: alvenaria -->
+                  <div class="holo-part holo-part--wall holo-part--wall-front" data-holo-order="4">
+                    <div class="holo-face holo-face--wall"></div>
+                  </div>
+                  <div class="holo-part holo-part--wall holo-part--wall-back" data-holo-order="4">
+                    <div class="holo-face holo-face--wall"></div>
+                  </div>
+                  <div class="holo-part holo-part--wall holo-part--wall-left" data-holo-order="4">
+                    <div class="holo-face holo-face--wall"></div>
+                  </div>
+                  <div class="holo-part holo-part--wall holo-part--wall-right" data-holo-order="4">
+                    <div class="holo-face holo-face--wall"></div>
+                  </div>
+
+                  <!-- Etapa 05: cobertura e instalações -->
+                  <div class="holo-part holo-part--roof holo-part--roof-front" data-holo-order="5">
+                    <div class="holo-face holo-face--roof"></div>
+                  </div>
+                  <div class="holo-part holo-part--roof holo-part--roof-back" data-holo-order="5">
+                    <div class="holo-face holo-face--roof"></div>
+                  </div>
+                  <div class="holo-part holo-part--glow" data-holo-order="5">
+                    <div class="holo-face holo-face--glow"></div>
+                  </div>
+
+                  <!-- Etapa 06: acabamento e entrega das chaves -->
+                  <div class="holo-part holo-part--door" data-holo-order="6">
+                    <div class="holo-face holo-face--door"></div>
+                  </div>
+                  <div class="holo-part holo-part--window holo-part--window-front" data-holo-order="6">
+                    <div class="holo-face holo-face--window"></div>
+                  </div>
+                  <div class="holo-part holo-part--window holo-part--window-side" data-holo-order="6">
+                    <div class="holo-face holo-face--window"></div>
+                  </div>
+                </div>
+
                 <div class="iso-layer iso-layer--terreno is-built is-current" data-layer-order="1"></div>
                 <div class="iso-layer iso-layer--fundacao" data-layer-order="2"></div>
                 <div class="iso-layer iso-layer--estrutura" data-layer-order="3"></div>
@@ -155,6 +211,8 @@
                   <span>Chaves</span>
                 </div>
               </div>
+
+              <span class="holo-spec">Holograma &middot; MCMV 48 m&sup2;</span>
             </div>
 
             <div>

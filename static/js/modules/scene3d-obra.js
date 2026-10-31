@@ -44,6 +44,7 @@ const initIsometricObraStage = () => {
   model.dataset.stageBound = "true";
 
   const layers = Array.from(model.querySelectorAll("[data-layer-order]"));
+  const holoParts = Array.from(model.querySelectorAll("[data-holo-order]"));
 
   const applyStage = (targetOrder, titleText, progressPct) => {
     const orderNum = Number(targetOrder) || 1;
@@ -52,6 +53,13 @@ const initIsometricObraStage = () => {
       const layerNum = Number(layer.dataset.layerOrder);
       layer.classList.toggle("is-built", layerNum <= orderNum);
       layer.classList.toggle("is-current", layerNum === orderNum);
+    });
+
+    // Holograma da residência: cada parte nasce quando a etapa chega nela
+    holoParts.forEach((part) => {
+      const partNum = Number(part.dataset.holoOrder);
+      part.classList.toggle("is-built", partNum <= orderNum);
+      part.classList.toggle("is-current", partNum === orderNum);
     });
 
     stepCards.forEach((card) => {
