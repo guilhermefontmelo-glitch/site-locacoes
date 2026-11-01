@@ -878,4 +878,15 @@
   background: linear-gradient(125deg, #ffffff 0%, #eaeef6 100%);
 }
 
+/* ==========================================================================
+   SEÇÃO 03 — PROJETOS DE REFERÊNCIA (MCMV)
+   Fotos ocupam o quadro inteiro (cover) e o container tem fundo neutro de
+   fallback, evitando qualquer aparência de imagem quebrada.
+   ========================================================================== */
+#projetos .media-frame {
+  background-color: color-mix(in srgb, var(--color-bg-elevated) 78%, #dfe6ee);
+}
 
+#projetos .media-frame__img {
+  object-fit: cover;
+}

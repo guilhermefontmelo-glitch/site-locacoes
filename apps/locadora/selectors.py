@@ -63,8 +63,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Ideal para acelerar reboco externo, chapisco, pintura e instalações.",
         "icone": "building-office-2",
         "imagem_url": (
-            "https://images.unsplash.com/photo-1504307651254-35680f356dfd"
-            "?auto=format&fit=crop&w=800&q=80"
+            "img/locacoes/andaime-tubular.png"
         ),
     },
     {
@@ -83,8 +82,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Garante nivelamento exato da laje e canteiro limpo e seguro.",
         "icone": "shield-check",
         "imagem_url": (
-            "https://images.unsplash.com/photo-1541888946425-d81bb19240f5"
-            "?auto=format&fit=crop&w=800&q=80"
+            "img/locacoes/escora-metalica.png"
         ),
     },
     {
@@ -103,8 +101,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Indispensável desde o concreto das sapatas até o reboco final.",
         "icone": "cube-transparent",
         "imagem_url": (
-            "https://images.unsplash.com/photo-1589939705384-5185137a7f0f"
-            "?auto=format&fit=crop&w=800&q=80"
+            "img/locacoes/betoneira.png"
         ),
     },
     {
@@ -123,8 +120,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Padrão obrigatório da engenharia Rocha em toda concretagem estrutural.",
         "icone": "sparkles",
         "imagem_url": (
-            "https://images.unsplash.com/photo-1590644365607-1c5a519a7a37"
-            "?auto=format&fit=crop&w=800&q=80"
+            "img/locacoes/vibrador-concreto.png"
         ),
     },
     {
@@ -143,8 +139,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Ideal para sobrados, lajes superiores e içamento de materiais.",
         "icone": "truck",
         "imagem_url": (
-            "https://images.unsplash.com/photo-1503387762-592deb58ef4e"
-            "?auto=format&fit=crop&w=800&q=80"
+            "img/locacoes/guincho-coluna.png"
         ),
     },
     {
@@ -163,8 +158,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Perfeito para passagens hidráulicas/elétricas, reformas e demolições.",
         "icone": "wrench-screwdriver",
         "imagem_url": (
-            "https://images.unsplash.com/photo-1572981779307-38b8cabb2407"
-            "?auto=format&fit=crop&w=800&q=80"
+            "img/locacoes/martelete-rompedor.png"
         ),
     },
     {
@@ -183,8 +177,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Agilidade no preparo de ferragens estruturais e ajustes finos em obra.",
         "icone": "wrench-screwdriver",
         "imagem_url": (
-            "https://images.unsplash.com/photo-1530124566582-a618bc2615dc"
-            "?auto=format&fit=crop&w=800&q=80"
+            "img/locacoes/esmerilhadeira.png"
         ),
     },
     {
@@ -205,8 +198,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         ),
         "icone": "wrench-screwdriver",
         "imagem_url": (
-            "https://images.unsplash.com/photo-1504148455328-c376907d081c"
-            "?auto=format&fit=crop&w=800&q=80"
+            "img/locacoes/serra-circular.png"
         ),
     },
 )

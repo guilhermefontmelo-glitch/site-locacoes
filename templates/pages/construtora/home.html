@@ -357,7 +357,8 @@
         {% for projeto in projetos_referencia %}
           <article class="card card--interactive flex flex-col justify-between gap-4" data-reveal>
             <div>
-              {% include "components/_image.html" with src=projeto.imagem_url alt=projeto.titulo width=900 height=600 wrapper_class="mb-4 aspect-video" only %}
+              {% static projeto.imagem_url as projeto_img %}
+              {% include "components/_image.html" with src=projeto_img alt=projeto.titulo width=900 height=600 wrapper_class="mb-4 aspect-video" only %}
 
               <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                 <span class="eyebrow">{{ projeto.modalidade }}</span>

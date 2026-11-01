@@ -1,9 +1,11 @@
+{% load static %}
 {% if equipamentos %}
   <div class="grid-auto">
     {% for item in equipamentos %}
       <article class="card card--interactive equip-card">
         <div>
-          {% include "components/_image.html" with src=item.imagem_url alt=item.nome width=800 height=500 wrapper_class="equip-card__media mb-4" only %}
+          {% static item.imagem_url as equipamento_img %}
+          {% include "components/_image.html" with src=equipamento_img alt=item.nome width=800 height=500 wrapper_class="equip-card__media mb-4" only %}
 
           <div class="equip-card__meta">
             <span>{{ item.grupo_nome }}</span>

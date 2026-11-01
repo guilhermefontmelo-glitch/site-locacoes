@@ -86,6 +86,12 @@
 
 .equip-card__media {
   aspect-ratio: 16 / 10;
+  background-color: #ffffff;
+}
+
+.equip-card__media .media-frame__img {
+  object-fit: contain;
+  padding: 0;
 }
 
 .equip-card__meta {

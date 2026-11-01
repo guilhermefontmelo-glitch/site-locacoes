@@ -237,10 +237,7 @@ def listar_projetos_referencia() -> list[ProjetoReferencia]:
                 "Planta inteligente com sala integrada, cozinha americana em granito, "
                 "área de serviço coberta, garagem e fachada contemporânea com platibanda."
             ),
-            "imagem_url": (
-                "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
-                "?auto=format&fit=crop&w=900&q=80"
-            ),
+            "imagem_url": "img/padroes/padrao-essencial.jpg",
         },
         {
             "slug": "residencia-ibiapaba-familia",
@@ -253,10 +250,7 @@ def listar_projetos_referencia() -> list[ProjetoReferencia]:
                 "Pé-direito valorizado na sala, suíte espaçosa, acabamento em porcelanato, "
                 "iluminação em LED e espaço gourmet integrado ao quintal."
             ),
-            "imagem_url": (
-                "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9"
-                "?auto=format&fit=crop&w=900&q=80"
-            ),
+            "imagem_url": "img/padroes/padrao-familia-conforto.jpg",
         },
         {
             "slug": "residencia-horizonte-premium",
@@ -269,10 +263,7 @@ def listar_projetos_referencia() -> list[ProjetoReferencia]:
                 "Arquitetura autoral de alto padrão construtivo, esquadrias amplas de vidro, "
                 "infraestrutura para energia solar/climatização e acabamento nobre."
             ),
-            "imagem_url": (
-                "https://images.unsplash.com/photo-1613490493576-7fde63acd811"
-                "?auto=format&fit=crop&w=900&q=80"
-            ),
+            "imagem_url": "img/padroes/padrao-personalizado.jpg",
         },
     ]
 
