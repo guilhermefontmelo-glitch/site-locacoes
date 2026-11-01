@@ -87,11 +87,12 @@
 .equip-card__media {
   aspect-ratio: 16 / 10;
   background-color: #ffffff;
+  padding: 8px;
 }
 
 .equip-card__media .media-frame__img {
   object-fit: contain;
-  padding: 0;
+  object-position: center;
 }
 
 .equip-card__meta {

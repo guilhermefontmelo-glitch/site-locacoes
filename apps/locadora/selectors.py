@@ -63,7 +63,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Ideal para acelerar reboco externo, chapisco, pintura e instalações.",
         "icone": "building-office-2",
         "imagem_url": (
-            "img/locacoes/andaime-tubular.png"
+            "img/locacoes/andaime-tubular.jpg"
         ),
     },
     {
@@ -82,7 +82,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Garante nivelamento exato da laje e canteiro limpo e seguro.",
         "icone": "shield-check",
         "imagem_url": (
-            "img/locacoes/escora-metalica.png"
+            "img/locacoes/escora-metalica.jpg"
         ),
     },
     {
@@ -101,7 +101,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Indispensável desde o concreto das sapatas até o reboco final.",
         "icone": "cube-transparent",
         "imagem_url": (
-            "img/locacoes/betoneira.png"
+            "img/locacoes/betoneira.jpg"
         ),
     },
     {
@@ -120,7 +120,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Padrão obrigatório da engenharia Rocha em toda concretagem estrutural.",
         "icone": "sparkles",
         "imagem_url": (
-            "img/locacoes/vibrador-concreto.png"
+            "img/locacoes/vibrador-concreto.jpg"
         ),
     },
     {
@@ -139,7 +139,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Ideal para sobrados, lajes superiores e içamento de materiais.",
         "icone": "truck",
         "imagem_url": (
-            "img/locacoes/guincho-coluna.png"
+            "img/locacoes/guincho-coluna.jpg"
         ),
     },
     {
@@ -158,7 +158,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Perfeito para passagens hidráulicas/elétricas, reformas e demolições.",
         "icone": "wrench-screwdriver",
         "imagem_url": (
-            "img/locacoes/martelete-rompedor.png"
+            "img/locacoes/martelete-rompedor.jpg"
         ),
     },
     {
@@ -177,7 +177,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "orientacao_uso": "Agilidade no preparo de ferragens estruturais e ajustes finos em obra.",
         "icone": "wrench-screwdriver",
         "imagem_url": (
-            "img/locacoes/esmerilhadeira.png"
+            "img/locacoes/esmerilhadeira.jpg"
         ),
     },
     {
@@ -198,7 +198,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         ),
         "icone": "wrench-screwdriver",
         "imagem_url": (
-            "img/locacoes/serra-circular.png"
+            "img/locacoes/serra-circular.jpg"
         ),
     },
 )
