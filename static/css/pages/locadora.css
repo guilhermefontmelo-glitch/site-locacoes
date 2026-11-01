@@ -122,6 +122,13 @@
 
 .equip-card__media {
   aspect-ratio: 16 / 10;
+  background-color: #ffffff;
+  padding: 8px;
+}
+
+.equip-card__media .media-frame__img {
+  object-fit: contain;
+  object-position: center;
 }
 
 .equip-modal__media {

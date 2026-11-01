@@ -294,8 +294,9 @@ def listar_projetos_referencia() -> list[ProjetoReferencia]:
                 "Planta inteligente com sala integrada, cozinha americana em granito, "
                 "área de serviço coberta, garagem e fachada contemporânea com platibanda."
             ),
-            "imagem_avif": "img/construtora/projeto-aurea-64m2.avif",
-            "imagem_webp": "img/construtora/projeto-aurea-64m2.webp",
+            "imagem_avif": "",
+            "imagem_webp": "img/padroes/padrao-essencial.webp",
+            "imagem_url": "img/padroes/padrao-essencial.webp",
         },
         {
             "slug": "residencial-brisa",
@@ -308,8 +309,9 @@ def listar_projetos_referencia() -> list[ProjetoReferencia]:
                 "Pé-direito valorizado na sala, suíte espaçosa, acabamento em porcelanato, "
                 "iluminação em LED e espaço gourmet integrado ao quintal."
             ),
-            "imagem_avif": "img/construtora/projeto-brisa-92m2.avif",
-            "imagem_webp": "img/construtora/projeto-brisa-92m2.webp",
+            "imagem_avif": "",
+            "imagem_webp": "img/padroes/padrao-familia-conforto.webp",
+            "imagem_url": "img/padroes/padrao-familia-conforto.webp",
         },
         {
             "slug": "residencial-horizonte",
@@ -322,16 +324,17 @@ def listar_projetos_referencia() -> list[ProjetoReferencia]:
                 "Arquitetura autoral de alto padrão construtivo, painel ripado, pedra natural, "
                 "infraestrutura para energia solar/climatização e acabamento nobre."
             ),
-            "imagem_avif": "img/construtora/projeto-horizonte-138m2.avif",
-            "imagem_webp": "img/construtora/projeto-horizonte-138m2.webp",
+            "imagem_avif": "",
+            "imagem_webp": "img/padroes/padrao-personalizado-caixa.webp",
+            "imagem_url": "img/padroes/padrao-personalizado-caixa.webp",
         },
     ]
 
     projetos: list[ProjetoReferencia] = []
     for item in specs:
         titulo = str(item["titulo"])
-        imagem_avif = str(item["imagem_avif"])
-        imagem_webp = str(item["imagem_webp"])
+        imagem_avif = str(item.get("imagem_avif") or "")
+        imagem_webp = str(item.get("imagem_webp") or "")
         msg = (
             f"Olá! Vi no site da Rocha Construtora o modelo '{titulo}' "
             f"({item['area_m2']}m²) e gostaria de saber como financiar pela Caixa."
@@ -347,7 +350,7 @@ def listar_projetos_referencia() -> list[ProjetoReferencia]:
                 descricao=str(item["descricao"]),
                 imagem_avif=imagem_avif,
                 imagem_webp=imagem_webp,
-                imagem_url=static(imagem_webp),
+                imagem_url=str(item.get("imagem_url") or static(imagem_webp)),
                 whatsapp_url=build_whatsapp_url(phone_e164=phone, message=msg),
             )
         )

@@ -67,6 +67,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "icone": "building-office-2",
         "imagem_avif": "img/locadora/andaime-tubular.avif",
         "imagem_webp": "img/locadora/andaime-tubular.webp",
+        "imagem_url": "img/locacoes/andaime-tubular.jpg",
     },
     {
         "codigo": "02",
@@ -85,6 +86,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "icone": "shield-check",
         "imagem_avif": "img/locadora/escora-metalica.avif",
         "imagem_webp": "img/locadora/escora-metalica.webp",
+        "imagem_url": "img/locacoes/escora-metalica.jpg",
     },
     {
         "codigo": "03",
@@ -103,6 +105,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "icone": "cube-transparent",
         "imagem_avif": "img/locadora/betoneira-400l.avif",
         "imagem_webp": "img/locadora/betoneira-400l.webp",
+        "imagem_url": "img/locacoes/betoneira.jpg",
     },
     {
         "codigo": "04",
@@ -121,6 +124,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "icone": "sparkles",
         "imagem_avif": "img/locadora/vibrador-concreto.avif",
         "imagem_webp": "img/locadora/vibrador-concreto.webp",
+        "imagem_url": "img/locacoes/vibrador-concreto.jpg",
     },
     {
         "codigo": "05",
@@ -139,6 +143,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "icone": "truck",
         "imagem_avif": "img/locadora/guincho-coluna.avif",
         "imagem_webp": "img/locadora/guincho-coluna.webp",
+        "imagem_url": "img/locacoes/guincho-coluna.jpg",
     },
     {
         "codigo": "06",
@@ -157,6 +162,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "icone": "wrench-screwdriver",
         "imagem_avif": "img/locadora/martelete-rompedor.avif",
         "imagem_webp": "img/locadora/martelete-rompedor.webp",
+        "imagem_url": "img/locacoes/martelete-rompedor.jpg",
     },
     {
         "codigo": "07",
@@ -175,6 +181,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "icone": "wrench-screwdriver",
         "imagem_avif": "img/locadora/esmerilhadeira-angular.avif",
         "imagem_webp": "img/locadora/esmerilhadeira-angular.webp",
+        "imagem_url": "img/locacoes/esmerilhadeira.jpg",
     },
     {
         "codigo": "08",
@@ -195,6 +202,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "icone": "wrench-screwdriver",
         "imagem_avif": "img/locadora/serra-circular.avif",
         "imagem_webp": "img/locadora/serra-circular.webp",
+        "imagem_url": "img/locacoes/serra-circular.jpg",
     },
 )
 

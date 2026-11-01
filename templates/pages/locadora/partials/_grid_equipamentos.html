@@ -1,9 +1,11 @@
+{% load static %}
 {% if equipamentos %}
   <div class="grid-auto equip-catalog-grid" data-stagger-group>
     {% for item in equipamentos %}
       <article class="card card--interactive equip-card cq-surface" data-stagger-item>
         <div class="equip-card__body">
-          {% include "components/_image.html" with avif_src=item.imagem_avif webp_src=item.imagem_webp alt=item.nome width=800 height=500 sizes="(min-width: 1024px) 31vw, (min-width: 640px) 48vw, 94vw" wrapper_class="equip-card__media mb-4" only %}
+          {% static item.imagem_url as equipamento_img %}
+          {% include "components/_image.html" with avif_src=item.imagem_avif webp_src=item.imagem_webp src=equipamento_img alt=item.nome width=800 height=500 sizes="(min-width: 1024px) 31vw, (min-width: 640px) 48vw, 94vw" wrapper_class="equip-card__media mb-4" only %}
 
           <div class="equip-card__meta">
             <span>{{ item.grupo_nome }}</span>
