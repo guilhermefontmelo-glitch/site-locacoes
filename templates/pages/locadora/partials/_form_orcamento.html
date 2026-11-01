@@ -4,6 +4,7 @@
   <div class="mb-4">
     <span class="eyebrow">
       {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon heroicon--sm" only %}
+
       <span>Cotação Multi-Equipamento</span>
     </span>
     <h3 class="heading-xl mt-2">Monte sua lista de locação</h3>
@@ -12,6 +13,6 @@
     </p>
   </div>
 
-  {% include "components/_crispy_form.html" with form=form_orcamento action_url=url_orcamento hx_target="#orcamento-locadora-box" submit_label="Gerar Pedido de Orçamento" submit_icon="truck" only %}
-</div>
+  {% include "components/_crispy_form.html" with form=form_orcamento action_url=url_orcamento hx_target="#orcamento-locadora-box" submit_label="Gerar Pedido de Orçamento" submit_icon="truck" trap_suffix="orcamento" only %}
 
+</div>

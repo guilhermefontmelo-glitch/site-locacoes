@@ -1,4 +1,6 @@
-<div>
+<div class="equip-modal-content">
+  {% include "components/_image.html" with avif_src=equipamento.imagem_avif webp_src=equipamento.imagem_webp alt=equipamento.nome width=800 height=500 sizes="(min-width: 640px) 600px, 92vw" wrapper_class="equip-modal__media mb-4" only %}
+
   <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
     <span class="eyebrow">{{ equipamento.grupo_nome }} &middot; Item {{ equipamento.codigo }}</span>
     <span class="equip-card__stage">{{ equipamento.etapa_obra }}</span>
@@ -12,6 +14,7 @@
     {% for spec in equipamento.especificacoes %}
       <li class="flex items-center gap-2 text-sm">
         {% include "components/_icon.html" with name="check-circle" class="heroicon heroicon--sm text-gold" only %}
+
         <span>{{ spec }}</span>
       </li>
     {% endfor %}
@@ -26,7 +29,7 @@
      target="_blank"
      rel="noopener noreferrer">
     {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
+
     <span>Pedir Orçamento de {{ equipamento.nome }}</span>
   </a>
 </div>
-

@@ -1,8 +1,9 @@
-"""Seletores imutáveis e auditados para Etapas 3D da Obra, Jornada Caixa/MCMV e Projetos."""
+"""Seletores imutáveis para Etapas 3D da Obra, Jornada Caixa Habitacional e Projetos."""
 
 from dataclasses import dataclass
 
 from django.conf import settings
+from django.templatetags.static import static
 
 from core.security import build_whatsapp_url
 
@@ -22,11 +23,13 @@ class EtapaConstrutiva:
     progresso_percentual: int
     icone: str
     camada_3d: str
+    imagem_avif: str
+    imagem_webp: str
 
 
 @dataclass(frozen=True, slots=True)
 class PassoFinanciamentoCaixa:
-    """Representa um passo do processo de financiamento Caixa Habitacional / MCMV."""
+    """Representa um passo do processo de financiamento Caixa Habitacional."""
 
     numero: str
     titulo: str
@@ -46,6 +49,8 @@ class ProjetoReferencia:
     quartos: str
     faixa_indicada: str
     descricao: str
+    imagem_avif: str
+    imagem_webp: str
     imagem_url: str
     whatsapp_url: str
 
@@ -57,7 +62,7 @@ _ETAPAS_OBRA: tuple[EtapaConstrutiva, ...] = (
         slug="terreno-e-projeto",
         titulo="Terreno, Projeto 3D & Aprovação Caixa",
         subtitulo="Planejamento arquitetônico e viabilidade técnica",
-        resumo="Escolha do lote ideal, planta personalizada e dossiê completo de engenharia.",
+        resumo="Escolha do lote ideal, gabarito a laser, planta personalizada e dossiê Caixa.",
         detalhe_engenharia=(
             "Elaboramos o projeto arquitetônico sob medida para sua família, projetos "
             "complementares, planilha orçamentária oficial PFUI da Caixa e registro de ART."
@@ -66,6 +71,8 @@ _ETAPAS_OBRA: tuple[EtapaConstrutiva, ...] = (
         progresso_percentual=15,
         icone="cube-transparent",
         camada_3d="terreno",
+        imagem_avif="img/construtora/etapa-01-terreno.avif",
+        imagem_webp="img/construtora/etapa-01-terreno.webp",
     ),
     EtapaConstrutiva(
         ordem=2,
@@ -75,13 +82,15 @@ _ETAPAS_OBRA: tuple[EtapaConstrutiva, ...] = (
         subtitulo="Segurança estrutural desde a base do solo",
         resumo="Locação a laser do gabarito, sapatas armadas, vigas baldrame e proteção estanque.",
         detalhe_engenharia=(
-            "Executamos escavação dimensionada para o solo da região, concreto vibrado de alta "
-            "resistência e impermeabilização asfáltica dupla evitando infiltração ascendente."
+            "Executamos escavação dimensionada para o solo da região, armaduras CA-50, concreto "
+            "vibrado e impermeabilização asfáltica dupla evitando infiltração ascendente."
         ),
         medicao_caixa="1ª Vistoria de Evolução de Obra — Liberação de recursos validada.",
         progresso_percentual=32,
         icone="shield-check",
         camada_3d="fundacao",
+        imagem_avif="img/construtora/etapa-02-fundacao.avif",
+        imagem_webp="img/construtora/etapa-02-fundacao.webp",
     ),
     EtapaConstrutiva(
         ordem=3,
@@ -98,6 +107,8 @@ _ETAPAS_OBRA: tuple[EtapaConstrutiva, ...] = (
         progresso_percentual=52,
         icone="building-office-2",
         camada_3d="estrutura",
+        imagem_avif="img/construtora/etapa-03-estrutura.avif",
+        imagem_webp="img/construtora/etapa-03-estrutura.webp",
     ),
     EtapaConstrutiva(
         ordem=4,
@@ -105,15 +116,17 @@ _ETAPAS_OBRA: tuple[EtapaConstrutiva, ...] = (
         slug="alvenaria-e-cobertura",
         titulo="Alvenaria, Reboco & Cobertura",
         subtitulo="Conforto térmico, acústico e proteção climática",
-        resumo="Elevação de paredes alinhadas, vergas/contravergas e telhado completo.",
+        resumo="Elevação de paredes alinhadas, vergas/contravergas e telhado com platibanda.",
         detalhe_engenharia=(
-            "Paredes com vergas em todos os vãos de portas e janelas prevenindo fissuras, "
+            "Paredes com vergas e contravergas em todos os vãos prevenindo fissuras, "
             "reboco sarrafeado fino e cobertura dimensionada para chuvas intensas na serra."
         ),
         medicao_caixa="3ª Vistoria Caixa — Fechamento da edificação e estanqueidade do telhado.",
         progresso_percentual=72,
         icone="home-modern",
         camada_3d="alvenaria",
+        imagem_avif="img/construtora/etapa-04-alvenaria.avif",
+        imagem_webp="img/construtora/etapa-04-alvenaria.webp",
     ),
     EtapaConstrutiva(
         ordem=5,
@@ -130,6 +143,8 @@ _ETAPAS_OBRA: tuple[EtapaConstrutiva, ...] = (
         progresso_percentual=90,
         icone="sparkles",
         camada_3d="instalacoes",
+        imagem_avif="img/construtora/etapa-05-instalacoes.avif",
+        imagem_webp="img/construtora/etapa-05-instalacoes.webp",
     ),
     EtapaConstrutiva(
         ordem=6,
@@ -146,6 +161,8 @@ _ETAPAS_OBRA: tuple[EtapaConstrutiva, ...] = (
         progresso_percentual=100,
         icone="key",
         camada_3d="entrega",
+        imagem_avif="img/construtora/etapa-06-entrega.avif",
+        imagem_webp="img/construtora/etapa-06-entrega.webp",
     ),
 )
 
@@ -165,7 +182,7 @@ _PASSOS_FINANCIAMENTO: tuple[PassoFinanciamentoCaixa, ...] = (
         titulo="Terreno + Projeto Personalizado",
         descricao=(
             "Ainda não tem lote? A Caixa financia a compra do terreno e a construção da casa "
-            "em um único financiamento. Se já possui terreno, financiamos 100% da obra."
+            "em um único financiamento. Se já possui terreno, financiamos a obra."
         ),
         destaque="Aquisição + Construção Caixa",
         icone="map-pin",
@@ -216,19 +233,59 @@ def obter_etapa_por_slug(*, slug: str) -> EtapaConstrutiva | None:
     return None
 
 
+def obter_etapa_por_ordem(*, ordem: int) -> EtapaConstrutiva | None:
+    """Localiza uma etapa construtiva específica pelo número ordinal (`1..6`)."""
+    for etapa in _ETAPAS_OBRA:
+        if etapa.ordem == ordem:
+            return etapa
+    return None
+
+
+def serializar_etapas_obra_payload(*, phone_e164: str) -> list[dict[str, str | int]]:
+    """Serializa as 6 etapas para `json_script` (scrubbing em memória sem round-trip HTTP)."""
+    payload: list[dict[str, str | int]] = []
+    for etapa in _ETAPAS_OBRA:
+        whatsapp_url = build_whatsapp_url(
+            phone_e164=phone_e164,
+            message=(
+                f"Olá! Estava vendo a etapa '{etapa.codigo} - {etapa.titulo}' no site da "
+                "Rocha Construtora e gostaria de tirar uma dúvida com a engenharia."
+            ),
+        )
+        payload.append(
+            {
+                "ordem": etapa.ordem,
+                "codigo": etapa.codigo,
+                "slug": etapa.slug,
+                "titulo": etapa.titulo,
+                "subtitulo": etapa.subtitulo,
+                "resumo": etapa.resumo,
+                "detalhe_engenharia": etapa.detalhe_engenharia,
+                "medicao_caixa": etapa.medicao_caixa,
+                "progresso_percentual": etapa.progresso_percentual,
+                "icone": etapa.icone,
+                "camada_3d": etapa.camada_3d,
+                "imagem_avif_url": static(etapa.imagem_avif),
+                "imagem_webp_url": static(etapa.imagem_webp),
+                "whatsapp_url": whatsapp_url,
+            }
+        )
+    return payload
+
+
 def listar_passos_financiamento() -> tuple[PassoFinanciamentoCaixa, ...]:
-    """Retorna a sequência explicativa do financiamento Caixa Habitacional / MCMV."""
+    """Retorna a sequência explicativa do financiamento Caixa Habitacional."""
     return _PASSOS_FINANCIAMENTO
 
 
 def listar_projetos_referencia() -> list[ProjetoReferencia]:
-    """Retorna modelos residenciais de referência com links de atendimento sanitizados."""
+    """Retorna modelos residenciais autorais com imagens locais AVIF/WebP e links WhatsApp."""
     phone: str = getattr(settings, "ROCHA_WHATSAPP_CONSTRUTORA", "5588992258807")
 
     specs: list[dict[str, str | int]] = [
         {
-            "slug": "residencia-aurora-mcmv",
-            "titulo": "Padrão Essencial Minha Casa Minha Vida",
+            "slug": "residencial-aurea",
+            "titulo": "Residencial Áurea — Minha Casa Minha Vida",
             "modalidade": "Terreno + Construção",
             "area_m2": 64,
             "quartos": "2 Quartos (1 Suíte)",
@@ -237,14 +294,12 @@ def listar_projetos_referencia() -> list[ProjetoReferencia]:
                 "Planta inteligente com sala integrada, cozinha americana em granito, "
                 "área de serviço coberta, garagem e fachada contemporânea com platibanda."
             ),
-            "imagem_url": (
-                "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
-                "?auto=format&fit=crop&w=900&q=80"
-            ),
+            "imagem_avif": "img/construtora/projeto-aurea-64m2.avif",
+            "imagem_webp": "img/construtora/projeto-aurea-64m2.webp",
         },
         {
-            "slug": "residencia-ibiapaba-familia",
-            "titulo": "Padrão Família Conforto",
+            "slug": "residencial-brisa",
+            "titulo": "Residencial Brisa — Família Conforto",
             "modalidade": "Terreno + Construção ou Lote Próprio",
             "area_m2": 92,
             "quartos": "3 Quartos (1 Suíte) + Varanda Gourmet",
@@ -253,32 +308,30 @@ def listar_projetos_referencia() -> list[ProjetoReferencia]:
                 "Pé-direito valorizado na sala, suíte espaçosa, acabamento em porcelanato, "
                 "iluminação em LED e espaço gourmet integrado ao quintal."
             ),
-            "imagem_url": (
-                "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9"
-                "?auto=format&fit=crop&w=900&q=80"
-            ),
+            "imagem_avif": "img/construtora/projeto-brisa-92m2.avif",
+            "imagem_webp": "img/construtora/projeto-brisa-92m2.webp",
         },
         {
-            "slug": "residencia-horizonte-premium",
-            "titulo": "Padrão Personalizado Caixa",
+            "slug": "residencial-horizonte",
+            "titulo": "Residencial Horizonte — Padrão Personalizado Caixa",
             "modalidade": "Construção Sob Medida",
             "area_m2": 138,
             "quartos": "3 Suítes + Garagem Dupla",
             "faixa_indicada": "Minha Casa Minha Vida Faixa 3 / Caixa SBPE",
             "descricao": (
-                "Arquitetura autoral de alto padrão construtivo, esquadrias amplas de vidro, "
+                "Arquitetura autoral de alto padrão construtivo, painel ripado, pedra natural, "
                 "infraestrutura para energia solar/climatização e acabamento nobre."
             ),
-            "imagem_url": (
-                "https://images.unsplash.com/photo-1613490493576-7fde63acd811"
-                "?auto=format&fit=crop&w=900&q=80"
-            ),
+            "imagem_avif": "img/construtora/projeto-horizonte-138m2.avif",
+            "imagem_webp": "img/construtora/projeto-horizonte-138m2.webp",
         },
     ]
 
     projetos: list[ProjetoReferencia] = []
     for item in specs:
         titulo = str(item["titulo"])
+        imagem_avif = str(item["imagem_avif"])
+        imagem_webp = str(item["imagem_webp"])
         msg = (
             f"Olá! Vi no site da Rocha Construtora o modelo '{titulo}' "
             f"({item['area_m2']}m²) e gostaria de saber como financiar pela Caixa."
@@ -292,9 +345,10 @@ def listar_projetos_referencia() -> list[ProjetoReferencia]:
                 quartos=str(item["quartos"]),
                 faixa_indicada=str(item["faixa_indicada"]),
                 descricao=str(item["descricao"]),
-                imagem_url=str(item["imagem_url"]),
+                imagem_avif=imagem_avif,
+                imagem_webp=imagem_webp,
+                imagem_url=static(imagem_webp),
                 whatsapp_url=build_whatsapp_url(phone_e164=phone, message=msg),
             )
         )
     return projetos
-

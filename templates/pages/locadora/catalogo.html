@@ -12,19 +12,21 @@
 
 {% block og_description %}Andaimes, escoras metálicas, betoneiras e ferramentas revisadas prontas para o seu canteiro de obras em Viçosa do Ceará e região.{% endblock %}
 
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/pages/locadora.css' %}" data-vertical-css="locadora">
+{% endblock %}
+
 {% block content %}
-  <!-- ======================================================================
-       HERO — ROCHA LOCAÇÕES (IDENTIDADE PRÓPRIA DE LOCAÇÃO DE EQUIPAMENTOS)
-       ====================================================================== -->
   <section class="hero-locadora" id="inicio-locadora">
     <div class="container split-layout">
       <div>
-        <p class="eyebrow">
+        <p class="eyebrow" data-kinetic="chars">
           {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon heroicon--sm" only %}
+
           <span>Rocha Locações &middot; Locação de Equipamentos para Construção Civil</span>
         </p>
 
-        <h1 class="hero-locadora__title">
+        <h1 class="hero-locadora__title" data-kinetic="words">
           Equipamento revisado para cada <span class="editorial-accent">etapa da sua obra.</span>
         </h1>
 
@@ -32,9 +34,10 @@
           Andaimes, escoras metálicas, betoneiras, vibradores de concreto, guinchos e ferramentas elétricas prontos para uso, com entrega e retirada programada em Viçosa do Ceará e região.
         </p>
 
-        <div class="flex flex-wrap gap-3">
+        <div class="flex flex-wrap gap-3 mb-6">
           <a class="btn btn--gold" href="#equipamentos">
             {% include "components/_icon.html" with name="arrow-down" class="heroicon heroicon--sm" only %}
+
             <span>Ver Catálogo Completo</span>
           </a>
           <a class="btn btn--whatsapp"
@@ -42,44 +45,63 @@
              target="_blank"
              rel="noopener noreferrer">
             {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
+
             <span>Pedir Orçamento Rápido</span>
           </a>
         </div>
+
+        <div class="hero-metrics" data-stagger-group>
+          <div data-stagger-item>
+            <strong class="hero-metrics__value" data-count-to="8" data-count-suffix=" linhas">8 linhas</strong>
+            <span class="hero-metrics__label">Frota essencial de canteiro</span>
+          </div>
+          <div data-stagger-item>
+            <strong class="hero-metrics__value" data-count-to="100" data-count-suffix="%">%</strong>
+            <span class="hero-metrics__label">Revisão preventiva na saída</span>
+          </div>
+          <div data-stagger-item>
+            <strong class="hero-metrics__value">Obra no Ritmo</strong>
+            <span class="hero-metrics__label">Entrega e retirada própria</span>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
-        <span class="eyebrow mb-2">Padrão de Manutenção Rocha Locações</span>
-        <h2 class="heading-2xl mb-3">Não alugamos apenas máquinas. Entregamos ritmo no canteiro.</h2>
-        <ul class="grid gap-3 mt-4">
-          <li class="flex items-center gap-3 text-sm">
-            {% include "components/_icon.html" with name="shield-check" class="heroicon text-gold" only %}
-            <span>Revisão mecânica e elétrica preventiva antes de cada saída.</span>
-          </li>
-          <li class="flex items-center gap-3 text-sm">
-            {% include "components/_icon.html" with name="truck" class="heroicon text-gold" only %}
-            <span>Logística própria pontual para entrega e recolhimento na obra.</span>
-          </li>
-          <li class="flex items-center gap-3 text-sm">
-            {% include "components/_icon.html" with name="banknotes" class="heroicon text-gold" only %}
-            <span>Planos flexíveis por diária, semana, quinzena ou mês.</span>
-          </li>
-        </ul>
+      <div class="hero-locadora__showcase">
+        {% include "components/_image.html" with avif_src="img/locadora/hero-operacao-canteiro.avif" webp_src="img/locadora/hero-operacao-canteiro.webp" alt="Operação de canteiro com andaimes tubulares e concretagem da Rocha Locações" width=1280 height=854 sizes="(min-width: 1024px) 46vw, 94vw" priority=True wrapper_class="hero-locadora__media mb-4" only %}
+
+        <div class="card hero-locadora__card">
+          <span class="eyebrow mb-2">Padrão de Manutenção Rocha Locações</span>
+          <h2 class="heading-xl mb-3">Não alugamos apenas máquinas. Entregamos ritmo no canteiro.</h2>
+          <ul class="grid gap-3 mt-3">
+            <li class="flex items-center gap-3 text-sm">
+              {% include "components/_icon.html" with name="shield-check" class="heroicon text-gold" only %}
+
+              <span>Revisão mecânica e elétrica preventiva antes de cada saída.</span>
+            </li>
+            <li class="flex items-center gap-3 text-sm">
+              {% include "components/_icon.html" with name="truck" class="heroicon text-gold" only %}
+
+              <span>Logística própria pontual para entrega e recolhimento na obra.</span>
+            </li>
+            <li class="flex items-center gap-3 text-sm">
+              {% include "components/_icon.html" with name="banknotes" class="heroicon text-gold" only %}
+
+              <span>Planos flexíveis por diária, semana, quinzena ou mês.</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ======================================================================
-       SEÇÃO 01 — CATÁLOGO INTERATIVO FILTRÁVEL EM TEMPO REAL VIA HTMX
-       ====================================================================== -->
   <section class="section" id="equipamentos">
     <div class="container">
       <div class="max-w-3xl mb-6" data-reveal>
         <p class="eyebrow">01 / Catálogo Operacional</p>
-        <h2 class="heading-3xl mt-2 mb-2">Tudo o que sua obra precisa.</h2>
+        <h2 class="heading-3xl mt-2 mb-2" data-kinetic="words">Tudo o que sua obra precisa.</h2>
         <p>Filtre por família de equipamento ou pesquise pelo serviço que vai executar.</p>
       </div>
 
-      <!-- Barra de Filtragem Assíncrona HTMX -->
       <form class="catalog-toolbar"
             method="get"
             action="{% url 'locadora:catalogo' %}"
@@ -110,27 +132,30 @@
 
       <div id="catalogo-grid-wrapper" aria-live="polite">
         {% include "pages/locadora/partials/_grid_equipamentos.html" with equipamentos=equipamentos only %}
+
       </div>
     </div>
   </section>
 
-  <!-- ======================================================================
-       SEÇÃO 02 — COMO ALUGAR EM 3 ETAPAS SIMPLES
-       ====================================================================== -->
-  <section class="section" id="como-alugar">
+  <section class="section" id="como-alugar" data-timeline-section>
     <div class="container">
       <div class="max-w-3xl mb-8" data-reveal>
         <p class="eyebrow">02 / Sem Burocracia</p>
-        <h2 class="heading-3xl mt-2 mb-2">Simples do pedido à retirada.</h2>
+        <h2 class="heading-3xl mt-2 mb-2" data-kinetic="words">Simples do pedido à retirada.</h2>
         <p>Atendimento ágil para não deixar sua equipe parada esperando ferramenta.</p>
       </div>
 
-      <ol class="grid-auto">
+      <div class="timeline-progress-track" aria-hidden="true">
+        <div class="timeline-progress-fill" data-timeline-fill></div>
+      </div>
+
+      <ol class="grid-auto" data-stagger-group>
         {% for passo in passos_aluguel %}
-          <li class="card" data-reveal>
+          <li class="card" data-stagger-item>
             <div class="flex items-center justify-between mb-3">
               <span class="eyebrow">Etapa {{ passo.numero }}</span>
               {% include "components/_icon.html" with name=passo.icone class="heroicon text-gold" only %}
+
             </div>
             <h3 class="heading-xl mb-2">{{ passo.titulo }}</h3>
             <p class="text-sm mb-4">{{ passo.descricao }}</p>
@@ -141,21 +166,17 @@
     </div>
   </section>
 
-  <!-- ======================================================================
-       SEÇÃO 03 — MONTADOR DE ORÇAMENTO (CRISPY FORMS + HTMX)
-       ====================================================================== -->
   <section class="section" id="orcamento">
     <div class="container split-layout">
       <div data-reveal>
         <p class="eyebrow">03 / Cotação Rápida</p>
-        <h2 class="heading-3xl mt-2 mb-4">
+        <h2 class="heading-3xl mt-2 mb-4" data-kinetic="words">
           Receba o valor da locação direto no seu WhatsApp.
         </h2>
         <p class="mb-6">
           Selecione um ou mais equipamentos ao lado, escolha o período e nós preparamos o atendimento completo com nossa equipe em Viçosa do Ceará.
         </p>
 
-        <!-- Cross-link de retorno para a Construtora / Financiamento Minha Casa Minha Vida -->
         <div class="card" id="contato">
           <span class="eyebrow mb-2">Vai construir do zero?</span>
           <h3 class="heading-lg mb-2">Conheça também a Rocha Construtora</h3>
@@ -166,15 +187,16 @@
              href="{% url 'construtora:home' %}"
              data-unit-target="construtora">
             {% include "components/_icon.html" with name="home-modern" class="heroicon heroicon--sm" only %}
+
             <span>Ir para Rocha Construtora &amp; Maquete 3D</span>
           </a>
         </div>
       </div>
 
-      <div id="orcamento-locadora-box" data-reveal>
+      <div id="orcamento-locadora-box" class="cq-surface" data-reveal>
         {% include "pages/locadora/partials/_form_orcamento.html" with form_orcamento=form_orcamento only %}
+
       </div>
     </div>
   </section>
 {% endblock %}
-

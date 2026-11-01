@@ -1,0 +1,18 @@
+<div id="simulador-workspace"
+     class="simulador-workspace cq-surface"
+     data-simulador-workspace="true">
+  <div class="simulador-workspace__grid">
+    <div class="simulador-workspace__form-col">
+      {% include "pages/construtora/partials/_form_simulacao.html" with form_simulacao=form_simulacao only %}
+
+    </div>
+
+    <div class="simulador-workspace__result-col" aria-live="polite">
+      <div id="simulador-loading" class="htmx-indicator sim-loading-bar" aria-hidden="true">
+        <span>Atualizando cálculo em precisão bancária...</span>
+      </div>
+      {% include "pages/construtora/partials/_resultado_simulacao.html" with resultado=resultado_simulacao simulacao_atualizada=simulacao_atualizada only %}
+
+    </div>
+  </div>
+</div>

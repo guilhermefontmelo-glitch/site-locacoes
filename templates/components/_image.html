@@ -1,15 +1,37 @@
+{% load static %}
+
 {% comment %}
-  Componente de imagem responsiva otimizada (anti-CLS, lazy-load / LCP priority)
+  Componente de imagem responsiva multi-formato (<picture> AVIF + WebP, anti-CLS, LCP cirúrgico)
   Uso:
-  {% include "components/_image.html" with src=img_url alt="Obra Rocha" width=800 height=600 priority=False only %}
+  {% include "components/_image.html" with avif_src=item.imagem_avif webp_src=item.imagem_webp alt=item.nome width=800 height=500 priority=False only %}
 {% endcomment %}
 <figure class="media-frame {{ wrapper_class|default:'' }}">
-  <img class="media-frame__img {{ class|default:'' }}"
-       src="{{ src }}"
-       alt="{{ alt }}"
-       width="{{ width|default:'800' }}"
-       height="{{ height|default:'600' }}"
-       {% if priority %}loading="eager" fetchpriority="high"{% else %}loading="lazy" decoding="async"{% endif %}>
+  <picture class="media-frame__picture">
+    {% if avif_src %}
+      <source type="image/avif"
+              srcset="{% static avif_src %}"
+              sizes="{{ sizes|default:'(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw' }}">
+    {% elif avif_url %}
+      <source type="image/avif"
+              srcset="{{ avif_url }}"
+              sizes="{{ sizes|default:'(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw' }}">
+    {% endif %}
+    {% if webp_src %}
+      <source type="image/webp"
+              srcset="{% static webp_src %}"
+              sizes="{{ sizes|default:'(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw' }}">
+    {% elif webp_url %}
+      <source type="image/webp"
+              srcset="{{ webp_url }}"
+              sizes="{{ sizes|default:'(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw' }}">
+    {% endif %}
+    <img {% if img_id %}id="{{ img_id }}"{% endif %}
+         class="media-frame__img {{ class|default:'' }}"
+         src="{% if webp_src %}{% static webp_src %}{% elif webp_url %}{{ webp_url }}{% else %}{{ src }}{% endif %}"
+         alt="{{ alt }}"
+         width="{{ width|default:'800' }}"
+         height="{{ height|default:'500' }}"
+         {% if priority %}loading="eager" fetchpriority="high" decoding="sync"{% else %}loading="lazy" decoding="async"{% endif %}>
+  </picture>
   {% if caption %}<figcaption class="sr-only">{{ caption }}</figcaption>{% endif %}
 </figure>
-

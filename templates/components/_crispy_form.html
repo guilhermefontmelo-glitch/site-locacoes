@@ -1,30 +1,36 @@
 {% load crispy_forms_tags %}
 
 {% comment %}
-  Envelope DRY para Formulários Django Crispy Forms + Tailwind + HTMX + Honeypot
-  Uso:
-  {% include "components/_crispy_form.html" with form=form action_url="/simular/" hx_target="#resultado-simulacao" submit_label="Simular Financiamento" submit_icon="calculator" only %}
+  Envelope DRY para Formulários Django Crispy Forms + Tailwind + HTMX + Honeypot + TimestampSigner
 {% endcomment %}
 <form method="post"
       action="{{ action_url|default:'' }}"
+      {% if form_dom_id %}id="{{ form_dom_id }}"{% endif %}
       class="rocha-crispy-form {{ form_class|default:'' }}"
       {% if hx_target %}hx-post="{{ action_url }}" hx-target="{{ hx_target }}" hx-swap="{{ hx_swap|default:'innerHTML' }}"{% endif %}
+      {% if hx_indicator %}hx-indicator="{{ hx_indicator }}"{% endif %}
       novalidate>
   {% csrf_token %}
+  <input type="hidden" name="form_ts_token" value="{{ form_ts_token }}">
 
-  <!-- Campo Honeypot Anti-Bot (Invisível a usuários humanos e leitores de tela) -->
   <div class="hp-trap" aria-hidden="true">
-    <label for="id_website_url_trap">Não preencha este campo</label>
+    <label for="id_website_{{ trap_suffix|default:'main' }}">Campo institucional interno</label>
+    <input type="text"
+           name="website"
+           id="id_website_{{ trap_suffix|default:'main' }}"
+           tabindex="-1"
+           autocomplete="off">
+    <label for="id_website_url_trap_{{ trap_suffix|default:'main' }}">Não preencha este campo</label>
     <input type="text"
            name="website_url_trap"
-           id="id_website_url_trap"
+           id="id_website_url_trap_{{ trap_suffix|default:'main' }}"
            tabindex="-1"
            autocomplete="off">
   </div>
 
   {{ form|crispy }}
 
-  <div class="mt-2">
+  <div class="rocha-form-actions mt-3">
     <button type="submit"
             class="btn {{ submit_variant|default:'btn--gold' }} w-full">
       {% if submit_icon %}
@@ -32,6 +38,12 @@
       {% endif %}
       <span>{{ submit_label|default:"Enviar Solicitação" }}</span>
     </button>
+    {% if reset_enabled %}
+      <button type="button"
+              class="btn btn--outline w-full mt-2"
+              data-simulador-reset="true">
+        <span>{{ reset_label|default:"Restaurar padrões" }}</span>
+      </button>
+    {% endif %}
   </div>
 </form>
-

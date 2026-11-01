@@ -4,21 +4,28 @@
 
 {% block brand_unit %}construtora{% endblock %}
 
+{% block extra_css %}
+  <link rel="stylesheet"
+        href="{% static 'css/pages/construtora.css' %}"
+        data-vertical-css="construtora">
+{% endblock %}
+
 {% block content %}
-  <!-- ======================================================================
-       HERO IMERSIVO 3D — ROCHA CONSTRUTORA (CAIXA / MINHA CASA MINHA VIDA)
-       ====================================================================== -->
+  {% comment %}
+    HERO IMERSIVO — ROCHA CONSTRUTORA (CAIXA HABITACIONAL & MINHA CASA MINHA VIDA)
+  {% endcomment %}
   <section class="hero-construtora" id="inicio">
     <div class="hero-construtora__glow" aria-hidden="true"></div>
 
     <div class="container split-layout">
       <div>
-        <p class="eyebrow">
+        <p class="eyebrow" data-kinetic="chars">
           {% include "components/_icon.html" with name="sparkles" class="heroicon heroicon--sm" only %}
+
           <span>Rocha Construtora &middot; Viçosa do Ceará e Região</span>
         </p>
 
-        <h1 class="hero-construtora__title">
+        <h1 class="hero-construtora__title" data-kinetic="words">
           Sua casa própria construída do zero e financiada pela Caixa.
           <span class="editorial-accent block mt-2">Do terreno às chaves.</span>
         </h1>
@@ -32,39 +39,45 @@
         <div class="hero-construtora__actions">
           <a class="btn btn--gold" href="#simulador">
             {% include "components/_icon.html" with name="calculator" class="heroicon" only %}
+
             <span>Simular Minha Obra</span>
           </a>
           <a class="btn btn--outline" href="#etapas-obra">
             {% include "components/_icon.html" with name="cube-transparent" class="heroicon" only %}
+
             <span>Explorar Obra em 3D</span>
           </a>
         </div>
 
-        <div class="hero-metrics">
-          <div>
+        <div class="hero-metrics" data-stagger-group>
+          <div data-stagger-item>
             <strong class="hero-metrics__value">Terreno + Obra</strong>
             <span class="hero-metrics__label">Em um único contrato Caixa</span>
           </div>
-          <div>
+          <div data-stagger-item>
             <strong class="hero-metrics__value">FGTS + Subsídio</strong>
             <span class="hero-metrics__label">Abatimento real na entrada</span>
           </div>
-          <div>
-            <strong class="hero-metrics__value">100% Auditada</strong>
+          <div data-stagger-item>
+            <strong class="hero-metrics__value" data-count-to="100" data-count-suffix="% Auditada">100% Auditada</strong>
             <span class="hero-metrics__label">Vistoria Caixa em cada etapa</span>
           </div>
         </div>
       </div>
 
-      <!-- Vitrine Flutuante 3D Reativa ao Movimento -->
       <div class="hero-card-3d-wrap">
-        <aside class="hero-card-3d" id="hero-card-3d" aria-label="Diferenciais do financiamento Caixa">
+        {% include "components/_image.html" with avif_src="img/construtora/hero-residencia-ceara.avif" webp_src="img/construtora/hero-residencia-ceara.webp" alt="Residência contemporânea térrea construída pela Rocha Construtora na Serra da Ibiapaba" width=1280 height=854 sizes="(min-width: 1024px) 46vw, 94vw" priority=True wrapper_class="hero-construtora__photo mb-4" only %}
+
+        <aside class="hero-card-3d"
+               id="hero-card-3d"
+               aria-label="Diferenciais do financiamento Caixa">
           <span class="hero-card-3d__badge">
             {% include "components/_icon.html" with name="shield-check" class="heroicon heroicon--sm" only %}
+
             <span>Especialista Caixa &amp; Minha Casa Minha Vida</span>
           </span>
 
-          <h2 class="heading-2xl mb-3">Por que construir financiado é mais vantajoso?</h2>
+          <h2 class="heading-xl mb-2">Por que construir financiado é mais vantajoso?</h2>
           <p class="text-sm">
             Você escolhe a planta ideal para sua família, acompanha a fundação e economiza até 30% em comparação a comprar um imóvel pronto.
           </p>
@@ -72,6 +85,7 @@
           <div class="hero-card-3d__pillars">
             <div class="hero-pillar-item">
               {% include "components/_icon.html" with name="banknotes" class="heroicon text-gold" only %}
+
               <div>
                 <strong class="block text-sm">Juros Reduzidos Minha Casa Minha Vida</strong>
                 <span class="text-xs">Menores taxas históricas para a região Nordeste.</span>
@@ -80,6 +94,7 @@
 
             <div class="hero-pillar-item">
               {% include "components/_icon.html" with name="clipboard-document-check" class="heroicon text-gold" only %}
+
               <div>
                 <strong class="block text-sm">Zero Dor de Cabeça com Burocracia</strong>
                 <span class="text-xs">Projetos, prefeitura, ART e engenharia Caixa feitos pela Rocha.</span>
@@ -88,6 +103,7 @@
 
             <div class="hero-pillar-item">
               {% include "components/_icon.html" with name="key" class="heroicon text-gold" only %}
+
               <div>
                 <strong class="block text-sm">Entrega das Chaves com Garantia</strong>
                 <span class="text-xs">Cronograma físico-financeiro cumprido à risca.</span>
@@ -100,6 +116,7 @@
              target="_blank"
              rel="noopener noreferrer">
             {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
+
             <span>Falar com Engenheiro no WhatsApp</span>
           </a>
         </aside>
@@ -107,214 +124,310 @@
     </div>
   </section>
 
-  <!-- ======================================================================
-       SEÇÃO 01 — PALCO ARQUITETÔNICO 3D INTERATIVO & ETAPAS DA OBRA
-       ====================================================================== -->
-  <section class="section" id="etapas-obra">
+  {% comment %}
+    SEÇÃO 01 — PALCO ARQUITETÔNICO 3D COM SCROLL-PINNING (ETAPAS 01 A 06)
+  {% endcomment %}
+  <section class="section obra-stage-section" id="etapas-obra">
+    {{ etapas_obra_payload|json_script:"etapas-obra-json" }}
+
     <div class="container">
-      <div class="max-w-3xl mb-10" data-reveal>
-        <p class="eyebrow">01 / Engenharia Transparente em 3D</p>
-        <h2 class="heading-3xl mt-2 mb-3">
-          Veja sua casa ganhar forma <span class="editorial-accent">etapa por etapa.</span>
-        </h2>
-        <p>
-          Role a página, clique em cada fase ou mova o cursor sobre a maquete isométrica 3D para inspecionar como executamos e validamos sua obra junto à Caixa.
-        </p>
-      </div>
-
-      <div class="obra-3d-grid">
-        <!-- Coluna Sticky: Maquete Isométrica 3D + Painel HTMX -->
-        <div class="obra-3d-sticky">
-          <div class="blueprint-viewport">
-            <div class="blueprint-viewport__toolbar">
-              <span class="blueprint-status-pill" id="blueprint-stage-label">
-                Etapa 01 &middot; {{ etapa_ativa.titulo }}
-              </span>
-
-              <button type="button"
-                      class="btn btn--outline text-xs py-2 px-3"
-                      id="toggle-exploded-3d"
-                      aria-pressed="false">
-                {% include "components/_icon.html" with name="cube-transparent" class="heroicon heroicon--sm" only %}
-                <span data-explode-text>Explodir Camadas 3D</span>
-              </button>
-            </div>
-
-            <!-- Cena Isométrica 3D Acelerada por GPU -->
-            <div class="iso-scene-wrap"
-                 id="iso-scene-wrap"
-                 role="group"
-                 aria-label="Maquete 3D interativa de uma residência Minha Casa Minha Vida sendo construída em seis etapas: terreno, fundação, estrutura, alvenaria, instalações e entrega das chaves. Arraste para girar e use os botões para aproximar.">
-              <!-- Renderizador WebGL (Three.js) — assume o palco quando disponível -->
-              <div class="iso-webgl"
-                   id="iso-webgl"
-                   data-three-url="{% static 'vendor/three/three.module.min.js' %}"></div>
-
-              <div class="iso-house-model" id="iso-house-model">
-                <!-- Holograma da residência Minha Casa Minha Vida (construído por etapa) -->
-                <div class="iso-hologram" aria-hidden="true">
-                  <!-- Etapa 03: laje e pilares -->
-                  <div class="holo-part holo-part--slab" data-holo-order="3">
-                    <div class="holo-face holo-face--slab"></div>
-                  </div>
-                  <div class="holo-part holo-part--pillar holo-part--pillar-nw" data-holo-order="3">
-                    <div class="holo-face holo-face--pillar"></div>
-                  </div>
-                  <div class="holo-part holo-part--pillar holo-part--pillar-ne" data-holo-order="3">
-                    <div class="holo-face holo-face--pillar"></div>
-                  </div>
-                  <div class="holo-part holo-part--pillar holo-part--pillar-sw" data-holo-order="3">
-                    <div class="holo-face holo-face--pillar"></div>
-                  </div>
-                  <div class="holo-part holo-part--pillar holo-part--pillar-se" data-holo-order="3">
-                    <div class="holo-face holo-face--pillar"></div>
-                  </div>
-
-                  <!-- Etapa 04: alvenaria -->
-                  <div class="holo-part holo-part--wall holo-part--wall-front" data-holo-order="4">
-                    <div class="holo-face holo-face--wall"></div>
-                  </div>
-                  <div class="holo-part holo-part--wall holo-part--wall-back" data-holo-order="4">
-                    <div class="holo-face holo-face--wall"></div>
-                  </div>
-                  <div class="holo-part holo-part--wall holo-part--wall-left" data-holo-order="4">
-                    <div class="holo-face holo-face--wall"></div>
-                  </div>
-                  <div class="holo-part holo-part--wall holo-part--wall-right" data-holo-order="4">
-                    <div class="holo-face holo-face--wall"></div>
-                  </div>
-
-                  <!-- Etapa 05: cobertura e instalações -->
-                  <div class="holo-part holo-part--roof holo-part--roof-front" data-holo-order="5">
-                    <div class="holo-face holo-face--roof"></div>
-                  </div>
-                  <div class="holo-part holo-part--roof holo-part--roof-back" data-holo-order="5">
-                    <div class="holo-face holo-face--roof"></div>
-                  </div>
-                  <div class="holo-part holo-part--glow" data-holo-order="5">
-                    <div class="holo-face holo-face--glow"></div>
-                  </div>
-
-                  <!-- Etapa 06: acabamento e entrega das chaves -->
-                  <div class="holo-part holo-part--door" data-holo-order="6">
-                    <div class="holo-face holo-face--door"></div>
-                  </div>
-                  <div class="holo-part holo-part--window holo-part--window-front" data-holo-order="6">
-                    <div class="holo-face holo-face--window"></div>
-                  </div>
-                  <div class="holo-part holo-part--window holo-part--window-side" data-holo-order="6">
-                    <div class="holo-face holo-face--window"></div>
-                  </div>
-                </div>
-
-                <div class="iso-layer iso-layer--terreno is-built is-current" data-layer-order="1"></div>
-                <div class="iso-layer iso-layer--fundacao" data-layer-order="2"></div>
-                <div class="iso-layer iso-layer--estrutura" data-layer-order="3"></div>
-                <div class="iso-layer iso-layer--alvenaria" data-layer-order="4"></div>
-                <div class="iso-layer iso-layer--instalacoes" data-layer-order="5"></div>
-                <div class="iso-layer iso-layer--entrega" data-layer-order="6">
-                  <span>Chaves</span>
-                </div>
-              </div>
-
-              <div class="iso-views" role="group" aria-label="Vistas rápidas da maquete 3D">
-                <button type="button"
-                        class="iso-views__btn"
-                        data-view-action="front"
-                        aria-pressed="false">
-                  Frontal
-                </button>
-                <button type="button"
-                        class="iso-views__btn"
-                        data-view-action="side"
-                        aria-pressed="false">
-                  Lateral
-                </button>
-                <button type="button"
-                        class="iso-views__btn"
-                        data-view-action="top"
-                        aria-pressed="false">
-                  A&eacute;rea
-                </button>
-                <button type="button"
-                        class="iso-views__btn is-active"
-                        data-view-action="iso"
-                        aria-pressed="true">
-                  Isom&eacute;trica
-                </button>
-              </div>
-
-              <div class="iso-hud" role="group" aria-label="Controles da maquete 3D">
-                <button type="button"
-                        class="iso-hud__btn"
-                        data-view-action="zoom-in"
-                        aria-label="Aproximar a maquete">
-                  <span aria-hidden="true">+</span>
-                </button>
-                <button type="button"
-                        class="iso-hud__btn"
-                        data-view-action="zoom-out"
-                        aria-label="Afastar a maquete">
-                  <span aria-hidden="true">&minus;</span>
-                </button>
-                <button type="button"
-                        class="iso-hud__btn"
-                        data-view-action="reset"
-                        aria-label="Restaurar a vista isométrica">
-                  <span aria-hidden="true">&#8634;</span>
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span>Evolução física auditada</span>
-                <span class="text-gold">Arraste para girar &middot; vistas rápidas e zoom</span>
-              </div>
-              <div class="obra-progress-track" aria-hidden="true">
-                <div class="obra-progress-fill" id="obra-progress-fill"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Painel Técnico Atualizado Dinamicamente via HTMX -->
-          <div id="painel-etapa-detalhe" aria-live="polite">
-            {% include "pages/construtora/partials/_etapa_painel.html" with etapa_ativa=etapa_ativa whatsapp_etapa_url=whatsapp_etapa_inicial only %}
-          </div>
+      <div class="obra-stage-intro" data-reveal>
+        <div class="max-w-3xl">
+          <p class="eyebrow">01 / Engenharia Transparente em 3D</p>
+          <h2 class="heading-3xl mt-2 mb-3" data-kinetic="words">
+            Veja sua casa ganhar forma <span class="editorial-accent">etapa por etapa.</span>
+          </h2>
+          <p>
+            Role para construir a residência holográfica do terreno até a entrega das chaves, alterne entre modo CAD e realista ou exploda todas as camadas estruturais em 3D.
+          </p>
         </div>
 
-        <!-- Coluna de Rolagem: As 6 Etapas Construtivas -->
-        <div class="stage-selector-list">
-          {% for etapa in etapas_obra %}
-            <button type="button"
-                    class="stage-step-card {% if forloop.first %}is-active{% endif %}"
-                    data-stage-order="{{ etapa.ordem }}"
-                    data-stage-title="{{ etapa.titulo }}"
-                    data-stage-progress="{{ etapa.progresso_percentual }}"
-                    hx-get="{% url 'construtora:etapa_detalhe' etapa.slug %}"
-                    hx-target="#painel-etapa-detalhe"
-                    hx-swap="innerHTML">
-              <div class="stage-step-card__top">
-                <span class="stage-step-card__num">ETAPA {{ etapa.codigo }}</span>
-                <span class="text-xs text-gold">{{ etapa.progresso_percentual }}% concluído</span>
+        <a class="btn btn--outline text-xs obra-skip-btn" href="#financiamento-caixa">
+          {% include "components/_icon.html" with name="arrow-down" class="heroicon heroicon--sm" only %}
+
+          <span>Pular etapas 3D</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="obra-scroll-runway" id="obra-scroll-runway">
+      <div class="obra-pinned-viewport" id="obra-pinned-viewport">
+        <div class="container obra-pinned-inner">
+          <div class="stage-milestones"
+               role="group"
+               aria-label="Navegação rápida pelas 6 etapas construtivas">
+            {% for etapa in etapas_obra %}
+              <button type="button"
+                      class="stage-step-card stage-milestone-btn {% if etapa.ordem == etapa_ativa.ordem %}is-active{% endif %}"
+                      data-stage-order="{{ etapa.ordem }}"
+                      data-stage-slug="{{ etapa.slug }}"
+                      data-stage-title="{{ etapa.titulo }}"
+                      data-stage-progress="{{ etapa.progresso_percentual }}"
+                      data-stage-url="{% url 'construtora:etapa_detalhe_numero' etapa.ordem %}"
+                      aria-current="{% if etapa.ordem == etapa_ativa.ordem %}step{% else %}false{% endif %}">
+                <div class="stage-milestone-btn__top">
+                  <span class="stage-step-card__num">{{ etapa.codigo }}</span>
+                  <span class="stage-milestone-btn__pct">{{ etapa.progresso_percentual }}%</span>
+                </div>
+                <span class="stage-milestone-btn__title">{{ etapa.titulo }}</span>
+              </button>
+            {% endfor %}
+          </div>
+
+          <div class="obra-3d-grid">
+            <div class="blueprint-viewport">
+              <div class="blueprint-viewport__toolbar">
+                <span class="blueprint-status-pill" id="blueprint-stage-label">
+                  Etapa {{ etapa_ativa.codigo }} &middot; {{ etapa_ativa.titulo }}
+                </span>
+
+                <div class="blueprint-viewport__actions">
+                  <button type="button"
+                          class="btn btn--outline blueprint-ctrl-btn"
+                          id="toggle-render-mode"
+                          aria-pressed="true"
+                          data-render-mode="hologram">
+                    {% include "components/_icon.html" with name="sparkles" class="heroicon heroicon--sm" only %}
+
+                    <span data-render-mode-text>Holograma CAD</span>
+                  </button>
+
+                  <button type="button"
+                          class="btn btn--outline blueprint-ctrl-btn"
+                          id="toggle-exploded-3d"
+                          aria-pressed="false">
+                    {% include "components/_icon.html" with name="cube-transparent" class="heroicon heroicon--sm" only %}
+
+                    <span data-explode-text>Explodir Camadas 3D</span>
+                  </button>
+                </div>
               </div>
-              <h3 class="heading-xl mb-1">{{ etapa.titulo }}</h3>
-              <p class="text-sm">{{ etapa.resumo }}</p>
-            </button>
-          {% endfor %}
+
+              <div class="iso-scene-wrap"
+                   id="iso-scene-wrap"
+                   role="group"
+                   aria-label="Maquete 3D interativa de uma residência Minha Casa Minha Vida sendo construída em seis etapas: terreno, fundação, estrutura, alvenaria, instalações e entrega das chaves. Arraste para girar e use os botões para aproximar.">
+                <div class="iso-webgl"
+                     id="iso-webgl"
+                     data-three-url="{% static 'vendor/three/three.module.min.js' %}"></div>
+
+                <div class="iso-house-model" id="iso-house-model">
+                  <div class="iso-scan-plane" id="iso-scan-plane" aria-hidden="true"></div>
+
+                  <div class="iso-hologram" aria-hidden="true">
+                    <div class="holo-part holo-part--gabarito"
+                         data-holo-order="1"
+                         data-explode-vec="0,0,-54">
+                      <div class="holo-face holo-face--gabarito"></div>
+                    </div>
+                    <div class="holo-part holo-part--laser"
+                         data-holo-order="1"
+                         data-explode-vec="-34,26,-38">
+                      <div class="holo-face holo-face--laser"></div>
+                    </div>
+
+                    <div class="holo-part holo-part--sapatas"
+                         data-holo-order="2"
+                         data-explode-vec="0,0,-34">
+                      <div class="holo-face holo-face--sapatas"></div>
+                    </div>
+                    <div class="holo-part holo-part--baldrame"
+                         data-holo-order="2"
+                         data-explode-vec="0,0,-16">
+                      <div class="holo-face holo-face--baldrame"></div>
+                    </div>
+
+                    <div class="holo-part holo-part--slab"
+                         data-holo-order="3"
+                         data-explode-vec="0,0,78">
+                      <div class="holo-face holo-face--slab"></div>
+                    </div>
+                    <div class="holo-part holo-part--pillar holo-part--pillar-nw"
+                         data-holo-order="3"
+                         data-explode-vec="-28,-18,26">
+                      <div class="holo-face holo-face--pillar"></div>
+                    </div>
+                    <div class="holo-part holo-part--pillar holo-part--pillar-ne"
+                         data-holo-order="3"
+                         data-explode-vec="28,-18,26">
+                      <div class="holo-face holo-face--pillar"></div>
+                    </div>
+                    <div class="holo-part holo-part--pillar holo-part--pillar-sw"
+                         data-holo-order="3"
+                         data-explode-vec="-28,18,26">
+                      <div class="holo-face holo-face--pillar"></div>
+                    </div>
+                    <div class="holo-part holo-part--pillar holo-part--pillar-se"
+                         data-holo-order="3"
+                         data-explode-vec="28,18,26">
+                      <div class="holo-face holo-face--pillar"></div>
+                    </div>
+
+                    <div class="holo-part holo-part--wall holo-part--wall-front"
+                         data-holo-order="4"
+                         data-explode-vec="0,46,36">
+                      <div class="holo-face holo-face--wall"></div>
+                    </div>
+                    <div class="holo-part holo-part--wall holo-part--wall-back"
+                         data-holo-order="4"
+                         data-explode-vec="0,-46,36">
+                      <div class="holo-face holo-face--wall"></div>
+                    </div>
+                    <div class="holo-part holo-part--wall holo-part--wall-left"
+                         data-holo-order="4"
+                         data-explode-vec="-52,0,38">
+                      <div class="holo-face holo-face--wall"></div>
+                    </div>
+                    <div class="holo-part holo-part--wall holo-part--wall-right"
+                         data-holo-order="4"
+                         data-explode-vec="52,0,38">
+                      <div class="holo-face holo-face--wall"></div>
+                    </div>
+
+                    <div class="holo-part holo-part--roof holo-part--roof-front"
+                         data-holo-order="4"
+                         data-explode-vec="16,12,132">
+                      <div class="holo-face holo-face--roof"></div>
+                    </div>
+                    <div class="holo-part holo-part--roof holo-part--roof-back"
+                         data-holo-order="4"
+                         data-explode-vec="-16,-12,132">
+                      <div class="holo-face holo-face--roof"></div>
+                    </div>
+
+                    <div class="holo-part holo-part--mep-west"
+                         data-holo-order="5"
+                         data-explode-vec="-74,0,48">
+                      <div class="holo-face holo-face--mep"></div>
+                    </div>
+                    <div class="holo-part holo-part--mep-east"
+                         data-holo-order="5"
+                         data-explode-vec="74,8,48">
+                      <div class="holo-face holo-face--mep"></div>
+                    </div>
+                    <div class="holo-part holo-part--glow"
+                         data-holo-order="5"
+                         data-explode-vec="0,0,8">
+                      <div class="holo-face holo-face--glow"></div>
+                    </div>
+
+                    <div class="holo-part holo-part--door"
+                         data-holo-order="6"
+                         data-explode-vec="-22,68,22">
+                      <div class="holo-face holo-face--door"></div>
+                    </div>
+                    <div class="holo-part holo-part--window holo-part--window-front"
+                         data-holo-order="6"
+                         data-explode-vec="0,58,48">
+                      <div class="holo-face holo-face--window"></div>
+                    </div>
+                    <div class="holo-part holo-part--window holo-part--window-side"
+                         data-holo-order="6"
+                         data-explode-vec="62,0,48">
+                      <div class="holo-face holo-face--window"></div>
+                    </div>
+                  </div>
+
+                  <div class="iso-layer iso-layer--terreno is-built is-current"
+                       data-layer-order="1"
+                       data-explode-vec="0,0,-54"></div>
+                  <div class="iso-layer iso-layer--fundacao"
+                       data-layer-order="2"
+                       data-explode-vec="0,0,-24"></div>
+                  <div class="iso-layer iso-layer--estrutura"
+                       data-layer-order="3"
+                       data-explode-vec="0,0,28"></div>
+                  <div class="iso-layer iso-layer--alvenaria"
+                       data-layer-order="4"
+                       data-explode-vec="0,0,64"></div>
+                  <div class="iso-layer iso-layer--instalacoes"
+                       data-layer-order="5"
+                       data-explode-vec="0,0,98"></div>
+                  <div class="iso-layer iso-layer--entrega"
+                       data-layer-order="6"
+                       data-explode-vec="0,38,152">
+                    <span>Chaves</span>
+                  </div>
+                </div>
+
+                <div class="iso-views" role="group" aria-label="Vistas rápidas da maquete 3D">
+                  <button type="button"
+                          class="iso-views__btn"
+                          data-view-action="front"
+                          aria-pressed="false">
+                    Frontal
+                  </button>
+                  <button type="button"
+                          class="iso-views__btn"
+                          data-view-action="side"
+                          aria-pressed="false">
+                    Lateral
+                  </button>
+                  <button type="button"
+                          class="iso-views__btn"
+                          data-view-action="top"
+                          aria-pressed="false">
+                    A&eacute;rea
+                  </button>
+                  <button type="button"
+                          class="iso-views__btn is-active"
+                          data-view-action="iso"
+                          aria-pressed="true">
+                    Isom&eacute;trica
+                  </button>
+                </div>
+
+                <div class="iso-hud" role="group" aria-label="Controles da maquete 3D">
+                  <button type="button"
+                          class="iso-hud__btn"
+                          data-view-action="zoom-in"
+                          aria-label="Aproximar a maquete">
+                    <span aria-hidden="true">+</span>
+                  </button>
+                  <button type="button"
+                          class="iso-hud__btn"
+                          data-view-action="zoom-out"
+                          aria-label="Afastar a maquete">
+                    <span aria-hidden="true">&minus;</span>
+                  </button>
+                  <button type="button"
+                          class="iso-hud__btn"
+                          data-view-action="reset"
+                          aria-label="Restaurar a vista isométrica">
+                    <span aria-hidden="true">&#8634;</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="blueprint-viewport__footer">
+                <div class="flex flex-wrap justify-between gap-2 text-xs mb-1">
+                  <span id="obra-scroll-hint">Evolução física auditada &middot; Role para avançar as 6 etapas</span>
+                  <span class="text-gold">Arraste para girar 360&deg; &middot; Vistas rápidas e zoom</span>
+                </div>
+                <div class="obra-progress-track" aria-hidden="true">
+                  <div class="obra-progress-fill" id="obra-progress-fill"></div>
+                </div>
+              </div>
+            </div>
+
+            <div id="painel-etapa-detalhe" class="obra-pinned-panel" aria-live="polite">
+              {% include "pages/construtora/partials/_etapa_painel.html" with etapa_ativa=etapa_ativa whatsapp_etapa_url=whatsapp_etapa_inicial only %}
+
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ======================================================================
-       SEÇÃO 02 — COMO FUNCIONA O FINANCIAMENTO CAIXA / MINHA CASA MINHA VIDA
-       ====================================================================== -->
-  <section class="section" id="financiamento-caixa">
+  {% comment %}
+    SEÇÃO 02 — COMO FUNCIONA O FINANCIAMENTO CAIXA / MINHA CASA MINHA VIDA
+  {% endcomment %}
+  <section class="section" id="financiamento-caixa" data-timeline-section>
     <div class="container">
-      <div class="max-w-3xl mb-10" data-reveal>
+      <div class="max-w-3xl mb-8" data-reveal>
         <p class="eyebrow">02 / Processo Simplificado Caixa Habitacional</p>
-        <h2 class="heading-3xl mt-2 mb-3">
+        <h2 class="heading-3xl mt-2 mb-3" data-kinetic="words">
           Como tiramos sua obra do papel pelo <span class="editorial-accent">Minha Casa Minha Vida.</span>
         </h2>
         <p>
@@ -322,12 +435,17 @@
         </p>
       </div>
 
-      <ol class="mcmv-timeline">
+      <div class="timeline-progress-track" aria-hidden="true">
+        <div class="timeline-progress-fill" data-timeline-fill></div>
+      </div>
+
+      <ol class="mcmv-timeline" data-stagger-group>
         {% for passo in passos_financiamento %}
-          <li class="mcmv-step-card" data-reveal>
+          <li class="mcmv-step-card" data-stagger-item>
             <div class="flex items-center justify-between">
               <span class="eyebrow">Passo {{ passo.numero }}</span>
               {% include "components/_icon.html" with name=passo.icone class="heroicon text-gold" only %}
+
             </div>
             <h3 class="heading-lg">{{ passo.titulo }}</h3>
             <p class="text-sm">{{ passo.descricao }}</p>
@@ -338,14 +456,14 @@
     </div>
   </section>
 
-  <!-- ======================================================================
-       SEÇÃO 03 — PADRÕES CONSTRUTIVOS DE REFERÊNCIA (IMAGENS OTIMIZADAS)
-       ====================================================================== -->
+  {% comment %}
+    SEÇÃO 03 — PADRÕES CONSTRUTIVOS DE REFERÊNCIA (IMAGENS LOCAIS AVIF/WEBP)
+  {% endcomment %}
   <section class="section" id="projetos">
     <div class="container">
       <div class="max-w-3xl mb-10" data-reveal>
         <p class="eyebrow">03 / Inspiração &amp; Padrão Rocha</p>
-        <h2 class="heading-3xl mt-2 mb-3">
+        <h2 class="heading-3xl mt-2 mb-3" data-kinetic="words">
           Projetos pensados para cada perfil familiar.
         </h2>
         <p>
@@ -353,11 +471,12 @@
         </p>
       </div>
 
-      <div class="grid-auto">
+      <div class="grid-auto" data-stagger-group>
         {% for projeto in projetos_referencia %}
-          <article class="card card--interactive flex flex-col justify-between gap-4" data-reveal>
+          <article class="card card--interactive cq-surface flex flex-col justify-between gap-4"
+                   data-stagger-item>
             <div>
-              {% include "components/_image.html" with src=projeto.imagem_url alt=projeto.titulo width=900 height=600 wrapper_class="mb-4 aspect-video" only %}
+              {% include "components/_image.html" with avif_src=projeto.imagem_avif webp_src=projeto.imagem_webp alt=projeto.titulo width=960 height=600 sizes="(min-width: 1024px) 31vw, (min-width: 640px) 48vw, 94vw" wrapper_class="mb-4 aspect-video" only %}
 
               <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                 <span class="eyebrow">{{ projeto.modalidade }}</span>
@@ -374,6 +493,7 @@
                target="_blank"
                rel="noopener noreferrer">
               {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
+
               <span>Quero um projeto neste padrão</span>
             </a>
           </article>
@@ -382,54 +502,61 @@
     </div>
   </section>
 
-  <!-- ======================================================================
-       SEÇÃO 04 — PRÉ-SIMULADOR INTERATIVO MINHA CASA MINHA VIDA (CRISPY + HTMX)
-       ====================================================================== -->
+  {% comment %}
+    SEÇÃO 04 — SIMULADOR INTERATIVO HABITACIONAL DE 2 COLUNAS (SAC / PRICE)
+  {% endcomment %}
   <section class="section" id="simulador">
-    <div class="container split-layout">
-      <div data-reveal>
-        <p class="eyebrow">04 / Simulador Habitacional</p>
-        <h2 class="heading-3xl mt-2 mb-4">
-          Faça sua pré-análise gratuita em menos de 1 minuto.
-        </h2>
-        <p class="mb-6">
-          Veja instantaneamente em qual faixa do <strong>Minha Casa Minha Vida</strong> ou linha <strong>Caixa Habitacional</strong> sua renda familiar se enquadra e receba atendimento direto do nosso setor de engenharia.
-        </p>
+    <div class="container">
+      <div class="simulador-intro mb-8" data-reveal>
+        <div class="max-w-3xl">
+          <p class="eyebrow">04 / Simulador Habitacional Caixa</p>
+          <h2 class="heading-3xl mt-2 mb-3" data-kinetic="words">
+            Simule parcelas SAC e PRICE em tempo real.
+          </h2>
+          <p>
+            Compare faixas do <strong>Minha Casa Minha Vida</strong> e da linha <strong>Caixa Habitacional</strong> com subsídio regional Nordeste, uso do FGTS e cálculo exato de entrada mínima.
+          </p>
+        </div>
 
-        <div class="grid gap-3">
+        <div class="simulador-pillars">
           <div class="hero-pillar-item">
             {% include "components/_icon.html" with name="check-circle" class="heroicon text-gold" only %}
-            <span class="text-sm">Aceitamos composição de renda familiar (cônjuge, pais ou filhos).</span>
+
+            <span class="text-sm">Composição de renda familiar (cônjuge, pais ou filhos).</span>
           </div>
           <div class="hero-pillar-item">
             {% include "components/_icon.html" with name="check-circle" class="heroicon text-gold" only %}
-            <span class="text-sm">Simulamos tanto <strong>Terreno + Construção</strong> quanto <strong>Construção em Terreno Próprio</strong>.</span>
+
+            <span class="text-sm"><strong>Terreno + Construção</strong> ou <strong>Lote Próprio</strong> (até 90% LTV).</span>
           </div>
           <div class="hero-pillar-item">
             {% include "components/_icon.html" with name="shield-check" class="heroicon text-gold" only %}
-            <span class="text-sm">Seus dados são validados com segurança e nunca solicitamos senhas.</span>
+
+            <span class="text-sm">Simulação livre sem exigir cadastro ou senhas.</span>
           </div>
         </div>
       </div>
 
       <div id="container-simulacao" data-reveal>
-        {% include "pages/construtora/partials/_form_simulacao.html" with form_simulacao=form_simulacao only %}
+        {% include "pages/construtora/partials/_simulador_workspace.html" with form_simulacao=form_simulacao resultado_simulacao=resultado_simulacao only %}
+
       </div>
     </div>
   </section>
 
-  <!-- ======================================================================
-       SEÇÃO 05 — SINERGIA ROCHA LOCAÇÕES & CONTATO DIRETO
-       ====================================================================== -->
+  {% comment %}
+    SEÇÃO 05 — SINERGIA ROCHA LOCAÇÕES & CONTATO DIRETO
+  {% endcomment %}
   <section class="section" id="contato">
     <div class="container">
       <div class="locadora-synergy-banner split-layout" data-reveal>
         <div>
           <p class="eyebrow">
             {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon heroicon--sm" only %}
+
             <span>Mesma Marca &middot; Mesma Excelência Operacional</span>
           </p>
-          <h2 class="heading-2xl mt-2 mb-3">
+          <h2 class="heading-2xl mt-2 mb-3" data-kinetic="words">
             Já está em obra e precisa alugar equipamentos?
           </h2>
           <p class="mb-6">
@@ -440,21 +567,26 @@
                href="{% url 'locadora:catalogo' %}"
                data-unit-target="locadora">
               {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon" only %}
+
               <span>Acessar Rocha Locações</span>
               {% include "components/_icon.html" with name="arrow-right" class="heroicon heroicon--sm" only %}
+
             </a>
             <a class="btn btn--whatsapp"
                href="{{ cta_whatsapp_geral }}"
                target="_blank"
                rel="noopener noreferrer">
               {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
+
               <span>Falar com a Construtora</span>
             </a>
           </div>
         </div>
 
         <div class="card">
-          <h3 class="heading-lg mb-3">Atendimento Presencial &amp; Digital</h3>
+          {% include "components/_image.html" with avif_src="img/construtora/apoio-sinergia-canteiro.avif" webp_src="img/construtora/apoio-sinergia-canteiro.webp" alt="Engenharia Rocha Construtora e andaimes Rocha Locações integrados no canteiro de obras" width=960 height=600 sizes="(min-width: 1024px) 38vw, 94vw" wrapper_class="mb-4 aspect-video" only %}
+
+          <h3 class="heading-lg mb-2">Atendimento Presencial &amp; Digital</h3>
           <p class="text-sm mb-4">
             {{ rocha.endereco_linha_1 }} — {{ rocha.endereco_linha_2 }}<br>
             {{ rocha.cidade_uf }} &middot; CEP {{ rocha.cep }}
@@ -462,10 +594,12 @@
           <div class="flex flex-col gap-2 text-sm">
             <a class="site-footer__item-link" href="tel:+{{ rocha.whatsapp_construtora }}">
               {% include "components/_icon.html" with name="phone" class="heroicon heroicon--sm text-gold" only %}
+
               <span><strong>Construtora:</strong> {{ rocha.tel_construtora_display }}</span>
             </a>
             <a class="site-footer__item-link" href="tel:+{{ rocha.whatsapp_locadora }}">
               {% include "components/_icon.html" with name="phone" class="heroicon heroicon--sm text-gold" only %}
+
               <span><strong>Locadora (Douglas):</strong> {{ rocha.tel_locadora_display }}</span>
             </a>
           </div>
@@ -473,4 +607,13 @@
       </div>
     </div>
   </section>
+{% endblock %}
+
+{% block extra_js %}
+  <script type="module"
+          src="{% static 'js/modules/scene3d-obra.js' %}"
+          nonce="{{ csp_nonce }}"></script>
+  <script type="module"
+          src="{% static 'js/modules/simulator-ui.js' %}"
+          nonce="{{ csp_nonce }}"></script>
 {% endblock %}

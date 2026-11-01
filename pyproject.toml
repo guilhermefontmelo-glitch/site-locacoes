@@ -75,7 +75,7 @@ ignore = [
 "**/admin.py" = ["ANN"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["config", "core", "apps", "locacoes"]
+known-first-party = ["config", "core", "apps"]
 section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
 combine-as-imports = true
 
@@ -99,7 +99,7 @@ close_void_tags = false
 preserve_blank_lines = true
 blank_line_after_tag = "load,extends,include"
 exclude = ".venv,.vercel,node_modules,staticfiles"
-ignore = "H021"
+ignore = "H021,H023,D018"
 
 # ==============================================================================
 # PYTEST & MYPY
@@ -115,6 +115,10 @@ python_version = "3.12"
 plugins = ["mypy_django_plugin.main"]
 strict = true
 exclude = ["migrations/", ".venv/", "staticfiles/"]
+
+[[tool.mypy.overrides]]
+module = ["environ", "environ.*"]
+ignore_missing_imports = true
 
 [tool.django-stubs]
 django_settings_module = "config.settings.local"

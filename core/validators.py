@@ -5,9 +5,7 @@ from django.core.exceptions import ValidationError
 
 def sanitize_plain_text(value: str, *, max_length: int = 240) -> str:
     """Remove caracteres de controle invisíveis, espaços redundantes e aplica limite."""
-    cleaned_chars: list[str] = [
-        ch for ch in value.strip() if ord(ch) >= 32 and ord(ch) != 127
-    ]
+    cleaned_chars: list[str] = [ch for ch in value.strip() if ord(ch) >= 32 and ord(ch) != 127]
     normalized: str = " ".join("".join(cleaned_chars).split())
     return normalized[:max_length]
 
@@ -30,4 +28,3 @@ def validate_brazilian_phone(value: str) -> str:
     if len(digits) == 11:
         return f"({digits[:2]}) {digits[2:7]}-{digits[7:]}"
     return f"({digits[:2]}) {digits[2:6]}-{digits[6:]}"
-

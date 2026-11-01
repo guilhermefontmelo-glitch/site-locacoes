@@ -68,4 +68,3 @@ def gerar_resumo_orcamento_locacao(
         observacoes=observacoes,
         whatsapp_url=whatsapp_url,
     )
-

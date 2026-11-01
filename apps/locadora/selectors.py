@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 
 from django.conf import settings
+from django.templatetags.static import static
 
 from core.security import build_whatsapp_url
 
@@ -21,6 +22,8 @@ class EquipamentoLocacao:
     especificacoes: tuple[str, ...]
     orientacao_uso: str
     icone: str
+    imagem_avif: str
+    imagem_webp: str
     imagem_url: str
     whatsapp_url: str
 
@@ -56,16 +59,14 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
             "Acesso seguro e estável para fachadas, pinturas, reboco e acabamentos em altura."
         ),
         "especificacoes": (
-            "Painéis metálicos de encaixe rápido e alta rigidez",
-            "Compatível com plataformas antiderrapantes, sapatas e rodízios",
+            "Painéis metálicos de encaixe rápido e alta rigidez estrutural (NR-18)",
+            "Compatível com plataformas antiderrapantes, guarda-corpo, sapatas e rodízios",
             "Inspecionado lote a lote antes do envio ao canteiro",
         ),
         "orientacao_uso": "Ideal para acelerar reboco externo, chapisco, pintura e instalações.",
         "icone": "building-office-2",
-        "imagem_url": (
-            "https://images.unsplash.com/photo-1504307651254-35680f356dfd"
-            "?auto=format&fit=crop&w=800&q=80"
-        ),
+        "imagem_avif": "img/locadora/andaime-tubular.avif",
+        "imagem_webp": "img/locadora/andaime-tubular.webp",
     },
     {
         "codigo": "02",
@@ -82,30 +83,26 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         ),
         "orientacao_uso": "Garante nivelamento exato da laje e canteiro limpo e seguro.",
         "icone": "shield-check",
-        "imagem_url": (
-            "https://images.unsplash.com/photo-1541888946425-d81bb19240f5"
-            "?auto=format&fit=crop&w=800&q=80"
-        ),
+        "imagem_avif": "img/locadora/escora-metalica.avif",
+        "imagem_webp": "img/locadora/escora-metalica.webp",
     },
     {
         "codigo": "03",
         "slug": "betoneira-400l",
-        "nome": "Betoneira Profissional",
+        "nome": "Betoneira Profissional 400L",
         "grupo_slug": "concretagem",
         "grupo_nome": "Concretagem",
         "etapa_obra": "Fundação, Estrutura & Alvenaria",
-        "resumo": "Mistura homogênea de concreto e argamassa com produtividade no canteiro.",
+        "resumo": "Mistura homogênea de concreto e argamassa com alta produtividade no canteiro.",
         "especificacoes": (
-            "Tambor de alta capacidade para traços uniformes sem esforço manual",
+            "Tambor metálico de 400 litros para traços uniformes sem esforço manual",
             "Motor elétrico revisado com proteção de cremalheira e correia",
             "Reduz desperdício de cimento e acelera concretagens e assentamento",
         ),
         "orientacao_uso": "Indispensável desde o concreto das sapatas até o reboco final.",
         "icone": "cube-transparent",
-        "imagem_url": (
-            "https://images.unsplash.com/photo-1589939705384-5185137a7f0f"
-            "?auto=format&fit=crop&w=800&q=80"
-        ),
+        "imagem_avif": "img/locadora/betoneira-400l.avif",
+        "imagem_webp": "img/locadora/betoneira-400l.webp",
     },
     {
         "codigo": "04",
@@ -116,16 +113,14 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "etapa_obra": "Fundação & Supraestrutura",
         "resumo": "Adensamento técnico do concreto, eliminando bolhas de ar, falhas e bicheiras.",
         "especificacoes": (
-            "Mangote de imersão de alta frequência para pilares, vigas e sapatas",
+            "Motor portátil acoplado a mangote flexível e agulha de imersão de alta frequência",
             "Aumenta a resistência mecânica e a impermeabilidade da peça concretada",
             "Operação ágil por um único operador na concretagem",
         ),
         "orientacao_uso": "Padrão obrigatório da engenharia Rocha em toda concretagem estrutural.",
         "icone": "sparkles",
-        "imagem_url": (
-            "https://images.unsplash.com/photo-1590644365607-1c5a519a7a37"
-            "?auto=format&fit=crop&w=800&q=80"
-        ),
+        "imagem_avif": "img/locadora/vibrador-concreto.avif",
+        "imagem_webp": "img/locadora/vibrador-concreto.webp",
     },
     {
         "codigo": "05",
@@ -136,16 +131,14 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "etapa_obra": "Obras de 2+ Pavimentos & Cobertura",
         "resumo": "Elevação rápida de baldes de argamassa, blocos e ferramentas entre pavimentos.",
         "especificacoes": (
-            "Cabo de aço de alta resistência com freio eletromagnético automático",
-            "Botoeira pendente com parada de emergência",
+            "Cabo de aço trançado de alta resistência com freio eletromagnético automático",
+            "Botoeira pendente com comando seguro de parada de emergência",
             "Multiplica o ritmo da equipe eliminando transporte manual em escadas",
         ),
         "orientacao_uso": "Ideal para sobrados, lajes superiores e içamento de materiais.",
         "icone": "truck",
-        "imagem_url": (
-            "https://images.unsplash.com/photo-1503387762-592deb58ef4e"
-            "?auto=format&fit=crop&w=800&q=80"
-        ),
+        "imagem_avif": "img/locadora/guincho-coluna.avif",
+        "imagem_webp": "img/locadora/guincho-coluna.webp",
     },
     {
         "codigo": "06",
@@ -162,10 +155,8 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         ),
         "orientacao_uso": "Perfeito para passagens hidráulicas/elétricas, reformas e demolições.",
         "icone": "wrench-screwdriver",
-        "imagem_url": (
-            "https://images.unsplash.com/photo-1572981779307-38b8cabb2407"
-            "?auto=format&fit=crop&w=800&q=80"
-        ),
+        "imagem_avif": "img/locadora/martelete-rompedor.avif",
+        "imagem_webp": "img/locadora/martelete-rompedor.webp",
     },
     {
         "codigo": "07",
@@ -182,10 +173,8 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         ),
         "orientacao_uso": "Agilidade no preparo de ferragens estruturais e ajustes finos em obra.",
         "icone": "wrench-screwdriver",
-        "imagem_url": (
-            "https://images.unsplash.com/photo-1530124566582-a618bc2615dc"
-            "?auto=format&fit=crop&w=800&q=80"
-        ),
+        "imagem_avif": "img/locadora/esmerilhadeira-angular.avif",
+        "imagem_webp": "img/locadora/esmerilhadeira-angular.webp",
     },
     {
         "codigo": "08",
@@ -204,10 +193,8 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
             "Essencial na montagem de fôrmas de vigas/pilares e estrutura do telhado."
         ),
         "icone": "wrench-screwdriver",
-        "imagem_url": (
-            "https://images.unsplash.com/photo-1504148455328-c376907d081c"
-            "?auto=format&fit=crop&w=800&q=80"
-        ),
+        "imagem_avif": "img/locadora/serra-circular.avif",
+        "imagem_webp": "img/locadora/serra-circular.webp",
     },
 )
 
@@ -248,15 +235,15 @@ _ETAPAS_COMO_ALUGAR: tuple[EtapaComoAlugar, ...] = (
 def _hidratar_equipamento(raw: dict[str, object], phone: str) -> EquipamentoLocacao:
     """Converte registro imutável em `EquipamentoLocacao` com URL WhatsApp sanitizada."""
     nome = str(raw["nome"])
+    imagem_avif = str(raw["imagem_avif"])
+    imagem_webp = str(raw["imagem_webp"])
     msg = (
         f"Olá! Vim pela área da Rocha Locações no site e gostaria de um orçamento "
         f"para locação de: {nome}."
     )
     especificacoes_raw = raw["especificacoes"]
     especificacoes: tuple[str, ...] = (
-        tuple(str(x) for x in especificacoes_raw)
-        if isinstance(especificacoes_raw, tuple)
-        else ()
+        tuple(str(x) for x in especificacoes_raw) if isinstance(especificacoes_raw, tuple) else ()
     )
     return EquipamentoLocacao(
         codigo=str(raw["codigo"]),
@@ -269,7 +256,9 @@ def _hidratar_equipamento(raw: dict[str, object], phone: str) -> EquipamentoLoca
         especificacoes=especificacoes,
         orientacao_uso=str(raw["orientacao_uso"]),
         icone=str(raw["icone"]),
-        imagem_url=str(raw["imagem_url"]),
+        imagem_avif=imagem_avif,
+        imagem_webp=imagem_webp,
+        imagem_url=static(imagem_webp),
         whatsapp_url=build_whatsapp_url(phone_e164=phone, message=msg),
     )
 
@@ -312,4 +301,3 @@ def listar_opcoes_equipamentos_choices() -> list[tuple[str, str]]:
 def listar_como_alugar() -> tuple[EtapaComoAlugar, ...]:
     """Retorna os 3 passos operacionais da Rocha Locações."""
     return _ETAPAS_COMO_ALUGAR
-

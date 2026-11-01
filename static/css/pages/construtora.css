@@ -1,13 +1,14 @@
 /* ==========================================================================
-   ROCHA CONSTRUTORA — PÁGINA PRINCIPAL (HERO 3D, PALCO ISOMÉTRICO & MCMV)
-   100% GPU Compositor Animations (transform + opacity)
+   ROCHA CONSTRUTORA — PÁGINA PRINCIPAL
+   Hero Editorial, Palco 3D com Scroll-Pinning (01..06) & Simulador 2 Colunas
+   100% GPU Compositor Animations (transform + translate + opacity)
    ========================================================================== */
 
-/* Hero Imersivo com Card 3D Reativo */
+/* Hero Imersivo com Card Informativo Caixa */
 .hero-construtora {
   position: relative;
-  padding-block: clamp(3.5rem, 7vw, 6.5rem) var(--space-section);
-  overflow: hidden;
+  padding-block: clamp(2rem, 4.5vw, 4rem) var(--space-section);
+  overflow: clip;
 }
 
 .hero-construtora__glow {
@@ -39,30 +40,13 @@
   margin-bottom: var(--space-8);
 }
 
-.hero-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-4);
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--color-border-subtle);
+.hero-construtora__photo {
+  aspect-ratio: 3 / 2;
 }
 
-.hero-metrics__value {
-  display: block;
-  font-family: var(--font-heading);
-  font-size: var(--text-xl);
-  font-weight: 800;
-  color: var(--color-gold-text);
-}
-
-.hero-metrics__label {
-  font-size: var(--text-xs);
-  color: var(--color-text-muted);
-}
-
-/* Card Flutuante 3D no Hero */
+/* Card Informativo Caixa no Hero (Sem animação de mouse no container) */
 .hero-card-3d-wrap {
-  perspective: 1100px;
+  position: relative;
 }
 
 .hero-card-3d {
@@ -74,11 +58,19 @@
   );
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-lg);
-  padding: var(--space-6);
+  padding: clamp(1.25rem, 2.5vw, 1.85rem);
   box-shadow: var(--shadow-md);
-  transform: rotateX(var(--hero-rx, 0deg)) rotateY(var(--hero-ry, 0deg));
-  transform-style: preserve-3d;
-  transition: transform 240ms var(--ease-out-expo);
+}
+
+.hero-card-3d .btn--whatsapp {
+  transition:
+    transform var(--duration-fast) var(--ease-out-expo),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.hero-card-3d .btn--whatsapp:hover {
+  transform: translate3d(0, -2px, 0);
+  box-shadow: 0 6px 18px rgba(34, 197, 94, 0.32);
 }
 
 .hero-card-3d__badge {
@@ -112,35 +104,181 @@
 }
 
 /* ==========================================================================
-   PALCO ARQUITETÔNICO ISOMÉTRICO 3D DAS ETAPAS DA OBRA
+   SEÇÃO 01 — PALCO ARQUITETÔNICO 3D COM SCROLL-PINNING (01 A 06)
    ========================================================================== */
+.obra-stage-section {
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+.obra-stage-intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.obra-skip-btn {
+  flex-shrink: 0;
+}
+
+/* Pista de rolagem sticky (nunca usar overflow: hidden em ancestrais) */
+.obra-scroll-runway {
+  position: relative;
+  height: 480svh;
+}
+
+@media (min-width: 64rem) {
+  .obra-scroll-runway {
+    height: 520svh;
+  }
+}
+
+.obra-pinned-viewport {
+  --sticky-stage-top: calc(var(--header-height) + var(--mobile-unit-bar-height));
+  position: sticky;
+  top: var(--sticky-stage-top);
+  min-height: calc(100svh - var(--sticky-stage-top));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 0.75rem;
+}
+
+/* Barra de Marcos 01..06 (Descomprimida com Layout Vertical de 2 Níveis) */
+.stage-milestones {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 0.35rem;
+  margin-bottom: var(--space-4);
+}
+
+.stage-milestones::-webkit-scrollbar {
+  display: none;
+}
+
+.stage-step-card {
+  text-align: left;
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  cursor: pointer;
+  transition:
+    transform var(--duration-fast) var(--ease-out-expo),
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.stage-step-card:hover {
+  border-color: var(--color-gold-400);
+  background-color: var(--color-bg-elevated);
+  transform: translate3d(0, -2px, 0);
+}
+
+.stage-step-card.is-active {
+  border-color: var(--color-gold-400);
+  background-color: var(--color-bg-elevated);
+  box-shadow: 0 0 16px rgba(201, 164, 92, 0.28);
+}
+
+.stage-milestone-btn {
+  flex: 0 0 auto;
+  min-width: 11.5rem;
+  min-height: 4.35rem;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 0.35rem;
+  scroll-snap-align: start;
+}
+
+.stage-milestone-btn__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.stage-step-card__num {
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.2rem 0.52rem;
+  border-radius: var(--radius-pill);
+  background-color: rgba(201, 164, 92, 0.16);
+  color: var(--color-gold-text);
+  flex-shrink: 0;
+}
+
+.stage-milestone-btn__pct {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.stage-milestone-btn__title {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+}
+
+@media (min-width: 64rem) {
+  .stage-milestones {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    overflow: visible;
+    gap: 0.65rem;
+  }
+
+  .stage-milestone-btn {
+    min-width: 0;
+  }
+}
+
 .obra-3d-grid {
   display: grid;
-  gap: var(--space-8);
-  align-items: start;
+  gap: var(--space-5);
+  align-items: stretch;
 }
 
 @media (min-width: 64rem) {
   .obra-3d-grid {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: var(--space-6);
   }
 
-  .obra-3d-sticky {
-    position: sticky;
-    top: calc(var(--header-height) + 1.5rem);
+  .blueprint-viewport,
+  .etapa-painel-card {
+    min-height: 31.5rem;
+    height: 100%;
   }
 }
 
 .blueprint-viewport {
   position: relative;
-  min-height: 25rem;
+  min-height: 25.5rem;
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border-strong);
   background:
     radial-gradient(circle at 50% 38%, rgba(201, 164, 92, 0.14), transparent 65%),
     linear-gradient(180deg, var(--color-bg-surface), var(--color-bg-canvas));
   box-shadow: var(--shadow-md);
-  padding: var(--space-5);
+  padding: clamp(1rem, 2.2vw, 1.5rem);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -158,11 +296,24 @@
   gap: var(--space-2);
 }
 
+.blueprint-viewport__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.blueprint-ctrl-btn {
+  min-height: 2.75rem;
+  padding: 0.45rem 0.9rem;
+  font-size: var(--text-xs);
+}
+
 .blueprint-status-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.35rem 0.8rem;
+  padding: 0.38rem 0.85rem;
   border-radius: var(--radius-pill);
   background-color: rgba(201, 164, 92, 0.14);
   border: 1px solid var(--color-border-strong);
@@ -174,7 +325,7 @@
 
 .iso-scene-wrap {
   position: relative;
-  height: 19rem;
+  height: 19.5rem;
   display: grid;
   place-items: center;
   perspective: 1000px;
@@ -184,6 +335,12 @@
 
 .iso-scene-wrap:active {
   cursor: grabbing;
+}
+
+@media (min-width: 64rem) {
+  .iso-scene-wrap {
+    height: 23.5rem;
+  }
 }
 
 /* Palco WebGL: assume a cena quando o Three.js inicializa com sucesso */
@@ -213,15 +370,15 @@
   pointer-events: none;
 }
 
-/* Controles de câmera da maquete 3D */
+/* Controles de câmera da maquete 3D (>= 44x44px para acessibilidade tátil) */
 .iso-hud {
   position: absolute;
-  right: 0.6rem;
-  bottom: 0.6rem;
+  right: 0.5rem;
+  top: 0.65rem;
   z-index: 4;
   display: none;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.4rem;
 }
 
 .iso-scene-wrap.has-webgl .iso-hud {
@@ -231,15 +388,17 @@
 .iso-hud__btn {
   display: grid;
   place-items: center;
-  width: 2rem;
-  height: 2rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   padding: 0;
   border-radius: 50%;
   border: 1px solid var(--color-border-strong);
-  background-color: rgba(11, 17, 26, 0.72);
+  background-color: rgba(11, 17, 26, 0.8);
   color: var(--color-gold-400);
   font-family: var(--font-heading);
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   line-height: 1;
   cursor: pointer;
   backdrop-filter: blur(6px);
@@ -250,28 +409,35 @@
 }
 
 .iso-hud__btn:hover {
-  background-color: rgba(201, 164, 92, 0.22);
+  background-color: rgba(201, 164, 92, 0.24);
   border-color: var(--color-gold-400);
-  transform: translateY(-1px);
+  transform: translate3d(0, -1px, 0);
 }
 
-.iso-hud__btn:focus-visible {
-  outline: 2px solid var(--color-gold-400);
-  outline-offset: 2px;
-}
-
-/* Vistas rápidas da maquete */
+/* Vistas rápidas da maquete (>= 44x44px em todas as larguras) */
 .iso-views {
   position: absolute;
-  left: 50%;
-  bottom: 0.65rem;
+  inset-inline: 0.5rem;
+  bottom: 0.5rem;
   z-index: 4;
   display: none;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.3rem;
-  max-width: calc(100% - 8rem);
-  transform: translateX(-50%);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  justify-content: flex-start;
+  gap: 0.38rem;
+}
+
+.iso-views::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 36rem) {
+  .iso-views {
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
 }
 
 .iso-scene-wrap.has-webgl .iso-views {
@@ -279,15 +445,21 @@
 }
 
 .iso-views__btn {
-  padding: 0.32rem 0.58rem;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  padding: 0.5rem 0.85rem;
   border-radius: var(--radius-pill);
   border: 1px solid var(--color-border-strong);
-  background-color: rgba(11, 17, 26, 0.72);
+  background-color: rgba(11, 17, 26, 0.82);
   color: var(--color-gold-400);
   font-family: var(--font-heading);
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   line-height: 1;
   cursor: pointer;
@@ -304,46 +476,180 @@
 }
 
 .iso-views__btn.is-active {
-  background-color: rgba(201, 164, 92, 0.92);
+  background-color: rgba(201, 164, 92, 0.94);
   border-color: var(--color-gold-400);
   color: #10151d;
 }
 
-.iso-views__btn:focus-visible {
-  outline: 2px solid var(--color-gold-400);
-  outline-offset: 2px;
+/* Painel Técnico Lateral da Etapa Ativa (Estabilização de Altura Contra Saltos) */
+.obra-pinned-panel {
+  display: flex;
+  flex-direction: column;
 }
 
-@media (max-width: 30rem) {
-  .iso-views__btn {
-    padding: 0.28rem 0.45rem;
-    font-size: 0.56rem;
+.etapa-painel-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.etapa-painel-card__media {
+  aspect-ratio: 16 / 10;
+  height: 9.8rem;
+  width: 100%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* Travamento de Linhas e Alturas Mínimas nos Campos de Texto */
+.etapa-painel-card [data-etapa-titulo] {
+  min-height: 2.25rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.15;
+}
+
+.etapa-painel-card [data-etapa-subtitulo] {
+  min-height: 1.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.etapa-painel-card [data-etapa-detalhe] {
+  min-height: 4.6rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.42;
+}
+
+.etapa-painel-card .hero-pillar-item {
+  min-height: 4.35rem;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.etapa-painel-card [data-etapa-medicao] {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   CALIBRAÇÃO PARA NOTEBOOKS DE BAIXA ALTURA (1366x768 / max-height: 800px)
+   E DISPOSITIVOS EM PAISAGEM ESTREITA
+   ========================================================================== */
+@media (min-width: 64rem) and (max-height: 800px) {
+  .obra-pinned-viewport {
+    padding-block: 0.35rem;
   }
-}
 
-@media (min-width: 1024px) {
+  .stage-milestones {
+    margin-bottom: 0.45rem;
+    gap: 0.45rem;
+  }
+
+  .stage-milestone-btn {
+    min-height: 3.85rem;
+    padding: 0.45rem 0.65rem;
+  }
+
+  .stage-milestone-btn__title {
+    font-size: 0.75rem;
+  }
+
+  .blueprint-viewport,
+  .etapa-painel-card {
+    min-height: 25.5rem;
+  }
+
+  .blueprint-viewport {
+    padding: 0.85rem 1.1rem;
+  }
+
   .iso-scene-wrap {
-    height: 27rem;
+    height: 18.5rem;
+  }
+
+  .etapa-painel-card {
+    padding: 0.95rem 1.15rem;
+  }
+
+  .etapa-painel-card__media {
+    height: 7.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .etapa-painel-card [data-etapa-detalhe] {
+    min-height: 3.8rem;
+    -webkit-line-clamp: 3;
   }
 }
 
+@media (max-height: 540px) and (orientation: landscape) {
+  .obra-scroll-runway {
+    height: auto;
+  }
+
+  .obra-pinned-viewport {
+    position: relative;
+    top: auto;
+    min-height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .obra-scroll-runway {
+    height: auto;
+  }
+
+  .obra-pinned-viewport {
+    position: relative;
+    top: auto;
+    min-height: 0;
+  }
+}
+
+/* ==========================================================================
+   FALLBACK CSS 3D VOLUMÉTRICO & HOLOGRAMA CAD (ETAPAS 01 A 06)
+   ========================================================================== */
 .iso-house-model {
   --explode: 1;
   position: relative;
   width: 13.5rem;
   height: 13.5rem;
   transform-style: preserve-3d;
-  transform: rotateX(var(--iso-rx, 58deg)) rotateZ(var(--iso-rz, -42deg));
+  transform: rotateX(58deg) rotateZ(-42deg);
   transition:
-    transform 220ms var(--ease-out-expo),
     translate 420ms var(--ease-out-expo),
     opacity 420ms var(--ease-standard);
 }
 
 .iso-house-model.is-exploded {
-  --explode: 1.6;
-  /* Desce o conjunto para a cobertura explodida não invadir a barra de controles */
-  translate: 0 3.2rem;
+  translate: 0 2.6rem;
+}
+
+.iso-scan-plane {
+  position: absolute;
+  inset: 0.65rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(56, 189, 248, 0.65);
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.14), transparent 72%);
+  pointer-events: none;
+}
+
+.iso-scene-wrap.is-realistic-mode .iso-scan-plane {
+  opacity: 0;
 }
 
 .iso-layer {
@@ -367,7 +673,6 @@
   box-shadow: 0 0 28px rgba(226, 197, 138, 0.38);
 }
 
-/* Camada 1: Terreno & Gabarito Técnico */
 .iso-layer--terreno {
   background-image:
     linear-gradient(to right, rgba(201, 164, 92, 0.22) 1px, transparent 1px),
@@ -378,15 +683,13 @@
   transform: translate3d(0, 0, 0);
 }
 
-/* Camada 2: Fundação & Vigas Baldrame */
 .iso-layer--fundacao {
   inset: 1.2rem;
   background-color: rgba(148, 163, 184, 0.28);
   border: 3px solid #94a3b8;
-  transform: translate3d(0, 0, calc(18px * var(--explode)));
+  transform: translate3d(0, 0, 18px);
 }
 
-/* Camada 3: Pilares & Laje Estrutural */
 .iso-layer--estrutura {
   inset: 1.2rem;
   background:
@@ -396,10 +699,9 @@
     radial-gradient(circle at 90% 90%, var(--color-gold-400) 4px, transparent 5px),
     rgba(30, 58, 95, 0.75);
   border: 2px solid var(--color-gold-400);
-  transform: translate3d(0, 0, calc(42px * var(--explode)));
+  transform: translate3d(0, 0, 42px);
 }
 
-/* Camada 4: Alvenaria & Divisões Internas */
 .iso-layer--alvenaria {
   inset: 1.5rem;
   background:
@@ -407,10 +709,9 @@
     linear-gradient(0deg, transparent 54%, rgba(226, 197, 138, 0.55) 55%, transparent 57%),
     rgba(201, 164, 92, 0.2);
   border: 3px solid var(--color-gold-300);
-  transform: translate3d(0, 0, calc(66px * var(--explode)));
+  transform: translate3d(0, 0, 66px);
 }
 
-/* Camada 5: Cobertura & Redes Elétrica/Hidráulica */
 .iso-layer--instalacoes {
   inset: 0.95rem;
   background: linear-gradient(
@@ -419,10 +720,9 @@
     rgba(23, 40, 68, 0.88) 65%
   );
   border: 2px solid var(--color-caixa-accent);
-  transform: translate3d(0, 0, calc(92px * var(--explode)));
+  transform: translate3d(0, 0, 92px);
 }
 
-/* Camada 6: Acabamento Nobre & Entrega das Chaves */
 .iso-layer--entrega {
   inset: auto;
   left: 50%;
@@ -441,20 +741,14 @@
   font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  transform: translate3d(0, 4.55rem, calc(6px * var(--explode))) scale(0.82);
+  transform: translate3d(0, 4.55rem, 6px) scale(0.82);
 }
 
-/* O selo da entrega só existe a partir da etapa 06 */
 .iso-layer--entrega:not(.is-built) {
   opacity: 0;
   pointer-events: none;
 }
 
-/* ==========================================================================
-   HOLOGRAMA 3D — RESIDÊNCIA MINHA CASA MINHA VIDA
-   Estrutura leve (laje, pilares, paredes, telhado e esquadrias) revelada
-   etapa por etapa, com material translúcido de projeção.
-   ========================================================================== */
 .iso-hologram {
   position: absolute;
   inset: 0;
@@ -462,7 +756,6 @@
   pointer-events: none;
 }
 
-/* Base de projeção luminosa no piso */
 .iso-hologram::before {
   content: "";
   position: absolute;
@@ -479,7 +772,7 @@
     transparent 72%
   );
   filter: blur(5px);
-  transform: translateZ(calc(2px * var(--explode)));
+  transform: translateZ(2px);
 }
 
 .holo-part {
@@ -515,12 +808,76 @@
   box-shadow: 0 0 22px rgba(226, 197, 138, 0.32);
 }
 
-/* Camada 03 — laje de piso */
+.iso-scene-wrap.is-realistic-mode .holo-face {
+  background-color: rgba(214, 199, 178, 0.65);
+  border-color: rgba(201, 164, 92, 0.72);
+  box-shadow: none;
+}
+
+/* Etapa 01 — Gabarito e Nível a Laser */
+.holo-part--gabarito {
+  width: 9.2rem;
+  height: 7.6rem;
+  margin: -3.8rem 0 0 -4.6rem;
+  transform: translateZ(4px);
+}
+
+.holo-face--gabarito {
+  border-style: dashed;
+  border-color: rgba(226, 197, 138, 0.75);
+  background-color: rgba(201, 164, 92, 0.08);
+}
+
+.holo-part--laser {
+  width: 0.75rem;
+  height: 0.75rem;
+  margin: -0.375rem 0 0 -3.2rem;
+  transform: translateZ(14px);
+}
+
+.holo-face--laser {
+  border-radius: 50%;
+  background-color: rgba(74, 222, 128, 0.65);
+  border-color: #4ade80;
+  box-shadow: 0 0 14px rgba(74, 222, 128, 0.75);
+}
+
+/* Etapa 02 — Sapatas e Vigas Baldrame */
+.holo-part--sapatas {
+  width: 8.2rem;
+  height: 6.8rem;
+  margin: -3.4rem 0 0 -4.1rem;
+  transform: translateZ(12px);
+}
+
+.holo-face--sapatas {
+  background:
+    radial-gradient(circle at 12% 14%, rgba(148, 163, 184, 0.85) 6px, transparent 7px),
+    radial-gradient(circle at 88% 14%, rgba(148, 163, 184, 0.85) 6px, transparent 7px),
+    radial-gradient(circle at 12% 86%, rgba(148, 163, 184, 0.85) 6px, transparent 7px),
+    radial-gradient(circle at 88% 86%, rgba(148, 163, 184, 0.85) 6px, transparent 7px);
+  border-color: rgba(148, 163, 184, 0.65);
+}
+
+.holo-part--baldrame {
+  width: 7.8rem;
+  height: 6.4rem;
+  margin: -3.2rem 0 0 -3.9rem;
+  transform: translateZ(24px);
+}
+
+.holo-face--baldrame {
+  border-width: 3px;
+  border-color: rgba(148, 163, 184, 0.9);
+  background-color: rgba(100, 116, 139, 0.25);
+}
+
+/* Etapa 03 — Laje e Pilares */
 .holo-part--slab {
   width: 7.6rem;
   height: 6.2rem;
   margin: -3.1rem 0 0 -3.8rem;
-  transform: translateZ(calc(46px * var(--explode)));
+  transform: translateZ(46px);
 }
 
 .holo-face--slab {
@@ -531,20 +888,17 @@
   background-size: 1.1rem 1.1rem;
 }
 
-/* Camada 03 — pilares estruturais */
 .holo-part--pillar {
   width: 0.34rem;
   height: 42px;
   margin: -42px 0 0 -0.17rem;
   transform-origin: 50% 100%;
-  transform: translateZ(calc(46px * var(--explode)))
-    translateX(var(--px, 0)) translateY(var(--py, 0)) rotateX(-90deg);
+  transform: translateZ(46px) translateX(var(--px, 0)) translateY(var(--py, 0)) rotateX(-90deg);
 }
 
 .holo-face--pillar {
   background-color: rgba(226, 197, 138, 0.28);
   border-color: rgba(226, 197, 138, 0.7);
-  box-shadow: 0 0 10px rgba(226, 197, 138, 0.25);
 }
 
 .holo-part--pillar-nw { --px: -3.55rem; --py: -2.85rem; }
@@ -552,7 +906,7 @@
 .holo-part--pillar-sw { --px: -3.55rem; --py: 2.85rem; }
 .holo-part--pillar-se { --px: 3.55rem; --py: 2.85rem; }
 
-/* Camada 04 — paredes de alvenaria */
+/* Etapa 04 — Paredes e Cobertura */
 .holo-part--wall {
   height: 42px;
   margin-top: -42px;
@@ -561,43 +915,34 @@
 
 .holo-face--wall {
   background-image:
-    repeating-linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 0.07) 0 1px,
-      transparent 1px 4px
-    ),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.07) 0 1px, transparent 1px 4px),
     linear-gradient(180deg, rgba(56, 189, 248, 0.24), rgba(56, 189, 248, 0.07));
 }
 
 .holo-part--wall-front {
   width: 7.6rem;
   margin-left: -3.8rem;
-  transform: translateZ(calc(46px * var(--explode))) translateY(3.1rem)
-    rotateX(-90deg);
+  transform: translateZ(46px) translateY(3.1rem) rotateX(-90deg);
 }
 
 .holo-part--wall-back {
   width: 7.6rem;
   margin-left: -3.8rem;
-  transform: translateZ(calc(46px * var(--explode))) translateY(-3.1rem)
-    rotateX(-90deg);
+  transform: translateZ(46px) translateY(-3.1rem) rotateX(-90deg);
 }
 
 .holo-part--wall-left {
   width: 6.2rem;
   margin-left: -3.1rem;
-  transform: translateZ(calc(46px * var(--explode))) translateX(-3.8rem)
-    rotateZ(90deg) rotateX(-90deg);
+  transform: translateZ(46px) translateX(-3.8rem) rotateZ(90deg) rotateX(-90deg);
 }
 
 .holo-part--wall-right {
   width: 6.2rem;
   margin-left: -3.1rem;
-  transform: translateZ(calc(46px * var(--explode))) translateX(3.8rem)
-    rotateZ(90deg) rotateX(-90deg);
+  transform: translateZ(46px) translateX(3.8rem) rotateZ(90deg) rotateX(-90deg);
 }
 
-/* Camada 05 — telhado em duas águas */
 .holo-part--roof {
   width: 8.2rem;
   height: 3.4rem;
@@ -607,18 +952,14 @@
 
 .holo-face--roof {
   background-image:
-    repeating-linear-gradient(
-      90deg,
-      rgba(226, 197, 138, 0.16) 0 1px,
-      transparent 1px 6px
-    ),
+    repeating-linear-gradient(90deg, rgba(226, 197, 138, 0.16) 0 1px, transparent 1px 6px),
     linear-gradient(180deg, rgba(201, 164, 92, 0.34), rgba(56, 189, 248, 0.12));
   border-color: rgba(226, 197, 138, 0.75);
 }
 
 .holo-part--roof-front {
   transform-origin: 50% 0;
-  transform: translateZ(calc(112px * var(--explode))) rotateX(-26deg);
+  transform: translateZ(112px) rotateX(-26deg);
 }
 
 .holo-part--roof-front .holo-face {
@@ -628,15 +969,36 @@
 .holo-part--roof-back {
   margin-top: -3.4rem;
   transform-origin: 50% 100%;
-  transform: translateZ(calc(112px * var(--explode))) rotateX(26deg);
+  transform: translateZ(112px) rotateX(26deg);
 }
 
-/* Camada 05 — luz interna das instalações */
+/* Etapa 05 — Redes Elétrica/Hidráulica (MEP) e Iluminação */
+.holo-part--mep-west {
+  width: 0.45rem;
+  height: 36px;
+  margin: -36px 0 0 -3.6rem;
+  transform-origin: 50% 100%;
+  transform: translateZ(50px) rotateX(-90deg);
+}
+
+.holo-part--mep-east {
+  width: 0.45rem;
+  height: 36px;
+  margin: -36px 0 0 3.2rem;
+  transform-origin: 50% 100%;
+  transform: translateZ(50px) rotateX(-90deg);
+}
+
+.holo-face--mep {
+  background-color: rgba(56, 189, 248, 0.55);
+  border-color: #38bdf8;
+}
+
 .holo-part--glow {
   width: 7rem;
   height: 5.6rem;
   margin: -2.8rem 0 0 -3.5rem;
-  transform: translateZ(calc(50px * var(--explode)));
+  transform: translateZ(50px);
 }
 
 .holo-face--glow {
@@ -650,20 +1012,18 @@
   box-shadow: none;
 }
 
-/* Camada 06 — porta e janelas */
+/* Etapa 06 — Esquadrias & Entrega */
 .holo-part--door {
   width: 1.15rem;
   height: 26px;
   margin: -26px 0 0 -1.8rem;
   transform-origin: 50% 100%;
-  transform: translateZ(calc(46px * var(--explode))) translateY(3.08rem)
-    rotateX(-90deg);
+  transform: translateZ(46px) translateY(3.08rem) rotateX(-90deg);
 }
 
 .holo-face--door {
   background-color: rgba(201, 164, 92, 0.45);
   border-color: rgba(235, 211, 162, 0.9);
-  box-shadow: 0 0 14px rgba(226, 197, 138, 0.35);
 }
 
 .holo-part--window {
@@ -676,21 +1036,18 @@
   border-width: 2px;
   background-color: rgba(186, 230, 253, 0.35);
   border-color: rgba(186, 230, 253, 0.85);
-  box-shadow: 0 0 14px rgba(56, 189, 248, 0.45);
 }
 
 .holo-part--window-front {
   width: 1.35rem;
   margin-left: 0.45rem;
-  transform: translateZ(calc(62px * var(--explode))) translateY(3.08rem)
-    rotateX(-90deg);
+  transform: translateZ(62px) translateY(3.08rem) rotateX(-90deg);
 }
 
 .holo-part--window-side {
   width: 1.2rem;
   margin-left: -0.6rem;
-  transform: translateZ(calc(62px * var(--explode))) translateX(3.82rem)
-    rotateZ(90deg) rotateX(-90deg);
+  transform: translateZ(62px) translateX(3.82rem) rotateZ(90deg) rotateX(-90deg);
 }
 
 /* Barra de progresso da obra dentro do palco 3D */
@@ -700,7 +1057,7 @@
   border-radius: var(--radius-pill);
   background-color: rgba(255, 255, 255, 0.1);
   overflow: hidden;
-  margin-top: var(--space-3);
+  margin-top: var(--space-2);
 }
 
 .obra-progress-fill {
@@ -708,57 +1065,12 @@
   width: 100%;
   background: linear-gradient(90deg, var(--color-gold-600), var(--color-gold-300));
   transform-origin: 0 50%;
-  transform: scaleX(var(--stage-progress, 0.15));
-  transition: transform 420ms var(--ease-out-expo);
+  transform: scaleX(0.15);
 }
 
-/* Lista de Etapas Interativas */
-.stage-selector-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.stage-step-card {
-  width: 100%;
-  text-align: left;
-  padding: var(--space-5);
-  border-radius: var(--radius-lg);
-  background-color: var(--color-bg-surface);
-  border: 1px solid var(--color-border-subtle);
-  cursor: pointer;
-  transition:
-    transform var(--duration-base) var(--ease-out-expo),
-    border-color var(--duration-base) var(--ease-standard),
-    background-color var(--duration-base) var(--ease-standard);
-}
-
-.stage-step-card:hover,
-.stage-step-card.is-active {
-  border-color: var(--color-gold-400);
-  background-color: var(--color-bg-elevated);
-  transform: translate3d(4px, 0, 0);
-}
-
-.stage-step-card__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-bottom: var(--space-2);
-}
-
-.stage-step-card__num {
-  font-family: var(--font-heading);
-  font-size: var(--text-xs);
-  font-weight: 800;
-  padding: 0.25rem 0.65rem;
-  border-radius: var(--radius-pill);
-  background-color: rgba(201, 164, 92, 0.16);
-  color: var(--color-gold-text);
-}
-
-/* Jornada Financiamento Caixa / MCMV */
+/* ==========================================================================
+   SEÇÃO 02 — JORNADA DE FINANCIAMENTO CAIXA / MINHA CASA MINHA VIDA
+   ========================================================================== */
 .mcmv-timeline {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
@@ -774,6 +1086,33 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  cursor: default;
+  transition:
+    transform var(--duration-base) var(--ease-out-expo),
+    border-color var(--duration-base) var(--ease-standard),
+    background-color var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard);
+  will-change: transform;
+}
+
+.mcmv-step-card:hover {
+  transform: translate3d(0, -6px, 0);
+  border-color: var(--color-gold-400);
+  background-color: var(--color-bg-elevated);
+  box-shadow:
+    0 16px 36px rgba(3, 8, 18, 0.48),
+    0 0 20px rgba(201, 164, 92, 0.16);
+}
+
+.mcmv-step-card .heroicon.text-gold {
+  transition:
+    transform var(--duration-base) var(--ease-out-expo),
+    color var(--duration-base) var(--ease-standard);
+}
+
+.mcmv-step-card:hover .heroicon.text-gold {
+  transform: scale(1.15) rotate(4deg);
+  color: var(--color-gold-300);
 }
 
 .mcmv-step-card__badge {
@@ -782,15 +1121,284 @@
   padding: 0.22rem 0.65rem;
   border-radius: var(--radius-pill);
   background-color: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.25);
   color: var(--color-caixa-accent);
   font-size: var(--text-xs);
   font-weight: 700;
+  transition:
+    background-color var(--duration-base) var(--ease-standard),
+    border-color var(--duration-base) var(--ease-standard),
+    color var(--duration-base) var(--ease-standard);
+}
+
+.mcmv-step-card:hover .mcmv-step-card__badge {
+  background-color: rgba(56, 189, 248, 0.22);
+  border-color: rgba(56, 189, 248, 0.55);
+  color: #7dd3fc;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mcmv-step-card:hover {
+    transform: none;
+  }
+
+  .mcmv-step-card:hover .heroicon.text-gold {
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   SEÇÃO 04 — SIMULADOR HABITACIONAL DE 2 COLUNAS (SAC / PRICE)
+   ========================================================================== */
+.simulador-intro {
+  display: grid;
+  gap: var(--space-6);
+  align-items: end;
+}
+
+@media (min-width: 62rem) {
+  .simulador-intro {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+}
+
+.simulador-pillars {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.simulador-workspace__grid {
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+  align-items: start;
+}
+
+@media (min-width: 62rem) {
+  .simulador-workspace__grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  }
+
+  .simulador-workspace__result-col {
+    position: sticky;
+    top: calc(var(--header-height) + 1.25rem);
+    max-height: calc(100svh - var(--header-height) - 2rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-strong) transparent;
+  }
+}
+
+.sim-prazo-presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background-color: color-mix(in srgb, var(--color-bg-canvas) 65%, transparent);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.sim-prazo-presets__label {
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.sim-prazo-presets__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sim-prazo-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-neutral);
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.sim-prazo-pill:hover,
+.sim-prazo-pill.is-active {
+  background-color: var(--color-gold-500);
+  border-color: var(--color-gold-500);
+  color: var(--color-text-on-gold);
+}
+
+.sim-range-slider {
+  display: block;
+  width: 100%;
+  min-height: 2.75rem;
+  margin-top: 0.25rem;
+  accent-color: var(--color-gold-500);
+  cursor: pointer;
+  background: transparent;
+}
+
+.sim-loading-bar {
+  padding: 0.55rem 0.95rem;
+  margin-bottom: var(--space-3);
+  border-radius: var(--radius-pill);
+  background-color: rgba(56, 189, 248, 0.14);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: var(--color-caixa-accent);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-align: center;
+}
+
+.simulador-result-card {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.25rem, 2.2vw, 1.75rem);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: var(--shadow-md), 0 0 24px rgba(201, 164, 92, 0.08);
+}
+
+.simulador-result-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-gold-500), var(--color-caixa-accent));
+}
+
+@media (min-width: 62rem) and (max-height: 820px) {
+  .simulador-result-card {
+    padding: 1rem 1.25rem;
+  }
+
+  .sim-kpi-grid {
+    gap: 0.45rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .sim-kpi-box {
+    padding: 0.55rem 0.75rem;
+  }
+
+  .sim-summary-strip {
+    margin-bottom: 0.75rem;
+    padding: 0.45rem 0.65rem;
+  }
+
+  .simulador-result-card .hero-pillar-item {
+    margin-bottom: 0.75rem;
+    padding: 0.45rem 0.65rem;
+  }
+}
+
+.simulador-result-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.sim-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.28rem 0.72rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+
+.sim-badge--ok {
+  background-color: rgba(74, 222, 128, 0.14);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  color: var(--color-success);
+}
+
+.sim-badge--adjust {
+  background-color: rgba(226, 197, 138, 0.16);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-gold-text);
+}
+
+.sim-badge--neutral {
+  background-color: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: var(--color-caixa-accent);
+}
+
+.sim-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11.5rem), 1fr));
+  gap: var(--space-3);
+}
+
+.sim-kpi-box {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background-color: color-mix(in srgb, var(--color-bg-canvas) 70%, transparent);
+  border: 1px solid var(--color-border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.sim-kpi-box--highlight {
+  border-color: var(--color-border-strong);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--color-gold-500) 14%, var(--color-bg-canvas)),
+    var(--color-bg-surface)
+  );
+}
+
+.sim-kpi-box__label {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.sim-kpi-box__value {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 800;
+}
+
+.sim-kpi-box__sub {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.sim-summary-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-subtle);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Banner de Sinergia Locadora */
 .locadora-synergy-banner {
   border-radius: var(--radius-lg);
-  padding: clamp(2rem, 5vw, 3.25rem);
+  padding: clamp(1.5rem, 5vw, 3.25rem);
   background: linear-gradient(
     125deg,
     var(--color-bg-elevated) 0%,
@@ -801,7 +1409,7 @@
 }
 
 /* ==========================================================================
-   ALTO CONTRASTE NO MODO CLARO ([data-theme="light"]) — PALCO 3D, CARDS & BADGES
+   ALTO CONTRASTE NO MODO CLARO ([data-theme="light"])
    ========================================================================== */
 :root[data-theme="light"] .hero-card-3d {
   background: linear-gradient(155deg, #ffffff 0%, #eef2f8 100%);
@@ -809,13 +1417,23 @@
 }
 
 :root[data-theme="light"] .hero-card-3d__badge,
-:root[data-theme="light"] .mcmv-step-card__badge {
+:root[data-theme="light"] .mcmv-step-card__badge,
+:root[data-theme="light"] .sim-badge--neutral,
+:root[data-theme="light"] .sim-loading-bar {
   background-color: rgba(7, 89, 133, 0.12);
   border: 1px solid rgba(7, 89, 133, 0.34);
   color: #075985;
 }
 
-:root[data-theme="light"] .hero-pillar-item {
+:root[data-theme="light"] .sim-badge--ok {
+  background-color: rgba(21, 128, 61, 0.12);
+  border-color: rgba(21, 128, 61, 0.38);
+  color: #15803d;
+}
+
+:root[data-theme="light"] .hero-pillar-item,
+:root[data-theme="light"] .sim-kpi-box,
+:root[data-theme="light"] .sim-prazo-presets {
   background-color: #f4f6fa;
   border-color: rgba(9, 18, 32, 0.16);
 }
@@ -877,5 +1495,3 @@
 :root[data-theme="light"] .locadora-synergy-banner {
   background: linear-gradient(125deg, #ffffff 0%, #eaeef6 100%);
 }
-
-

@@ -1,0 +1,18 @@
+<div class="simulador-result-card rate-limit-alert" role="alert" aria-live="assertive">
+  <span class="badge mb-3">Proteção Anti-Abuso (429)</span>
+  <h3 class="heading-md mb-2">Muitas tentativas em sequência</h3>
+  <p class="text-sm mb-4">
+    Para manter o atendimento rápido e estável, aguarde cerca de
+    <strong>{{ retry_after_seconds|default:60 }} segundos</strong> antes de enviar uma nova solicitação pelo site,
+    ou fale diretamente com nossa equipe agora no WhatsApp.
+  </p>
+  <div class="cta-row">
+    <a class="btn btn--whatsapp"
+       href="https://wa.me/{{ rocha.whatsapp_construtora }}"
+       target="_blank"
+       rel="noopener noreferrer">
+      {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
+      <span>Atendimento Direto no WhatsApp</span>
+    </a>
+  </div>
+</div>

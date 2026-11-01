@@ -9,11 +9,16 @@ from django.urls import URLPattern, URLResolver, include, path
 from core import views as core_views
 
 urlpatterns: list[URLPattern | URLResolver] = [
-    path(settings.DJANGO_ADMIN_URL, admin.site.urls),
     path("healthz/", core_views.healthcheck_view, name="healthcheck"),
     path("locadora/", include("apps.locadora.urls", namespace="locadora")),
     path("", include("apps.construtora.urls", namespace="construtora")),
 ]
+
+if getattr(settings, "ENABLE_DJANGO_ADMIN", False):
+    urlpatterns = [
+        path(settings.DJANGO_ADMIN_URL, admin.site.urls),
+        *urlpatterns,
+    ]
 
 handler400 = "core.views.error_400_view"
 handler403 = "core.views.error_403_view"

@@ -5,6 +5,8 @@ from typing import Any
 from django.conf import settings
 from django.http import HttpRequest
 
+from core.security import generate_form_timestamp_token
+
 
 def site_context(request: HttpRequest) -> dict[str, Any]:
     """Disponibiliza o `csp_nonce` da requisição e os dados canônicos da marca nos templates."""
@@ -13,6 +15,7 @@ def site_context(request: HttpRequest) -> dict[str, Any]:
 
     return {
         "csp_nonce": getattr(request, "csp_nonce", ""),
+        "form_ts_token": generate_form_timestamp_token(scope="public_form"),
         "rocha": {
             "nome_marca": "Rocha Construtora",
             "nome_construtora": "Rocha Construtora",
@@ -41,4 +44,3 @@ def site_context(request: HttpRequest) -> dict[str, Any]:
             "url_locadora": "/locadora/",
         },
     }
-

@@ -5,6 +5,7 @@ import importlib.util
 from .base import *
 
 DEBUG: bool = env.bool("DJANGO_DEBUG", default=True)
+ENABLE_DJANGO_ADMIN = env.bool("ENABLE_DJANGO_ADMIN", default=True)
 
 # Em ambiente estritamente local, permite chave do .env ou chave efêmera de dev
 SECRET_KEY: str = env(
@@ -50,4 +51,3 @@ if DEBUG and importlib.util.find_spec("debug_toolbar") is not None:
         "RESULTS_CACHE_SIZE": 50,
         "UPDATE_ON_FETCH": True,
     }
-

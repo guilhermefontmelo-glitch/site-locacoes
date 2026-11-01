@@ -1,31 +1,39 @@
-<div class="card mt-4" data-etapa-painel="{{ etapa_ativa.slug }}">
-  <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+<article class="card etapa-painel-card"
+         data-etapa-painel="{{ etapa_ativa.slug }}"
+         data-etapa-ordem="{{ etapa_ativa.ordem }}">
+  {% include "components/_image.html" with avif_src=etapa_ativa.imagem_avif webp_src=etapa_ativa.imagem_webp alt=etapa_ativa.titulo width=960 height=600 sizes="(min-width: 1024px) 38vw, 94vw" wrapper_class="etapa-painel-card__media mb-4" only %}
+
+  <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
     <span class="eyebrow">
-      {% include "components/_icon.html" with name=etapa_ativa.icone class="heroicon heroicon--sm" only %}
-      <span>Inspeção de Engenharia &middot; Etapa {{ etapa_ativa.codigo }}</span>
+      {% include "components/_icon.html" with name="shield-check" class="heroicon heroicon--sm" only %}
+
+      <span data-etapa-eyebrow>Inspeção de Engenharia &middot; Etapa {{ etapa_ativa.codigo }}</span>
     </span>
-    <span class="blueprint-status-pill">{{ etapa_ativa.progresso_percentual }}% da obra</span>
+    <span class="blueprint-status-pill" data-etapa-progresso>{{ etapa_ativa.progresso_percentual }}% da obra</span>
   </div>
 
-  <h3 class="heading-xl mb-2">{{ etapa_ativa.titulo }}</h3>
-  <p class="mb-4">{{ etapa_ativa.detalhe_engenharia }}</p>
+  <h3 class="heading-xl mb-1" data-etapa-titulo>{{ etapa_ativa.titulo }}</h3>
+  <p class="text-xs text-gold font-bold mb-2" data-etapa-subtitulo>{{ etapa_ativa.subtitulo }}</p>
+  <p class="text-sm mb-4" data-etapa-detalhe>{{ etapa_ativa.detalhe_engenharia }}</p>
 
   <div class="hero-pillar-item mb-4">
-    {% include "components/_icon.html" with name="shield-check" class="heroicon text-gold" only %}
+    {% include "components/_icon.html" with name="clipboard-document-check" class="heroicon text-gold" only %}
+
     <div>
       <strong class="block text-sm">Controle Caixa Habitacional:</strong>
-      <span class="text-xs">{{ etapa_ativa.medicao_caixa }}</span>
+      <span class="text-xs" data-etapa-medicao>{{ etapa_ativa.medicao_caixa }}</span>
     </div>
   </div>
 
   {% if whatsapp_etapa_url %}
     <a class="btn btn--outline w-full"
+       data-etapa-whatsapp
        href="{{ whatsapp_etapa_url }}"
        target="_blank"
        rel="noopener noreferrer">
       {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
+
       <span>Tirar dúvida sobre esta etapa</span>
     </a>
   {% endif %}
-</div>
-
+</article>

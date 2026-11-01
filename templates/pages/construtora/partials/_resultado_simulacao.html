@@ -1,32 +1,78 @@
-<div class="card">
-  <div class="flex items-center gap-2 mb-3">
-    {% include "components/_icon.html" with name="check-circle" class="heroicon text-gold" only %}
-    <span class="eyebrow">Pré-Análise Concluída para {{ resultado.nome_cliente }}</span>
-  </div>
+<div class="card simulador-result-card" data-simulador-resultado="true">
+  <div class="simulador-result-card__header">
+    <div class="flex flex-wrap items-center gap-2">
+      {% include "components/_icon.html" with name="check-circle" class="heroicon text-gold" only %}
 
-  <h3 class="heading-xl mb-2">{{ resultado.faixa_titulo }}</h3>
-  <p class="mb-4">{{ resultado.beneficio_destaque }}</p>
-
-  <div class="grid-auto mb-4">
-    <div class="hero-pillar-item">
-      {% include "components/_icon.html" with name="banknotes" class="heroicon text-gold" only %}
-      <div>
-        <span class="text-xs block">Parcela Teto Estimada (30%)</span>
-        <strong class="heading-lg text-gold">{{ resultado.parcela_teto_formatada }}</strong>
-      </div>
+      <span class="eyebrow">
+        {% if simulacao_atualizada %}
+          Simulação Atualizada &middot; {{ resultado.nome_cliente }}
+        {% else %}
+          Cenário Base Instantâneo &middot; {{ resultado.sistema_amortizacao }}
+        {% endif %}
+      </span>
     </div>
 
-    <div class="hero-pillar-item">
-      {% include "components/_icon.html" with name="home-modern" class="heroicon text-gold" only %}
-      <div>
-        <span class="text-xs block">Potencial Construtivo Orientativo</span>
-        <strong class="heading-lg text-gold">{{ resultado.potencial_obra_formatado }}</strong>
-      </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="sim-badge {% if resultado.viavel_com_entrada_atual %}sim-badge--ok{% else %}sim-badge--adjust{% endif %}">
+        {% if resultado.viavel_com_entrada_atual %}
+          Entrada Compatível
+        {% else %}
+          Ajuste de Entrada / Planta
+        {% endif %}
+      </span>
+      <span class="sim-badge sim-badge--neutral">
+        {{ resultado.sistema_amortizacao }} &middot; {{ resultado.prazo_meses }} meses
+      </span>
     </div>
   </div>
 
-  <div class="hero-pillar-item mb-6">
+  <h3 class="heading-xl mt-3 mb-2">{{ resultado.faixa_titulo }}</h3>
+  <p class="text-sm mb-5">{{ resultado.beneficio_destaque }}</p>
+
+  <div class="sim-kpi-grid mb-5">
+    <div class="sim-kpi-box sim-kpi-box--highlight">
+      <span class="sim-kpi-box__label">1ª Parcela Estimada ({{ resultado.sistema_amortizacao }})</span>
+      <strong class="sim-kpi-box__value text-gold">{{ resultado.primeira_parcela_formatada }}</strong>
+      <span class="sim-kpi-box__sub">Última parcela: {{ resultado.ultima_parcela_formatada }}</span>
+    </div>
+
+    <div class="sim-kpi-box">
+      <span class="sim-kpi-box__label">Crédito Financiado (teto LTV {{ resultado.ltv_percentual }}%)</span>
+      <strong class="sim-kpi-box__value">{{ resultado.valor_financiado_formatado }}</strong>
+      <span class="sim-kpi-box__sub">Obra estimada: {{ resultado.valor_obra_formatado }}</span>
+    </div>
+
+    <div class="sim-kpi-box">
+      <span class="sim-kpi-box__label">Subsídio Habitacional Estimado</span>
+      <strong class="sim-kpi-box__value text-gold">{{ resultado.subsidio_estimado_formatado }}</strong>
+      <span class="sim-kpi-box__sub">Juros: {{ resultado.taxa_anual_formatada }} ({{ resultado.taxa_mensal_formatada }})</span>
+    </div>
+
+    <div class="sim-kpi-box">
+      <span class="sim-kpi-box__label">Entrada Mínima Necessária</span>
+      <strong class="sim-kpi-box__value">{{ resultado.entrada_minima_formatada }}</strong>
+      <span class="sim-kpi-box__sub">Teto 30% renda: {{ resultado.parcela_teto_formatada }}</span>
+    </div>
+  </div>
+
+  <div class="sim-summary-strip mb-5">
+    <div>
+      <span class="text-xs block">Entrada / FGTS informada</span>
+      <strong class="text-sm">{{ resultado.entrada_informada_formatada }}</strong>
+    </div>
+    <div>
+      <span class="text-xs block">Potencial construtivo máximo</span>
+      <strong class="text-sm text-gold">{{ resultado.potencial_obra_formatado }}</strong>
+    </div>
+    <div>
+      <span class="text-xs block">Modalidade selecionada</span>
+      <strong class="text-sm">{{ resultado.modalidade_label }}</strong>
+    </div>
+  </div>
+
+  <div class="hero-pillar-item mb-5">
     {% include "components/_icon.html" with name="sparkles" class="heroicon text-gold" only %}
+
     <p class="text-sm">{{ resultado.orientacao_tecnica }}</p>
   </div>
 
@@ -36,13 +82,13 @@
        target="_blank"
        rel="noopener noreferrer">
       {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
-      <span>Continuar Aprovação Oficial no WhatsApp</span>
-      {% include "components/_icon.html" with name="arrow-up-right" class="heroicon heroicon--sm" only %}
-    </a>
 
-    <a class="btn btn--outline w-full" href="#simulador">
-      Refazer simulação com outros valores
+      <span>Validar Dossiê Oficial no WhatsApp</span>
+      {% include "components/_icon.html" with name="arrow-up-right" class="heroicon heroicon--sm" only %}
+
     </a>
+    <p class="text-xs text-center">
+      Cálculo determinístico em precisão bancária para fins de pré-análise orientativa sujeita à avaliação de crédito Caixa.
+    </p>
   </div>
 </div>
-

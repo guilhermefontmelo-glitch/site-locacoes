@@ -3,9 +3,7 @@
 from .base import *
 
 DEBUG: bool = False
-SECRET_KEY: str = (
-    "test-suite-secret-key-exclusiva-para-pytest-com-entropia-suficiente-64b"  # noqa: S105
-)
+SECRET_KEY: str = "test-suite-secret-key-exclusiva-para-pytest-com-entropia-suficiente-64b"  # noqa: S105
 ALLOWED_HOSTS: list[str] = ["testserver", "127.0.0.1", "localhost"]
 
 DATABASES = {
@@ -16,10 +14,11 @@ DATABASES = {
 }
 
 # Acelera criação de fixtures em testes gerais (testes de Argon2 validam base.PASSWORD_HASHERS)
-PASSWORD_HASHERS: list[str] = [
+PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.MD5PasswordHasher",
 ]
 
 WHITENOISE_USE_FINDERS: bool = True
 WHITENOISE_AUTOREFRESH: bool = False
-
+ENABLE_DJANGO_ADMIN = False
+ENFORCE_FORM_TIMESTAMP = False

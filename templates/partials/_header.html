@@ -2,7 +2,6 @@
 
 <header class="site-header" id="site-header">
   <div class="container site-header__inner">
-    <!-- Assinatura de Marca Única e Instantânea: Rocha Construtora <-> Rocha Locações -->
     <a class="brand-logo"
        id="header-brand-link"
        href="{% if active_unit == 'locadora' %}{{ rocha.url_locadora }}{% else %}{{ rocha.url_construtora }}{% endif %}"
@@ -18,11 +17,9 @@
            alt="{% if active_unit == 'locadora' %}Logo Rocha Locações{% else %}Logo Rocha Construtora{% endif %}"
            width="164"
            height="42"
-           decoding="sync"
-           fetchpriority="high">
+           decoding="async">
     </a>
 
-    <!-- Seletor de Frente de Negócio com Posição Fixa e Bolha Deslizante -->
     <nav class="unit-switcher"
          id="unit-switcher"
          data-active-unit="{% if active_unit == 'locadora' %}locadora{% else %}construtora{% endif %}"
@@ -33,6 +30,7 @@
          class="unit-switcher__item {% if active_unit != 'locadora' %}is-active{% endif %}"
          {% if active_unit != 'locadora' %}aria-current="page"{% endif %}>
         {% include "components/_icon.html" with name="home-modern" class="heroicon heroicon--sm" only %}
+
         <span>Rocha Construtora</span>
       </a>
       <a href="{{ rocha.url_locadora }}"
@@ -40,11 +38,11 @@
          class="unit-switcher__item {% if active_unit == 'locadora' %}is-active{% endif %}"
          {% if active_unit == 'locadora' %}aria-current="page"{% endif %}>
         {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon heroicon--sm" only %}
+
         <span>Rocha Locações</span>
       </a>
     </nav>
 
-    <!-- Navegação Rápida Desktop -->
     <nav class="primary-nav" id="primary-nav" aria-label="Seções da página">
       {% if active_unit == 'locadora' %}
         <a class="primary-nav__link" href="#equipamentos">Equipamentos</a>
@@ -58,7 +56,6 @@
       <a class="primary-nav__link" href="#contato">Contato</a>
     </nav>
 
-    <!-- Ações Globais: Alternância de Tema (Heroicons Sol/Lua) + Menu Mobile -->
     <div class="site-header__actions">
       <button type="button"
               class="btn btn--icon"
@@ -67,7 +64,9 @@
               aria-pressed="false"
               title="Alternar tema visual">
         {% include "components/_icon.html" with name="sun" class="heroicon theme-icon--sun" only %}
+
         {% include "components/_icon.html" with name="moon" class="heroicon theme-icon--moon" only %}
+
       </button>
 
       <button type="button"
@@ -77,12 +76,39 @@
               aria-expanded="false"
               aria-controls="mobile-drawer">
         {% include "components/_icon.html" with name="bars-3" class="heroicon" only %}
+
       </button>
     </div>
   </div>
 </header>
 
-<!-- Gaveta de Navegação Mobile Acessível -->
+<nav class="mobile-unit-bar"
+     id="mobile-unit-bar"
+     data-active-unit="{% if active_unit == 'locadora' %}locadora{% else %}construtora{% endif %}"
+     aria-label="Alternar unidade de atendimento">
+  <div class="container mobile-unit-bar__inner">
+    <div class="mobile-unit-bar__track">
+      <span class="mobile-unit-bar__bubble" aria-hidden="true"></span>
+      <a href="{{ rocha.url_construtora }}"
+         data-unit-target="construtora"
+         class="mobile-unit-bar__item {% if active_unit != 'locadora' %}is-active{% endif %}"
+         {% if active_unit != 'locadora' %}aria-current="page"{% endif %}>
+        {% include "components/_icon.html" with name="home-modern" class="heroicon heroicon--sm" only %}
+
+        <span>Construtora</span>
+      </a>
+      <a href="{{ rocha.url_locadora }}"
+         data-unit-target="locadora"
+         class="mobile-unit-bar__item {% if active_unit == 'locadora' %}is-active{% endif %}"
+         {% if active_unit == 'locadora' %}aria-current="page"{% endif %}>
+        {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon heroicon--sm" only %}
+
+        <span>Locações</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
 <div class="mobile-drawer" id="mobile-drawer" hidden>
   <div class="mobile-drawer__backdrop" data-drawer-close tabindex="-1"></div>
   <nav class="mobile-drawer__panel" aria-label="Menu móvel principal">
@@ -95,6 +121,7 @@
               data-drawer-close
               aria-label="Fechar menu de navegação">
         {% include "components/_icon.html" with name="x-mark" class="heroicon" only %}
+
       </button>
     </div>
 
@@ -103,12 +130,14 @@
          data-unit-target="construtora"
          class="btn {% if active_unit != 'locadora' %}btn--gold{% else %}btn--outline{% endif %}">
         {% include "components/_icon.html" with name="home-modern" class="heroicon" only %}
+
         <span>Rocha Construtora</span>
       </a>
       <a href="{{ rocha.url_locadora }}"
          data-unit-target="locadora"
          class="btn {% if active_unit == 'locadora' %}btn--gold{% else %}btn--outline{% endif %}">
         {% include "components/_icon.html" with name="wrench-screwdriver" class="heroicon" only %}
+
         <span>Rocha Locações</span>
       </a>
     </div>
@@ -121,7 +150,7 @@
       {% else %}
         <li><a href="#etapas-obra" data-drawer-link>Etapas da Obra em 3D</a></li>
         <li><a href="#financiamento-caixa" data-drawer-link>Processo Minha Casa Minha Vida</a></li>
-        <li><a href="#simulador" data-drawer-link>Pré-Análise Gratuita</a></li>
+        <li><a href="#simulador" data-drawer-link>Simulador Habitacional</a></li>
       {% endif %}
       <li><a href="#contato" data-drawer-link>Falar com Especialista</a></li>
     </ul>

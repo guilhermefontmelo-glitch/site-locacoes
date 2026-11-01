@@ -8,9 +8,7 @@ import sys
 def main() -> None:
     """Inicializa o ambiente modular do Django e executa o comando administrativo."""
     default_settings = (
-        "config.settings.production"
-        if os.environ.get("VERCEL")
-        else "config.settings.local"
+        "config.settings.production" if os.environ.get("VERCEL") else "config.settings.local"
     )
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", default_settings)
     try:

@@ -13,11 +13,13 @@ from apps.locadora.selectors import (
     obter_equipamento_por_slug,
 )
 from apps.locadora.services import gerar_resumo_orcamento_locacao
-from core.security import build_whatsapp_url, is_honeypot_triggered
-from core.throttling import is_rate_limited
+from core.http import add_htmx_vary_headers, htmx_vary_response
+from core.security import build_whatsapp_url, validate_anti_bot_submission
+from core.throttling import build_rate_limit_response, check_rate_limit
 
 
 @require_GET
+@htmx_vary_response
 def catalogo_locadora_view(request: HttpRequest) -> HttpResponse:
     """Renderiza a página da Locadora ou apenas o grid parcial quando acionada via HTMX."""
     filtro_form = FiltroCatalogoForm(data=request.GET)
@@ -30,7 +32,6 @@ def catalogo_locadora_view(request: HttpRequest) -> HttpResponse:
 
     equipamentos = listar_equipamentos(grupo_slug=grupo_ativo, termo_busca=termo_busca)
 
-    # Resposta parcial ultrarrápida para filtragem HTMX sem recarregar a página
     if request.headers.get("HX-Request") == "true":
         return render(
             request,
@@ -62,8 +63,9 @@ def catalogo_locadora_view(request: HttpRequest) -> HttpResponse:
 
 
 @require_GET
+@htmx_vary_response
 def equipamento_modal_htmx_view(request: HttpRequest, slug: str) -> HttpResponse:
-    """Hidrata o modal nativo `<dialog>` com especificações técnicas do equipamento."""
+    """Hidrata o modal nativo `<dialog>` com especificações técnicas e foto do equipamento."""
     equipamento = obter_equipamento_por_slug(slug=slug)
     if equipamento is None:
         raise Http404("Equipamento não encontrado.")
@@ -76,13 +78,32 @@ def equipamento_modal_htmx_view(request: HttpRequest, slug: str) -> HttpResponse
 
 
 @require_POST
+@htmx_vary_response
 def solicitar_orcamento_htmx_view(request: HttpRequest) -> HttpResponse:
     """Valida a lista de equipamentos no backend e devolve confirmação com link WhatsApp."""
-    if is_rate_limited(request, scope="locadora_orcamento"):
-        return render(request, "errors/429.html", status=429)
+    rl_decision = check_rate_limit(request, scope="locadora_orcamento")
+    if not rl_decision.allowed:
+        return build_rate_limit_response(
+            request,
+            retry_after_seconds=rl_decision.retry_after_seconds,
+        )
 
-    if is_honeypot_triggered(request):
-        return HttpResponse(status=204)
+    anti_bot = validate_anti_bot_submission(request, scope="public_form")
+    if not anti_bot.accepted:
+        if anti_bot.reason == "honeypot_triggered":
+            return add_htmx_vary_headers(HttpResponse(status=204))
+        form_retry = OrcamentoLocacaoForm(data=request.POST)
+        form_retry.is_valid()
+        form_retry.add_error(
+            None,
+            "Validação temporal de segurança renovada. Confirme o envio do orçamento novamente.",
+        )
+        return render(
+            request,
+            "pages/locadora/partials/_form_orcamento.html",
+            {"form_orcamento": form_retry},
+            status=400,
+        )
 
     form = OrcamentoLocacaoForm(data=request.POST)
     if not form.is_valid():
@@ -108,4 +129,3 @@ def solicitar_orcamento_htmx_view(request: HttpRequest) -> HttpResponse:
         "pages/locadora/partials/_resultado_orcamento.html",
         {"resumo": resumo},
     )
-

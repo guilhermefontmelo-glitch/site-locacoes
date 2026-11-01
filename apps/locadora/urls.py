@@ -19,4 +19,3 @@ urlpatterns: list[URLPattern] = [
         name="solicitar_orcamento",
     ),
 ]
-

@@ -1,17 +1,28 @@
 {% url 'construtora:simular_mcmv' as url_simular %}
 
-<div class="card">
+<div class="card simulador-form-card">
   <div class="mb-4">
     <span class="eyebrow">
       {% include "components/_icon.html" with name="calculator" class="heroicon heroicon--sm" only %}
-      <span>Pré-Análise Instantânea</span>
+
+      <span>Parâmetros da Simulação</span>
     </span>
-    <h3 class="heading-xl mt-2">Descubra sua faixa no Minha Casa Minha Vida</h3>
+    <h3 class="heading-xl mt-2">Configure renda, obra e sistema SAC ou PRICE</h3>
     <p class="text-sm mt-2">
-      Preencha os dados básicos para ver seu enquadramento estimado e falar com nossa engenharia já com o resumo pronto.
+      Ajuste os valores livremente para comparar parcelas, subsídio e entrada mínima. Nome e WhatsApp são opcionais nesta etapa.
     </p>
   </div>
 
-  {% include "components/_crispy_form.html" with form=form_simulacao action_url=url_simular hx_target="#container-simulacao" submit_label="Calcular Meu Enquadramento Caixa" submit_icon="calculator" only %}
-</div>
+  <div class="sim-prazo-presets mb-4" role="group" aria-label="Atalhos rápidos de prazo em meses">
+    <span class="sim-prazo-presets__label">Prazos usuais Caixa:</span>
+    <div class="sim-prazo-presets__pills">
+      <button type="button" class="sim-prazo-pill" data-prazo-preset="180">180 meses</button>
+      <button type="button" class="sim-prazo-pill" data-prazo-preset="300">300 meses</button>
+      <button type="button" class="sim-prazo-pill is-active" data-prazo-preset="360">360 meses</button>
+      <button type="button" class="sim-prazo-pill" data-prazo-preset="420">420 meses</button>
+    </div>
+  </div>
 
+  {% include "components/_crispy_form.html" with form=form_simulacao action_url=url_simular form_dom_id="form-simulacao-habitacional" hx_target="#simulador-workspace" hx_swap="outerHTML" hx_indicator="#simulador-loading" submit_label="Recalcular Financiamento Caixa" submit_icon="calculator" reset_enabled=True reset_label="Restaurar padrões" trap_suffix="simulador" only %}
+
+</div>

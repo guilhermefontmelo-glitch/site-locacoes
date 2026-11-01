@@ -1,7 +1,7 @@
 /* ==========================================================================
    ROCHA CONSTRUTORA & ROCHA LOCAÇÕES — DESIGN SYSTEM CSS3 + TAILWIND v4
    Camadas sincronizadas com Tailwind CSS v4: @layer properties, theme, base, components, animations, utilities;
-   Inclui Design Tokens Dark/Light, Crispy Forms Tailwind Harmonics & Palco 3D GPU
+   Inclui Design Tokens Dark/Light, Fontes Self-Hosted, Crispy Forms & WAAPI Motion
    ========================================================================== */
 
 @layer properties, theme, base, components, animations, utilities;
@@ -25,7 +25,7 @@
     --color-gold-700: #8c6b2c;
     --color-gold-text: #e2c58a;
 
-    /* Textos & Contraste WCAG AA */
+    /* Textos & Contraste WCAG AA+ */
     --color-text-primary: #f8fafc;
     --color-text-secondary: #cbd5e1;
     --color-text-muted: #94a3b8;
@@ -43,20 +43,20 @@
     --color-border-strong: rgba(226, 197, 138, 0.42);
     --color-border-neutral: rgba(255, 255, 255, 0.12);
 
-    /* Tipografia Pareada (site-bonito.md: Geométrica + Leitura + Editorial) */
+    /* Tipografia Pareada Auto-Hospedada (Zero Google Fonts Externo) */
     --font-heading: "Outfit", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     --font-sans: "Plus Jakarta Sans", "Outfit", system-ui, -apple-system, sans-serif;
     --font-serif: "Playfair Display", Georgia, serif;
 
-    /* Escala Tipográfica Fluida com clamp() */
-    --text-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.82rem);
-    --text-sm: clamp(0.875rem, 0.84rem + 0.18vw, 0.95rem);
-    --text-base: clamp(1rem, 0.96rem + 0.22vw, 1.06rem);
-    --text-lg: clamp(1.125rem, 1.05rem + 0.4vw, 1.3rem);
-    --text-xl: clamp(1.35rem, 1.2rem + 0.75vw, 1.75rem);
-    --text-2xl: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
-    --text-3xl: clamp(2.15rem, 1.65rem + 2.6vw, 3.4rem);
-    --text-display: clamp(2.45rem, 1.8rem + 3.8vw, 4.65rem);
+    /* Escala Tipográfica Fluida com clamp() calibrada para Desktop & Mobile */
+    --text-xs: clamp(0.72rem, 0.7rem + 0.12vw, 0.8rem);
+    --text-sm: clamp(0.85rem, 0.82rem + 0.15vw, 0.92rem);
+    --text-base: clamp(0.95rem, 0.92rem + 0.18vw, 1.02rem);
+    --text-lg: clamp(1.05rem, 0.98rem + 0.25vw, 1.18rem);
+    --text-xl: clamp(1.18rem, 1.05rem + 0.5vw, 1.42rem);
+    --text-2xl: clamp(1.42rem, 1.2rem + 0.9vw, 1.88rem);
+    --text-3xl: clamp(1.78rem, 1.4rem + 1.4vw, 2.38rem);
+    --text-display: clamp(2.15rem, 1.65rem + 2.1vw, 3.25rem);
 
     /* Escala Espacial Fluida */
     --space-1: 0.25rem;
@@ -67,12 +67,13 @@
     --space-6: 2rem;
     --space-8: 3rem;
     --space-10: 4rem;
-    --space-section: clamp(4.25rem, 8vw, 7.5rem);
+    --space-section: clamp(3rem, 5vw, 5rem);
 
-    /* Geometria, Container & Elevação */
-    --container-max: 1200px;
-    --gutter: clamp(1.25rem, 4vw, 3rem);
+    /* Geometria, Container, Safe Area & Elevação */
+    --container-max: 1180px;
+    --gutter: clamp(1rem, 3.2vw, 2.25rem);
     --header-height: 4.5rem;
+    --mobile-unit-bar-height: 3.35rem;
     --radius-sm: 0.5rem;
     --radius-md: 0.875rem;
     --radius-lg: 1.25rem;
@@ -84,11 +85,17 @@
 
     /* Parâmetros de Animação & Palco 3D */
     --stage-perspective: 1200px;
+    --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
     --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
     --duration-fast: 180ms;
     --duration-base: 300ms;
-    --scroll-ratio: 0;
+  }
+
+  @media (min-width: 64rem) {
+    :root {
+      --mobile-unit-bar-height: 0px;
+    }
   }
 
   /* Tema Claro de Alto Contraste (Leitura sob luz solar direta no canteiro de obras — WCAG AAA) */
@@ -126,9 +133,33 @@
 }
 
 /* ==========================================================================
-   2. RESET COMPLEMENTAR, TIPOGRAFIA & ACESSIBILIDADE
+   2. FONTES SELF-HOSTED, RESET COMPLEMENTAR & ACESSIBILIDADE
    ========================================================================== */
 @layer base {
+  @font-face {
+    font-family: "Outfit";
+    src: url("../fonts/outfit-latin.woff2") format("woff2");
+    font-weight: 500 800;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url("../fonts/plus-jakarta-sans-latin.woff2") format("woff2");
+    font-weight: 400 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Playfair Display";
+    src: url("../fonts/playfair-display-italic-latin.woff2") format("woff2");
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+  }
+
   *,
   *::before,
   *::after {
@@ -137,12 +168,13 @@
 
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: calc(var(--header-height) + 1rem);
+    scroll-padding-top: calc(var(--header-height) + var(--mobile-unit-bar-height) + 1rem);
     -webkit-text-size-adjust: 100%;
   }
 
   body {
     min-height: 100svh;
+    min-height: 100dvh;
     margin: 0;
     font-family: var(--font-sans);
     font-size: var(--text-base);
@@ -158,6 +190,10 @@
     overflow-x: clip;
     display: flex;
     flex-direction: column;
+  }
+
+  body.is-scroll-locked {
+    overflow: hidden;
   }
 
   h1,
@@ -251,12 +287,12 @@
 }
 
 /* ==========================================================================
-   3. LAYOUT, COMPONENTES, HEROICONS, IMAGENS & DJANGO CRISPY FORMS
+   3. LAYOUT, NAVEGAÇÃO DUAL, BOTÕES >= 44PX, IMAGENS & DJANGO CRISPY FORMS
    ========================================================================== */
 @layer components {
   .main-content {
     flex: 1;
-    padding-top: var(--header-height);
+    padding-top: calc(var(--header-height) + var(--mobile-unit-bar-height));
   }
 
   .container {
@@ -283,7 +319,7 @@
 
   .grid-auto {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18.5rem), 1fr));
     gap: var(--space-5);
   }
 
@@ -297,6 +333,29 @@
     .split-layout {
       grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
     }
+  }
+
+  /* Métricas fluidas compartilhadas entre Construtora e Locadora (320px -> Ultrawide) */
+  .hero-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+    gap: var(--space-4);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .hero-metrics__value {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: 800;
+    color: var(--color-gold-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero-metrics__label {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
   }
 
   /* Container Queries */
@@ -342,8 +401,8 @@
   .theme-icon--moon {
     position: absolute;
     transition:
-      opacity 380ms cubic-bezier(0.22, 1, 0.36, 1),
-      transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+      opacity 380ms var(--ease-editorial),
+      transform 420ms var(--ease-editorial);
   }
 
   :root[data-theme="dark"] .theme-icon--sun,
@@ -376,6 +435,9 @@
     top: var(--space-3);
     left: var(--space-3);
     z-index: 200;
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
     padding: var(--space-3) var(--space-4);
     background-color: var(--color-gold-500);
     color: var(--color-text-on-gold);
@@ -389,13 +451,14 @@
     transform: translate3d(0, 0, 0);
   }
 
-  /* Header Fixo com Glassmorphism */
+  /* Header Fixo com Glassmorphism e Safe Area */
   .site-header {
     position: fixed;
     top: 0;
     inset-inline: 0;
     z-index: 80;
     height: var(--header-height);
+    padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
     background-color: var(--color-bg-glass);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--color-border-subtle);
@@ -406,13 +469,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-4);
+    gap: var(--space-3);
   }
 
   .brand-logo {
     display: inline-flex;
     align-items: center;
-    width: 11.25rem;
+    min-height: 2.75rem;
+    width: clamp(9.5rem, 38vw, 11.25rem);
     flex-shrink: 0;
     overflow: visible;
   }
@@ -433,7 +497,6 @@
     object-fit: contain;
   }
 
-  /* Transição equilibrada e elegante da Logo (suave, perceptível na medida certa) */
   .brand-logo__img.is-logo-out-right,
   .site-footer__logo.is-logo-out-right {
     opacity: 0.08;
@@ -454,17 +517,17 @@
 
   .brand-logo__img.is-logo-in-right,
   .site-footer__logo.is-logo-in-right {
-    animation: rocha-logo-in-from-right 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: rocha-logo-in-from-right 280ms var(--ease-out-expo) both;
   }
 
   .brand-logo__img.is-logo-in-left,
   .site-footer__logo.is-logo-in-left {
-    animation: rocha-logo-in-from-left 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: rocha-logo-in-from-left 280ms var(--ease-out-expo) both;
   }
 
   .brand-logo__img.is-logo-in-theme,
   .site-footer__logo.is-logo-in-theme {
-    animation: rocha-logo-in-theme 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: rocha-logo-in-theme 260ms var(--ease-out-expo) both;
   }
 
   @keyframes rocha-logo-in-from-right {
@@ -500,7 +563,6 @@
     }
   }
 
-  /* Alternância automática de Logo conforme Tema Escuro / Claro */
   :root[data-theme="dark"] .brand-logo__img--light,
   :root:not([data-theme="light"]) .brand-logo__img--light {
     display: none;
@@ -510,16 +572,16 @@
     display: none;
   }
 
-  /* Switcher Construtora <-> Locadora com Posição Invariante e Bolha Deslizante */
+  /* Switcher Desktop (>= 1024px) */
   .unit-switcher {
     position: relative;
     isolation: isolate;
     display: none;
-    width: 22rem;
+    width: 22.5rem;
     flex-shrink: 0;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: center;
-    padding: 0.25rem;
+    padding: 0.2rem;
     background-color: var(--color-bg-surface);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-pill);
@@ -528,10 +590,10 @@
 
   .unit-switcher__bubble {
     position: absolute;
-    top: 0.25rem;
-    bottom: 0.25rem;
-    left: 0.25rem;
-    width: calc(50% - 0.25rem);
+    top: 0.2rem;
+    bottom: 0.2rem;
+    left: 0.2rem;
+    width: calc(50% - 0.2rem);
     border-radius: var(--radius-pill);
     background-color: var(--color-gold-500);
     box-shadow: var(--shadow-gold);
@@ -539,7 +601,7 @@
     pointer-events: none;
     will-change: transform;
     transform: translate3d(0%, 0, 0);
-    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 420ms var(--ease-editorial);
   }
 
   .unit-switcher[data-active-unit="locadora"] .unit-switcher__bubble {
@@ -552,8 +614,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-height: 2.75rem;
     gap: 0.42rem;
-    padding: 0.42rem 0.9rem;
+    padding: 0.45rem 0.9rem;
     border-radius: var(--radius-pill);
     font-family: var(--font-heading);
     font-size: var(--text-xs);
@@ -571,10 +634,85 @@
     color: var(--color-text-on-gold);
   }
 
+  /* Barra Compacta Mobile/Tablet (< 1024px) sempre visível sob o Header */
+  .mobile-unit-bar {
+    position: fixed;
+    top: var(--header-height);
+    inset-inline: 0;
+    z-index: 75;
+    height: var(--mobile-unit-bar-height);
+    padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+    background-color: var(--color-bg-glass);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border-subtle);
+    display: flex;
+    align-items: center;
+  }
+
+  .mobile-unit-bar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-unit-bar__track {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(100%, 24rem);
+    padding: 0.16rem;
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+  }
+
+  .mobile-unit-bar__bubble {
+    position: absolute;
+    top: 0.16rem;
+    bottom: 0.16rem;
+    left: 0.16rem;
+    width: calc(50% - 0.16rem);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-gold-500);
+    box-shadow: var(--shadow-gold);
+    z-index: 0;
+    pointer-events: none;
+    will-change: transform;
+    transform: translate3d(0%, 0, 0);
+    transition: transform 400ms var(--ease-editorial);
+  }
+
+  .mobile-unit-bar[data-active-unit="locadora"] .mobile-unit-bar__bubble {
+    transform: translate3d(100%, 0, 0);
+  }
+
+  .mobile-unit-bar__item {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    gap: 0.38rem;
+    padding-inline: 0.65rem;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-heading);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--color-text-secondary);
+    transition: color 220ms var(--ease-standard);
+  }
+
+  .mobile-unit-bar__item.is-active {
+    color: var(--color-text-on-gold);
+  }
+
   .primary-nav {
     display: none;
     align-items: center;
-    gap: var(--space-5);
+    gap: var(--space-4);
     will-change: transform, opacity;
     transition:
       opacity 135ms cubic-bezier(0.33, 1, 0.68, 1),
@@ -592,6 +730,10 @@
   }
 
   .primary-nav__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: 0.3rem;
     font-size: var(--text-sm);
     font-weight: 500;
     color: var(--color-text-secondary);
@@ -603,11 +745,11 @@
   }
 
   .primary-nav.is-nav-in-right .primary-nav__link {
-    animation: rocha-nav-link-in-right 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: rocha-nav-link-in-right 280ms var(--ease-out-expo) both;
   }
 
   .primary-nav.is-nav-in-left .primary-nav__link {
-    animation: rocha-nav-link-in-left 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: rocha-nav-link-in-left 280ms var(--ease-out-expo) both;
   }
 
   .primary-nav.is-nav-in-right .primary-nav__link:nth-child(1),
@@ -655,13 +797,17 @@
   @media (min-width: 64rem) {
     .site-header__inner {
       display: grid;
-      grid-template-columns: 11.25rem 22rem 1fr auto;
+      grid-template-columns: 11.25rem 22.5rem 1fr auto;
       align-items: center;
       gap: var(--space-5);
     }
 
     .unit-switcher {
       display: inline-grid;
+    }
+
+    .mobile-unit-bar {
+      display: none;
     }
 
     .primary-nav {
@@ -680,13 +826,15 @@
     gap: var(--space-2);
   }
 
-  /* Botões Acelerados por GPU */
+  /* Botões Acelerados por GPU (Alvo Tátil >= 44x44px) */
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
     gap: var(--space-2);
-    padding: 0.78rem 1.4rem;
+    padding: 0.72rem 1.35rem;
     border-radius: var(--radius-pill);
     font-family: var(--font-heading);
     font-size: var(--text-sm);
@@ -743,8 +891,10 @@
   }
 
   .btn--icon {
-    width: 2.65rem;
-    height: 2.65rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     padding: 0;
     border-radius: 50%;
     border: 1px solid var(--color-border-neutral);
@@ -755,6 +905,8 @@
   .menu-toggle {
     width: 2.75rem;
     height: 2.75rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     border-radius: 50%;
     border: 1px solid var(--color-border-strong);
     display: inline-grid;
@@ -788,6 +940,7 @@
     width: min(24rem, 100%);
     height: 100%;
     padding: var(--space-5);
+    padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
     background-color: var(--color-bg-surface);
     border-left: 1px solid var(--color-border-subtle);
     display: flex;
@@ -810,21 +963,24 @@
   .mobile-drawer__links {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-2);
   }
 
   .mobile-drawer__links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
     font-family: var(--font-heading);
     font-size: var(--text-xl);
     font-weight: 700;
   }
 
-  /* Cards & Moldura de Imagem Otimizada (site-bonito.md Item 4) */
+  /* Cards & Moldura <picture> Otimizada */
   .card {
     background-color: var(--color-bg-surface);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-lg);
-    padding: var(--space-6);
+    padding: clamp(1.25rem, 3vw, 2rem);
     box-shadow: var(--shadow-sm);
     transition:
       transform var(--duration-base) var(--ease-out-expo),
@@ -844,6 +1000,12 @@
     border: 1px solid var(--color-border-subtle);
   }
 
+  .media-frame picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
   .media-frame__img {
     width: 100%;
     height: 100%;
@@ -857,7 +1019,6 @@
 
   /* ========================================================================
      HARMONIZAÇÃO DJANGO CRISPY FORMS + CRISPY-TAILWIND (DARK & LIGHT THEME)
-     Garante que `{{ form|crispy }}` fique impecável no tema Rocha Construtora
      ======================================================================== */
   .rocha-crispy-form label {
     display: block;
@@ -873,11 +1034,12 @@
     margin-left: 0.2rem;
   }
 
-  .rocha-crispy-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+  .rocha-crispy-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="range"]),
   .rocha-crispy-form select,
   .rocha-crispy-form textarea {
     width: 100%;
-    padding: 0.82rem 1rem;
+    min-height: 2.85rem;
+    padding: 0.78rem 1rem;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border-neutral);
     background-color: var(--color-bg-canvas);
@@ -923,6 +1085,13 @@
     font-size: var(--text-xs);
   }
 
+  .form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
   /* Honeypot Anti-Bot */
   .hp-trap {
     position: absolute;
@@ -936,7 +1105,8 @@
   /* Modal Nativo <dialog> */
   .modal-dialog {
     margin: auto;
-    width: min(40rem, calc(100% - 2rem));
+    width: min(40rem, calc(100% - 1.5rem));
+    max-height: calc(100dvh - 2rem);
     border: 1px solid var(--color-border-strong);
     border-radius: var(--radius-lg);
     background-color: var(--color-bg-surface);
@@ -951,7 +1121,7 @@
   }
 
   .modal-dialog__panel {
-    padding: var(--space-6);
+    padding: clamp(1.25rem, 3vw, 2rem);
   }
 
   .modal-dialog__header {
@@ -965,6 +1135,7 @@
   /* Indicadores HTMX */
   .htmx-indicator {
     opacity: 0;
+    pointer-events: none;
     transition: opacity var(--duration-fast) var(--ease-standard);
   }
 
@@ -976,7 +1147,7 @@
   /* Rodapé Institucional */
   .site-footer {
     margin-top: var(--space-section);
-    padding-block: var(--space-10) var(--space-6);
+    padding-block: var(--space-10) calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
     background-color: var(--color-bg-surface);
     border-top: 1px solid var(--color-border-subtle);
   }
@@ -1010,7 +1181,7 @@
   .site-footer__list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-2);
     font-size: var(--text-sm);
     color: var(--color-text-secondary);
   }
@@ -1018,6 +1189,7 @@
   .site-footer__item-link {
     display: inline-flex;
     align-items: center;
+    min-height: 2.75rem;
     gap: 0.45rem;
   }
 
@@ -1042,6 +1214,7 @@
   .site-footer__map-link {
     display: inline-flex;
     align-items: center;
+    min-height: 2.75rem;
     gap: 0.35rem;
     font-size: var(--text-sm);
     font-weight: 600;
@@ -1065,7 +1238,7 @@
 }
 
 /* ==========================================================================
-   4. ANIMAÇÕES ACELERADAS POR GPU, 3D STAGE & VIEW TRANSITIONS API
+   4. ANIMAÇÕES ACELERADAS POR GPU, COREOGRAFIA WAAPI & VIEW TRANSITIONS
    ========================================================================== */
 @layer animations {
   @view-transition {
@@ -1076,6 +1249,9 @@
   html.is-theme-transitioning,
   html.is-theme-transitioning body,
   html.is-theme-transitioning .site-header,
+  html.is-theme-transitioning .mobile-unit-bar,
+  html.is-theme-transitioning .mobile-unit-bar__track,
+  html.is-theme-transitioning .mobile-unit-bar__bubble,
   html.is-theme-transitioning .unit-switcher,
   html.is-theme-transitioning .unit-switcher__item,
   html.is-theme-transitioning .unit-switcher__bubble,
@@ -1117,10 +1293,10 @@
   html.is-theme-transitioning a,
   html.is-theme-transitioning address {
     transition:
-      background-color 400ms cubic-bezier(0.22, 1, 0.36, 1),
-      color 400ms cubic-bezier(0.22, 1, 0.36, 1),
-      border-color 400ms cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 400ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+      background-color 400ms var(--ease-editorial),
+      color 400ms var(--ease-editorial),
+      border-color 400ms var(--ease-editorial),
+      box-shadow 400ms var(--ease-editorial) !important;
   }
 
   .site-header {
@@ -1146,11 +1322,11 @@
   }
 
   .main-content.is-entering-from-right {
-    animation: rocha-unit-enter-from-right 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: rocha-unit-enter-from-right 380ms var(--ease-editorial) both;
   }
 
   .main-content.is-entering-from-left {
-    animation: rocha-unit-enter-from-left 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: rocha-unit-enter-from-left 380ms var(--ease-editorial) both;
   }
 
   @keyframes rocha-unit-enter-from-right {
@@ -1215,7 +1391,7 @@
     z-index: 100;
     background: linear-gradient(90deg, var(--color-gold-600), var(--color-gold-300));
     transform-origin: 0 50%;
-    transform: scaleX(var(--scroll-ratio, 0));
+    transform: scaleX(0);
     pointer-events: none;
   }
 
@@ -1235,7 +1411,64 @@
     }
   }
 
-  /* Primitivas do Palco 3D das Etapas da Obra */
+  /* Tipografia Cinética Acessível & Conectores Progressivos (scroll-choreography.js) */
+  .kinetic-word-nowrap {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .kinetic-mask {
+    display: inline-block;
+    overflow: clip;
+    vertical-align: bottom;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+
+  .kinetic-unit {
+    display: inline-block;
+    will-change: transform, opacity;
+  }
+
+  .timeline-progress-track {
+    width: 100%;
+    height: 0.35rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-border-subtle);
+    overflow: hidden;
+    margin-bottom: var(--space-5);
+  }
+
+  .timeline-progress-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      var(--color-gold-600),
+      var(--color-caixa-accent),
+      var(--color-gold-300)
+    );
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+  }
+
+  @supports (animation-timeline: view()) {
+    .timeline-progress-fill {
+      animation: rocha-timeline-fill linear both;
+      animation-timeline: view();
+      animation-range: entry 15% cover 72%;
+    }
+
+    @keyframes rocha-timeline-fill {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+  }
+
   .stage-3d {
     perspective: var(--stage-perspective);
     transform-style: preserve-3d;
@@ -1249,15 +1482,14 @@
       opacity var(--duration-base) var(--ease-standard);
   }
 
-  [data-reveal] {
+  [data-reveal],
+  [data-stagger-item] {
     opacity: 0;
-    transform: translate3d(0, 1.5rem, 0);
-    transition:
-      opacity 0.55s var(--ease-out-expo),
-      transform 0.55s var(--ease-out-expo);
+    transform: translate3d(0, 1.35rem, 0);
   }
 
-  [data-reveal].is-visible {
+  [data-reveal].is-visible,
+  [data-stagger-item].is-visible {
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }
@@ -1275,9 +1507,15 @@
       transition-duration: 0.01ms !important;
     }
 
-    [data-reveal] {
-      opacity: 1;
-      transform: none;
+    [data-reveal],
+    [data-stagger-item],
+    .kinetic-unit {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .timeline-progress-fill {
+      transform: scaleX(1) !important;
     }
   }
 }

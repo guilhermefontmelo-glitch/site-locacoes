@@ -9,4 +9,3 @@ class ConstrutoraConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.construtora"
     verbose_name = "Rocha Construtora & Financiamento MCMV"
-

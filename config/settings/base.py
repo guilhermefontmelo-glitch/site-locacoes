@@ -161,7 +161,6 @@ STATIC_URL: str = "/static/"
 STATIC_ROOT: Path = BASE_DIR / "staticfiles"
 STATICFILES_DIRS: list[Path] = [
     BASE_DIR / "static",
-    BASE_DIR / "locacoes" / "static",
 ]
 
 # ==============================================================================
@@ -173,6 +172,7 @@ CRISPY_TEMPLATE_PACK: str = "tailwind"
 # ==============================================================================
 # PARÂMETROS COMERCIAIS & SEGURANÇA OPERACIONAL DA MARCA ROCHA
 # ==============================================================================
+ENABLE_DJANGO_ADMIN: bool = env.bool("ENABLE_DJANGO_ADMIN", default=False)
 DJANGO_ADMIN_URL: str = env("DJANGO_ADMIN_URL").lstrip("/")
 if not DJANGO_ADMIN_URL.endswith("/"):
     DJANGO_ADMIN_URL = f"{DJANGO_ADMIN_URL}/"
@@ -180,8 +180,10 @@ if not DJANGO_ADMIN_URL.endswith("/"):
 ROCHA_WHATSAPP_CONSTRUTORA: str = "".join(
     ch for ch in env("ROCHA_WHATSAPP_CONSTRUTORA") if ch.isdigit()
 )
-ROCHA_WHATSAPP_LOCADORA: str = "".join(
-    ch for ch in env("ROCHA_WHATSAPP_LOCADORA") if ch.isdigit()
-)
+ROCHA_WHATSAPP_LOCADORA: str = "".join(ch for ch in env("ROCHA_WHATSAPP_LOCADORA") if ch.isdigit())
 RATE_LIMIT_REQUESTS_PER_MINUTE: int = env("RATE_LIMIT_REQUESTS_PER_MINUTE")
+ENFORCE_FORM_TIMESTAMP: bool = env.bool("ENFORCE_FORM_TIMESTAMP", default=True)
+FORM_MIN_SUBMIT_SECONDS: float = env.float("FORM_MIN_SUBMIT_SECONDS", default=1.2)
+FORM_MAX_AGE_SECONDS: int = env.int("FORM_MAX_AGE_SECONDS", default=7200)
+TRUSTED_PROXY_DEPTH: int = env.int("TRUSTED_PROXY_DEPTH", default=0)
 CSP_UPGRADE_INSECURE_REQUESTS: bool = False

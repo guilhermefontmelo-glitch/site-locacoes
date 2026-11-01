@@ -6,10 +6,20 @@ from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
 
+from ._validators import (
+    resolve_strict_hosts_and_origins,
+    validate_strict_hostname,
+    validate_strict_origin,
+)
 from .base import *
 
-# Hardening: DEBUG jamais pode ser ativado em produção
+_resolve_strict_hosts_and_origins = resolve_strict_hosts_and_origins
+_validate_strict_hostname = validate_strict_hostname
+_validate_strict_origin = validate_strict_origin
+
+# Hardening: DEBUG jamais pode ser ativado em produção e Admin permanece oculto por padrão
 DEBUG: bool = False
+ENABLE_DJANGO_ADMIN = env.bool("ENABLE_DJANGO_ADMIN", default=False)
 
 IS_VERCEL: bool = bool(os.environ.get("VERCEL"))
 
@@ -25,28 +35,13 @@ if not SECRET_KEY or SECRET_KEY.startswith("django-insecure") or len(SECRET_KEY)
     raise ImproperlyConfigured(msg)
 
 # ==============================================================================
-# ALLOWED_HOSTS & CSRF_TRUSTED_ORIGINS (DOMÍNIOS PRÓPRIOS + VERCEL DEPLOYMENTS)
+# ALLOWED_HOSTS & CSRF_TRUSTED_ORIGINS ESTRITOS (ZERO WILDCARD VERCEL)
 # ==============================================================================
-ALLOWED_HOSTS: list[str] = env.list("DJANGO_ALLOWED_HOSTS", default=[])
-CSRF_TRUSTED_ORIGINS: list[str] = env.list("DJANGO_CSRF_TRUSTED_ORIGINS", default=[])
-
-if IS_VERCEL:
-    if ".vercel.app" not in ALLOWED_HOSTS:
-        ALLOWED_HOSTS.append(".vercel.app")
-    if "https://*.vercel.app" not in CSRF_TRUSTED_ORIGINS:
-        CSRF_TRUSTED_ORIGINS.append("https://*.vercel.app")
-    for vercel_env_var in ("VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL"):
-        vercel_host = os.environ.get(vercel_env_var, "").strip()
-        if vercel_host:
-            if vercel_host not in ALLOWED_HOSTS:
-                ALLOWED_HOSTS.append(vercel_host)
-            origin = f"https://{vercel_host}"
-            if origin not in CSRF_TRUSTED_ORIGINS:
-                CSRF_TRUSTED_ORIGINS.append(origin)
-
-if not ALLOWED_HOSTS:
-    msg = "DJANGO_ALLOWED_HOSTS deve conter ao menos um host válido em produção."
-    raise ImproperlyConfigured(msg)
+ALLOWED_HOSTS, CSRF_TRUSTED_ORIGINS = resolve_strict_hosts_and_origins(
+    configured_hosts=env.list("DJANGO_ALLOWED_HOSTS", default=[]),
+    configured_origins=env.list("DJANGO_CSRF_TRUSTED_ORIGINS", default=[]),
+    is_vercel=IS_VERCEL,
+)
 
 # ==============================================================================
 # HARDENING DE TRANSPORTE (TLS, HSTS E COOKIES SEGUROS)
@@ -55,26 +50,24 @@ SECURE_PROXY_SSL_HEADER: tuple[str, str] = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT: bool = env.bool("SECURE_SSL_REDIRECT", default=True)
 
 SESSION_COOKIE_SECURE: bool = True
-SESSION_COOKIE_HTTPONLY: bool = True
-SESSION_COOKIE_SAMESITE: str = "Lax"
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
 
 CSRF_COOKIE_SECURE: bool = True
-CSRF_COOKIE_HTTPONLY: bool = True
-CSRF_COOKIE_SAMESITE: str = "Lax"
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = "Lax"
 
 SECURE_HSTS_SECONDS: int = env.int("SECURE_HSTS_SECONDS", default=31536000)
 SECURE_HSTS_INCLUDE_SUBDOMAINS: bool = True
 SECURE_HSTS_PRELOAD: bool = True
 
-SECURE_CONTENT_TYPE_NOSNIFF: bool = True
-X_FRAME_OPTIONS: str = "DENY"
-CSP_UPGRADE_INSECURE_REQUESTS: bool = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
+CSP_UPGRADE_INSECURE_REQUESTS = True
 
 # ==============================================================================
 # COMPATIBILIDADE SERVERLESS VERCEL (FILESYSTEM SOMENTE-LEITURA)
 # ==============================================================================
-# Caso nenhum banco externo (DATABASE_URL) esteja configurado na Vercel, usa
-# sessões em cookies assinados criptograficamente e caminho temporário seguro.
 if IS_VERCEL and not os.environ.get("DATABASE_URL"):
     SESSION_ENGINE: str = "django.contrib.sessions.backends.signed_cookies"
     DATABASES["default"]["NAME"] = Path(tempfile.gettempdir()) / "rocha_serverless.sqlite3"
@@ -91,7 +84,6 @@ STORAGES = {
     },
 }
 
-# Resiliência extra em builds serverless + cache imutável de 1 ano para assets com hash
 WHITENOISE_MANIFEST_STRICT: bool = False
 WHITENOISE_USE_FINDERS: bool = IS_VERCEL
 WHITENOISE_MAX_AGE: int = 31536000
@@ -127,4 +119,3 @@ LOGGING = {
         },
     },
 }
-

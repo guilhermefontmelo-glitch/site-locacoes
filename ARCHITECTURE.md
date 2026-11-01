@@ -1,122 +1,78 @@
-# ARCHITECTURE.md — Arquitetura da Landing Page Rocha Construtora & Locações
+# ARCHITECTURE.md — Arquitetura da Plataforma Rocha Construtora & Rocha Locações
 
-## 1. Visão Geral e Posicionamento Arquitetural
+## 1. Visão Geral e Posicionamento Arquitetural (`Zero-ERP`)
 
-Esta aplicação é uma **Landing Page Interativa e Dinâmica de Alta Conversão** (arquitetura enxuta **Zero-ERP**), hospedada na **Vercel**, projetada para a **Rocha Construtora** (Viçosa do Ceará - CE e região).
+Aplicação web institucional e interativa de alta conversão (**Zero-ERP**), projetada para execução serverless na **Vercel** (Python 3.12 + Django 6.1 + HTMX 2.0.4 + Tailwind CSS v4 + Three.js WebGL), unificando duas verticais de negócio em Viçosa do Ceará - CE sob o mesmo sistema de design:
 
-O ecossistema unifica duas frentes sob a **mesma marca, identidade visual e infraestrutura**, guiando o visitante diretamente ao fechamento/atendimento via WhatsApp:
+1. **`apps/construtora` (Rocha Construtora — Obras Financiadas Caixa & Minha Casa Minha Vida)**:
+   - Palco arquitetônico 3D com *scroll-pinning* (`01..06`, pista `.obra-scroll-runway` + `.obra-pinned-viewport`), alternância entre **Holograma CAD** (`EdgesGeometry` + plano de varredura laser) e **Modo Realista PBR**, vista explodida omnidirecional `(dx, dy, dz)` em 18 subgrupos construtivos e sincronia em memória (`json_script` `#etapas-obra-json`).
+   - Simulador Habitacional interativo de 2 colunas com matemática **100% `decimal.Decimal`** (`ROUND_HALF_UP`), comparando sistemas **`SAC`** e **`PRICE`**, Faixas 1, 2 e 3 do programa Minha Casa Minha Vida Regional Nordeste + linha Caixa SBPE, teto LTV (`70%`, `80%` ou `90%` em lote próprio), subsídio estimado, máscara BRL e sliders progressivos sincronizados.
 
-1. **`apps/construtora` (Construtora & Financiamento Caixa / Minha Casa Minha Vida)**:
-   - Experiência visual imersiva com animações 3D e coreografia de rolagem (*scroll-driven storytelling*) exibindo as **etapas da obra** (Fundação → Estrutura → Alvenaria → Cobertura & Instalações → Acabamento → Entrega das Chaves).
-   - Jornada explicativa e **pré-simulador interativo (HTMX + Crispy Forms)** do processo de financiamento **Caixa Habitacional / Minha Casa Minha Vida (MCMV)** (aquisição de terreno + construção ou construção em terreno próprio).
-   - Vitrine enxuta de obras/diferenciais construtivos e CTAs diretos de alta conversão.
-
-2. **`apps/locadora` (Área da Locadora de Equipamentos para Construção Civil)**:
-   - Landing page integrada com a mesma assinatura visual da Rocha Construtora.
-   - Catálogo interativo de andaimes, escoras, betoneiras, compactadores e ferramentas, filtrável instantaneamente via HTMX por categoria ou **etapa da obra**.
-   - Passo a passo simplificado (*Orçamento → Entrega na Obra → Retirada*) e formulário/cesta estilizado com Crispy Forms + Tailwind que gera mensagem estruturada e validada no backend para atendimento imediato no WhatsApp.
+2. **`apps/locadora` (Rocha Locações — Equipamentos para Construção Civil)**:
+   - Catálogo operacional com 8 famílias de equipamentos fotografados em proporção editorial (`AVIF` + `WebP`), filtragem instantânea via HTMX com barra horizontal `scroll-snap` em mobile, modal `<dialog>` nativo acessível e montagem de orçamento multi-equipamento convertendo diretamente para o WhatsApp.
 
 ---
 
-## 2. Estrutura de Diretórios Consolidada (DRY, Enxuta & Serverless-Ready)
+## 2. Estrutura de Diretórios Consolidada
 
 ```text
 site-locacoes/
-├── .vscode/
-│   └── settings.json                 # Ruff (Python) + djLint (Django HTML) + .venv
+├── .stitch/
+│   └── DESIGN.md                         # Design System semântico canônico (Dark/Light, tokens, anti-patterns)
 ├── config/
-│   ├── __init__.py
-│   ├── asgi.py                       # Entrypoint ASGI
-│   ├── wsgi.py                       # Entrypoint WSGI (auto-detecta Vercel -> production)
-│   ├── urls.py                       # Rotas principais (/ para Construtora, /locadora/ para Locadora)
+│   ├── asgi.py                           # Entrypoint ASGI
+│   ├── wsgi.py                           # Entrypoint WSGI serverless (Vercel)
+│   ├── urls.py                           # Roteamento raiz (/, /locadora/, /healthz/ e admin condicional)
 │   └── settings/
-│       ├── __init__.py
-│       ├── base.py                   # Base compartilhada, Argon2, Crispy Tailwind, Middlewares
-│       ├── local.py                  # DEBUG=True, Debug Toolbar, auditoria local
-│       ├── production.py             # Hardening total + compatibilidade nativa Vercel + WhiteNoise
-│       └── test.py                   # Suíte rápida pytest
-├── core/                             # Camada transversal de segurança, performance e utilitários
-│   ├── __init__.py
-│   ├── apps.py
-│   ├── context_processors.py         # Nonce CSP + metadados institucionais globais da marca Rocha
-│   ├── middleware.py                 # Content-Security-Policy (Nonce), Permissions-Policy, COOP
-│   ├── security.py                   # Honeypot anti-bot e assinatura temporal de formulários
-│   ├── throttling.py                 # Rate limiting leve em cache para endpoints POST públicos
-│   ├── validators.py                 # Sanitização de entradas, validação de telefone BR e valores
-│   └── views.py                      # Endpoint /healthz/ e páginas de erro seguras (400/403/404/429/500)
-├── apps/                             # Apenas 2 domínios enxutos orientados a conversão
-│   ├── __init__.py
-│   ├── construtora/                  # Obras + Cena 3D das Etapas + Jornada/Simulador Caixa MCMV
-│   │   ├── __init__.py
-│   │   ├── apps.py
-│   │   ├── forms.py                  # Formulários validados no backend e renderizados via Crispy Tailwind
-│   │   ├── models.py                 # Modelos enxutos (se aplicável) sem sobrecarga de ERP
-│   │   ├── selectors.py              # Leitura otimizada de etapas da obra, faixas MCMV e portfólio
-│   │   ├── services.py               # Cálculo seguro de pré-enquadramento MCMV + geração link WhatsApp
-│   │   ├── urls.py
-│   │   ├── views.py                  # Views SSR + fragmentos parciais HTMX
-│   │   └── tests/
-│   └── locadora/                     # Área de Locação de Equipamentos para Construção Civil
-│       ├── __init__.py
-│       ├── apps.py
-│       ├── forms.py                  # Validação backend de filtros de catálogo e pedido de orçamento
-│       ├── models.py                 # Modelos enxutos de catálogo (ou dados tipados imutáveis)
-│       ├── selectors.py              # Filtragem rápida por categoria e etapa da obra
-│       ├── services.py               # Montagem validada de orçamento multi-equipamento -> WhatsApp
-│       ├── urls.py
-│       ├── views.py                  # Views SSR + filtros/modais/orçamento parciais HTMX
-│       └── tests/
+│       ├── _validators.py                # Validação RFC 1123 sem wildcards para hosts e origens CSRF
+│       ├── base.py                       # Configuração base compartilhada, Argon2, Crispy Tailwind
+│       ├── local.py                      # Desenvolvimento local
+│       ├── production.py                 # Hardening Zero-Trust + WhiteNoise Manifest/Brotli + Vercel
+│       └── test.py                       # Suíte rápida pytest em SQLite :memory:
+├── core/
+│   ├── context_processors.py             # Nonce CSP, metadados Rocha e gerador de token anti-bot
+│   ├── http.py                           # @htmx_vary_response (Vary: HX-Request + Cache-Control privado)
+│   ├── middleware.py                     # CSP Zero-CDN (default-src 'none', style-src-attr 'none'), COOP/CORP
+│   ├── security.py                       # TimestampSigner (1.2s..7200s), Honeypots duplos e WhatsApp URL
+│   ├── throttling.py                     # Rate limiting com IP real Vercel, HMAC-SHA256 e 429 HTMX
+│   ├── validators.py                     # Sanitização textual e validação de telefone brasileiro
+│   ├── views.py                          # /healthz/ e handlers de erro 400/403/404/429/500
+│   └── tests/
+│       └── test_security_and_headers.py  # Testes unitários e de integração de segurança Zero-Trust
+├── apps/
+│   ├── construtora/                      # Domínio Rocha Construtora (selectors, forms, services Decimal, views)
+│   └── locadora/                         # Domínio Rocha Locações (selectors, forms, services, views)
 ├── src/
-│   └── input.css                     # Fonte do Tailwind CSS v4 (@theme Rocha + @source templates/crispy)
+│   └── input.css                         # Entrada do Tailwind CSS v4 CLI
 ├── templates/
-│   ├── base.html                     # Estrutura global DRY (Fontes, Tailwind + main.css, CSP Nonce, HTMX)
-│   ├── partials/
-│   │   ├── _header.html              # Topo fixo glassmorphism + Heroicons + switcher Construtora <-> Locadora
-│   │   └── _footer.html              # Rodapé institucional unificado Viçosa do Ceará - CE
-│   ├── components/                   # Componentes atômicos isolados ({% include ... only %})
-│   │   ├── _icon.html                # Biblioteca Heroicons v2 em SVG inline otimizado (Zero-Bloat)
-│   │   ├── _image.html               # Componente de imagem responsiva otimizada (anti-CLS, lazy/LCP)
-│   │   └── _crispy_form.html         # Envelope padrão HTMX + CSRF + Honeypot + {{ form|crispy }}
+│   ├── base.html                         # Shell HTML5 sem CDN externa, fontes preload e manifesto data-*
+│   ├── partials/                         # _header.html (desktop switcher + .mobile-unit-bar) e _footer.html
+│   ├── components/                       # _icon.html, _image.html (<picture> AVIF/WebP), _crispy_form.html
 │   ├── pages/
-│   │   ├── construtora/              # Landing principal (3D, Etapas, Financiamento MCMV) + parciais HTMX
-│   │   └── locadora/                 # Landing da Locadora (Catálogo, Como Alugar, Cotação) + parciais HTMX
-│   └── errors/                       # 400.html, 403.html, 404.html, 429.html, 500.html
-├── static/
-│   ├── css/
-│   │   ├── tailwind.css              # Bundle utilitário minificado compilado pelo Tailwind CSS v4 CLI
-│   │   ├── main.css                  # Design Tokens Dark/Light, harmonização Crispy Forms e animações 3D/GPU
-│   │   └── pages/                    # Estilos específicos sob demanda (construtora.css, locadora.css)
-│   ├── js/
-│   │   └── modules/
-│   │       ├── app.js                # Bootstrap ES6+: menu acessível, tema Dark/Light, barra scroll, <dialog>
-│   │       ├── scene3d-obra.js       # Animação 3D interativa das etapas da obra acelerada por GPU
-│   │       └── scroll-choreography.js# Coreografia de rolagem 60fps via IntersectionObserver + rAF
-│   └── img/                          # Ativos visuais otimizados da marca, obras e equipamentos
-├── requirements/
-│   ├── base.txt                      # Django, Argon2, Environ, WhiteNoise, Crispy Forms + Crispy Tailwind
-│   ├── local.txt                     # Ferramentas de dev, lint e inspeção
-│   └── production.txt                # Runtime de produção
-├── package.json                      # Scripts npm css:dev / css:build do Tailwind CSS v4 CLI
-├── requirements.txt                  # Entrada automática do builder Python da Vercel
-├── vercel.json                       # Configuração Serverless da Vercel apontando para config/wsgi.py
-├── manage.py
-├── pyproject.toml
-├── .env.example
-├── AI_RULES.md
-├── ARCHITECTURE.md
-└── SECURITY_CHECKLIST.md
+│   │   ├── construtora/                  # home.html + parciais (_simulador_workspace, _etapa_painel, etc.)
+│   │   └── locadora/                     # catalogo.html + parciais (_grid_equipamentos, _modal_equipamento, etc.)
+│   └── errors/                           # Páginas de erro + partials/_rate_limit_429.html
+└── static/
+    ├── fonts/                            # Outfit, Plus Jakarta Sans e Playfair Display (.woff2 locais)
+    ├── vendor/                           # HTMX 2.0.4 e Three.js ES Module auto-hospedados
+    ├── css/                              # tailwind.css, main.css e pages/{construtora,locadora}.css
+    ├── img/                              # Logos + 20 ativos contextuais em pares .avif e .webp (40 arquivos)
+    └── js/modules/
+        ├── waapi-driver.js               # Motor Web Animations API compositor-only (zero inline style)
+        ├── scroll-choreography.js        # Tipografia cinética acessível, stagger, contadores e timelines
+        ├── simulator-ui.js               # Máscara BRL, sliders progressivos, presets de prazo e reset
+        ├── scene3d-obra.js               # Scroll-pinning 01..06, painel em memória e lazy import WebGL
+        ├── scene3d-three.js              # Cena Three.js CAD/PBR, 18 subgrupos explodíveis e dispose GPU
+        └── app.js                        # Bootstrap SPA entre unidades, tema Dark/Light e ciclo de vida
 ```
 
 ---
 
-## 3. Pilares Visuais & Frontend (`site-bonito.md` + Alta Performance)
+## 3. Decisões Arquiteturais Chave
 
-1. **Tailwind CSS v4 + CSS3 `@layer` Unificados**:
-   - `src/input.css` define os tokens `@theme` da Rocha Construtora e rastreia automaticamente `templates/`, `apps/` e os templates internos do `crispy_tailwind`, gerando `static/css/tailwind.css` minificado.
-   - `static/css/main.css` opera nas mesmas camadas (`@layer theme, base, components, animations, utilities;`), adicionando suporte nativo Dark/Light, estilização refinada dos campos do `django-crispy-forms`, Container Queries e primitivas 3D/GPU.
-2. **Formulários Turbinados (`django-crispy-forms` + `crispy-tailwind`)**:
-   - Elimina completamente HTML bruto (`form.as_p`), unindo validação rigorosa no backend com renderização elegante `{{ form|crispy }}` e submissão sem reload via HTMX.
-3. **Tipografia Editorial, Heroicons SVG e Imagens Otimizadas**:
-   - Par tipográfico `Outfit` (títulos e números) + `Plus Jakarta Sans` (interface e leitura) + `Playfair Display` (destaques nobres).
-   - Biblioteca `components/_icon.html` baseada em **Heroicons v2** (vetores puros sem requisições extras de fontes e 100% aderentes à nossa CSP).
-   - Componente `components/_image.html` garantindo carregamento rápido (`loading="lazy"`, `decoding="async"`, dimensões explícitas contra *Layout Shift*).
+1. **Compatibilidade Total com `style-src-attr 'none'` (`waapi-driver.js`)**:
+   - Nenhuma animação ou controle interativo muta `element.style.*` nem invoca `Animation.commitStyles()`. Barras de progresso, inclinação 3D, varredura laser e explosão CSS 3D operam diretamente na pilha de composição via `KeyframeEffect` e `Element.animate()`.
+2. **Code-Splitting Estrito por Vertical**:
+   - Visitantes que acessam `/locadora/` baixam apenas `locadora.css` e os módulos globais leves (`app.js`, `scroll-choreography.js`, `waapi-driver.js`). Ao alternar para a Construtora via transição SPA, `app.js` injeta `construtora.css` e importa `scene3d-obra.js` e `simulator-ui.js` sob demanda; ao retornar para a Locadora, `disposeObraStageUI()` libera integralmente geometrias, materiais, texturas, `PMREMGenerator` e contexto WebGL.
+3. **Pipeline `<picture>` AVIF + WebP com Prioridade Cirúrgica de LCP**:
+   - Apenas a imagem Hero principal de cada página recebe `fetchpriority="high" loading="eager" decoding="sync"`, enquanto os demais 19 ativos utilizam `loading="lazy" decoding="async"` com `width`/`height` explícitos (`CLS = 0`).

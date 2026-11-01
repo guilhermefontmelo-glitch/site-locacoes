@@ -1,12 +1,20 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark" data-unit="{% block brand_unit %}construtora{% endblock %}">
+<html lang="pt-BR"
+      data-theme="dark"
+      data-unit="{% block brand_unit %}construtora{% endblock %}"
+      data-css-construtora="{% static 'css/pages/construtora.css' %}"
+      data-css-locadora="{% static 'css/pages/locadora.css' %}"
+      data-js-obra="{% static 'js/modules/scene3d-obra.js' %}"
+      data-js-three="{% static 'js/modules/scene3d-three.js' %}"
+      data-js-simulador="{% static 'js/modules/simulator-ui.js' %}">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="view-transition" content="same-origin">
-    <meta name="htmx-config" content='{"inlineStyleNonce":"{{ csp_nonce }}"}'>
+    <meta name="htmx-config"
+          content='{"inlineStyleNonce":"{{ csp_nonce }}","includeIndicatorStyles":false,"allowEval":false,"selfRequestsOnly":true}'>
     <title>{% block title %}Rocha Construtora | Obras Financiadas Caixa &amp; Minha Casa Minha Vida{% endblock %}</title>
     <meta name="description"
           content="{% block meta_description %}Construtora especializada em obras financiadas pela Caixa Habitacional e Minha Casa Minha Vida em Viçosa do Ceará - CE, além de locação de equipamentos para construção civil.{% endblock %}">
@@ -15,7 +23,6 @@
     <meta name="theme-color" content="#0b1320">
     <meta name="robots" content="index, follow">
 
-    <!-- Open Graph / Compartilhamento Social -->
     <meta property="og:locale" content="pt_BR">
     <meta property="og:type" content="website">
     <meta property="og:site_name"
@@ -25,17 +32,21 @@
     <meta property="og:description"
           content="{% block og_description %}Do projeto e aprovação na Caixa até a entrega das chaves, além de locação completa de equipamentos para sua obra.{% endblock %}">
 
-    <!-- Tipografia Pareada Moderna (Outfit + Plus Jakarta Sans + Playfair Display) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Playfair+Display:ital,wght@1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-          rel="stylesheet">
+    <!-- Preload seletivo das 2 fontes primárias auto-hospedadas acima da dobra -->
+    <link rel="preload"
+          href="{% static 'fonts/outfit-latin.woff2' %}"
+          as="font"
+          type="font/woff2"
+          crossorigin>
+    <link rel="preload"
+          href="{% static 'fonts/plus-jakarta-sans-latin.woff2' %}"
+          as="font"
+          type="font/woff2"
+          crossorigin>
 
-    <!-- Framework CSS Moderno (Tailwind CSS v4 Compilado) + Design System 3D/Tokens -->
-    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}?v=7">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=7">
-    <link rel="stylesheet" href="{% static 'css/pages/construtora.css' %}?v=7">
-    <link rel="stylesheet" href="{% static 'css/pages/locadora.css' %}?v=7">
+    <!-- CSS Crítico Global (Tailwind v4 Zero-Bloat + Design Tokens) -->
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
     {% block extra_css %}{% endblock %}
 
     <!-- Prevenção de FOUC de Tema (Assinado via CSP Nonce) -->
@@ -77,30 +88,24 @@
   </head>
 
   <body class="page-shell" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <!-- Acessibilidade: Atalho de Teclado Direto ao Conteúdo -->
     <a class="skip-link" href="#conteudo-principal">Pular para o conteúdo principal</a>
 
-    <!-- Barra de Progresso de Rolagem Acelerada por GPU (transform: scaleX) -->
     <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
 
-    <!-- Cabeçalho Global Unificado (Construtora <-> Locadora) -->
     {% block header %}
       {% include "partials/_header.html" with active_unit=active_unit|default:"construtora" rocha=rocha csp_nonce=csp_nonce only %}
     {% endblock %}
 
-    <!-- Conteúdo Principal Semântico (DRY Template Inheritance) -->
     <main id="conteudo-principal" class="main-content" tabindex="-1">
       {% block content %}{% endblock %}
     </main>
 
-    <!-- Região Viva para Notificações Assíncronas (HTMX / Formulários) -->
     <div id="toast-region"
          class="toast-region"
          role="status"
          aria-live="polite"
          aria-atomic="true"></div>
 
-    <!-- Modal Nativo Acessível (<dialog>) Hidratado sob Demanda via HTMX -->
     <dialog id="modal-dinamico" class="modal-dialog" aria-labelledby="modal-titulo">
       <div class="modal-dialog__panel">
         <div class="modal-dialog__header">
@@ -116,23 +121,15 @@
       </div>
     </dialog>
 
-    <!-- Rodapé Institucional Unificado -->
     {% block footer %}
       {% include "partials/_footer.html" with active_unit=active_unit|default:"construtora" rocha=rocha only %}
     {% endblock %}
 
-    <!-- Interatividade Fluida (HTMX 2) + Bootstrap Modular ES6+ (CSP Nonce) -->
-    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.4/dist/htmx.min.js"
+    <script src="{% static 'vendor/htmx/htmx.min.js' %}"
             nonce="{{ csp_nonce }}"
             defer></script>
     <script type="module"
-            src="{% static 'js/modules/scene3d-obra.js' %}?v=7"
-            nonce="{{ csp_nonce }}"></script>
-    <script type="module"
-            src="{% static 'js/modules/scene3d-three.js' %}?v=7"
-            nonce="{{ csp_nonce }}"></script>
-    <script type="module"
-            src="{% static 'js/modules/app.js' %}?v=7"
+            src="{% static 'js/modules/app.js' %}"
             nonce="{{ csp_nonce }}"></script>
     {% block extra_js %}{% endblock %}
   </body>

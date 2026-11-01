@@ -9,4 +9,3 @@ class LocadoraConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.locadora"
     verbose_name = "Rocha Locações de Equipamentos"
-

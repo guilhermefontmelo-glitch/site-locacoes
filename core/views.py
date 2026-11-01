@@ -36,4 +36,3 @@ def error_404_view(
 def error_500_view(request: HttpRequest) -> HttpResponse:
     """Renderiza página segura para falhas internas sem expor stack trace (HTTP 500)."""
     return render(request, "errors/500.html", status=500)
-

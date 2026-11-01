@@ -1,11 +1,34 @@
 /**
- * Bootstrap Modular ES6+ — Rocha Construtora & Rocha Locações
- * Zero-Bloat: apenas interações essenciais de UI, acessibilidade (<dialog>/drawer),
- * alternância instantânea de logo/tema Dark/Light, transição fluida em tempo real
- * entre Construtora e Locações (sem recarregar o cabeçalho e sem atraso na logo).
+ * Bootstrap Modular ES6+ — Rocha Construtora & Rocha Locações (`app.js`).
+ *
+ * Responsabilidades:
+ * - Alternância instantânea Dark/Light e sincronia de logos sem FOUC;
+ * - Transição SPA entre Construtora (`/`) e Locações (`/locadora/`) com cache TTL (`30 min`),
+ *   carregamento sob demanda de CSS/JS da vertical alvo e descarte simétrico de memória/WebGL;
+ * - Integração com `waapi-driver.js` e `scroll-choreography.js` com zero mutação `element.style.*`
+ *   (100% compatível com `Content-Security-Policy: style-src-attr 'none'`).
  */
 
+import {
+  disposeScrollChoreography,
+  hydrateChoreographySubtree,
+  mountScrollChoreography,
+} from "./scroll-choreography.js";
+import { createProgressScrubber } from "./waapi-driver.js";
+
+const PAGE_CACHE_TTL_MS = 30 * 60 * 1000;
+
+/** @type {Map<string, { htmlText: string, cachedAt: number }>} */
 const pageCache = new Map();
+
+const LOGO_ANIM_CLASSES = [
+  "is-logo-out-right",
+  "is-logo-out-left",
+  "is-logo-out-theme",
+  "is-logo-in-right",
+  "is-logo-in-left",
+  "is-logo-in-theme",
+];
 
 const preloadBrandLogos = () => {
   const firstLogo = document.querySelector("img[data-theme-logo]");
@@ -22,15 +45,6 @@ const preloadBrandLogos = () => {
       img.src = src;
     });
 };
-
-const LOGO_ANIM_CLASSES = [
-  "is-logo-out-right",
-  "is-logo-out-left",
-  "is-logo-out-theme",
-  "is-logo-in-right",
-  "is-logo-in-left",
-  "is-logo-in-theme",
-];
 
 const syncThemeAndUnitLogos = (unitOverride, themeOverride, options = {}) => {
   const { animate = false, mode = "unit" } = options;
@@ -72,10 +86,8 @@ const syncThemeAndUnitLogos = (unitOverride, themeOverride, options = {}) => {
           ? "is-logo-in-right"
           : "is-logo-in-left";
 
-    // Fase 1 (0ms -> 135ms): Saída suave e equilibrada da logo atual imediatamente no clique
     img.classList.add(outClass);
 
-    // Fase 2 (135ms -> 415ms): Troca a imagem pré-carregada e entra com deslize discreto
     img.__logoTimerOut = window.setTimeout(() => {
       img.setAttribute("src", targetSrc);
       img.setAttribute("alt", `Logo ${brandName}`);
@@ -98,6 +110,42 @@ const syncThemeAndUnitLogos = (unitOverride, themeOverride, options = {}) => {
   if (drawerBrand) {
     drawerBrand.textContent = brandName;
   }
+};
+
+const syncAllUnitSwitchersUI = (targetUnit) => {
+  const desktopSwitcher = document.getElementById("unit-switcher");
+  if (desktopSwitcher) {
+    desktopSwitcher.setAttribute("data-active-unit", targetUnit);
+    desktopSwitcher.querySelectorAll(".unit-switcher__item").forEach((item) => {
+      const isTarget = item.getAttribute("data-unit-target") === targetUnit;
+      item.classList.toggle("is-active", isTarget);
+      if (isTarget) {
+        item.setAttribute("aria-current", "page");
+      } else {
+        item.removeAttribute("aria-current");
+      }
+    });
+  }
+
+  const mobileUnitBar = document.getElementById("mobile-unit-bar");
+  if (mobileUnitBar) {
+    mobileUnitBar.setAttribute("data-active-unit", targetUnit);
+    mobileUnitBar.querySelectorAll(".mobile-unit-bar__item").forEach((item) => {
+      const isTarget = item.getAttribute("data-unit-target") === targetUnit;
+      item.classList.toggle("is-active", isTarget);
+      if (isTarget) {
+        item.setAttribute("aria-current", "page");
+      } else {
+        item.removeAttribute("aria-current");
+      }
+    });
+  }
+
+  document.querySelectorAll(".mobile-drawer__units a[data-unit-target]").forEach((btn) => {
+    const isTarget = btn.getAttribute("data-unit-target") === targetUnit;
+    btn.classList.toggle("btn--gold", isTarget);
+    btn.classList.toggle("btn--outline", !isTarget);
+  });
 };
 
 const initThemeSwitcher = () => {
@@ -142,48 +190,37 @@ const initThemeSwitcher = () => {
   });
 };
 
-const initScrollRevealAndFallbackProgress = () => {
-  if (!window.__rochaScrollBound && !CSS.supports("animation-timeline", "scroll()")) {
-    window.__rochaScrollBound = true;
-    let ticking = false;
-    window.addEventListener(
-      "scroll",
-      () => {
-        if (!ticking) {
-          window.requestAnimationFrame(() => {
-            const max = document.documentElement.scrollHeight - window.innerHeight;
-            const ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-            document.documentElement.style.setProperty("--scroll-ratio", ratio.toFixed(4));
-            ticking = false;
-          });
-          ticking = true;
-        }
-      },
-      { passive: true },
-    );
-  }
-
-  const revealTargets = document.querySelectorAll("[data-reveal]:not(.is-visible)");
-  if (!revealTargets.length) return;
-
-  if (!("IntersectionObserver" in window)) {
-    revealTargets.forEach((el) => el.classList.add("is-visible"));
+const initScrollProgressFallback = () => {
+  if (window.__rochaScrollBound) return;
+  if (typeof CSS !== "undefined" && CSS.supports("animation-timeline", "scroll()")) {
     return;
   }
 
-  const observer = new IntersectionObserver(
-    (entries, obs) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          obs.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.14, rootMargin: "0px 0px -40px 0px" },
-  );
+  const barEl = document.getElementById("scroll-progress");
+  if (!barEl) return;
 
-  revealTargets.forEach((el) => observer.observe(el));
+  window.__rochaScrollBound = true;
+  const scrubber = createProgressScrubber(barEl, "X");
+  let ticking = false;
+
+  const updateBar = () => {
+    ticking = false;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    scrubber.setProgress(ratio);
+  };
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(updateBar);
+      }
+    },
+    { passive: true },
+  );
+  updateBar();
 };
 
 const initFilterPillsState = () => {
@@ -200,11 +237,83 @@ const initFilterPillsState = () => {
   });
 };
 
+/**
+ * Garante que a folha de estilo exclusiva da vertical alvo esteja carregada antes do swap.
+ * @param {"construtora" | "locadora"} targetUnit
+ * @returns {Promise<void>}
+ */
+const ensureVerticalStylesheet = (targetUnit) => {
+  const attrName =
+    targetUnit === "locadora" ? "data-css-locadora" : "data-css-construtora";
+  const cssHref = document.documentElement.getAttribute(attrName);
+  if (!cssHref) return Promise.resolve();
+
+  const existing =
+    document.querySelector(`link[data-vertical-css="${targetUnit}"]`) ||
+    document.querySelector(`link[rel="stylesheet"][href="${cssHref}"]`);
+  if (existing) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = cssHref;
+    link.setAttribute("data-vertical-css", targetUnit);
+
+    const timer = window.setTimeout(resolve, 1500);
+    const done = () => {
+      window.clearTimeout(timer);
+      resolve();
+    };
+    link.addEventListener("load", done, { once: true });
+    link.addEventListener("error", done, { once: true });
+    document.head.appendChild(link);
+  });
+};
+
+/**
+ * Desmonta de forma limpa os módulos interativos exclusivos da Rocha Construtora.
+ * @returns {Promise<void>}
+ */
+const disposeConstrutoraModules = async () => {
+  const obraUrl =
+    document.documentElement.getAttribute("data-js-obra") ||
+    new URL("./scene3d-obra.js", import.meta.url).href;
+  const simUrl =
+    document.documentElement.getAttribute("data-js-simulador") ||
+    new URL("./simulator-ui.js", import.meta.url).href;
+
+  await Promise.allSettled([
+    import(obraUrl).then((m) => m.disposeObraStageUI?.()),
+    import(simUrl).then((m) => m.disposeSimulatorUI?.()),
+  ]);
+};
+
+/**
+ * Importa e monta os módulos interativos exclusivos da Rocha Construtora sob demanda.
+ * @param {ParentNode} root
+ * @returns {Promise<void>}
+ */
+const mountConstrutoraModules = async (root) => {
+  const obraUrl =
+    document.documentElement.getAttribute("data-js-obra") ||
+    new URL("./scene3d-obra.js", import.meta.url).href;
+  const simUrl =
+    document.documentElement.getAttribute("data-js-simulador") ||
+    new URL("./simulator-ui.js", import.meta.url).href;
+
+  await Promise.allSettled([
+    import(obraUrl).then((m) => m.mountObraStageUI?.()),
+    import(simUrl).then((m) => m.mountSimulatorUI?.(root)),
+  ]);
+};
+
 const fetchUnitDocument = async (href) => {
   const normalizedUrl = new URL(href, window.location.origin).pathname;
-  if (pageCache.has(normalizedUrl)) {
-    return pageCache.get(normalizedUrl);
+  const cached = pageCache.get(normalizedUrl);
+  if (cached && Date.now() - cached.cachedAt < PAGE_CACHE_TTL_MS) {
+    return cached.htmlText;
   }
+
   const response = await fetch(normalizedUrl, {
     headers: { "X-Requested-With": "RochaUnitTransition" },
     credentials: "same-origin",
@@ -213,63 +322,65 @@ const fetchUnitDocument = async (href) => {
     throw new Error(`HTTP ${response.status}`);
   }
   const htmlText = await response.text();
-  pageCache.set(normalizedUrl, htmlText);
+  pageCache.set(normalizedUrl, { htmlText, cachedAt: Date.now() });
   return htmlText;
 };
 
-const prefetchOtherUnit = () => {
-  const currentUnit = document.documentElement.getAttribute("data-unit") || "construtora";
-  const otherHref = currentUnit === "locadora" ? "/" : "/locadora/";
-  fetchUnitDocument(otherHref).catch(() => {
-    // Prefetch silencioso
-  });
+const schedulePrefetchOtherUnit = () => {
+  const runPrefetch = () => {
+    const currentUnit =
+      document.documentElement.getAttribute("data-unit") || "construtora";
+    const otherHref = currentUnit === "locadora" ? "/" : "/locadora/";
+    fetchUnitDocument(otherHref).catch(() => {
+      // Prefetch silencioso
+    });
+  };
+
+  const scheduleIdle = () => {
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(runPrefetch, { timeout: 2200 });
+    } else {
+      window.setTimeout(runPrefetch, 900);
+    }
+  };
+
+  if (document.readyState === "complete") {
+    scheduleIdle();
+  } else {
+    window.addEventListener("load", scheduleIdle, { once: true });
+  }
 };
 
 const initUnitSwitcherTransition = () => {
   if (window.__rochaUnitSwitcherBound) return;
   window.__rochaUnitSwitcherBound = true;
 
-  const switcher = document.getElementById("unit-switcher");
   let isTransitioning = false;
 
   const performUnitSwitch = async (targetUnit, href, pushHistory = true) => {
-    const currentUnit = document.documentElement.getAttribute("data-unit") || "construtora";
+    const currentUnit =
+      document.documentElement.getAttribute("data-unit") || "construtora";
     if (isTransitioning || !targetUnit || targetUnit === currentUnit) return;
     isTransitioning = true;
 
+    const normalizedTarget = targetUnit === "locadora" ? "locadora" : "construtora";
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mainContent = document.getElementById("conteudo-principal");
 
-    // 1. INSTANTÂNEO (0ms de atraso): Inicia a animação suave da logo e da bolha deslizante!
-    document.documentElement.setAttribute("data-unit", targetUnit);
-    syncThemeAndUnitLogos(targetUnit, undefined, { animate: true, mode: "unit" });
-
-    if (switcher) {
-      switcher.setAttribute("data-active-unit", targetUnit);
-      switcher.querySelectorAll(".unit-switcher__item").forEach((item) => {
-        const isTarget = item.getAttribute("data-unit-target") === targetUnit;
-        item.classList.toggle("is-active", isTarget);
-        if (isTarget) {
-          item.setAttribute("aria-current", "page");
-        } else {
-          item.removeAttribute("aria-current");
-        }
-      });
-    }
-
-    document.querySelectorAll(".mobile-drawer__units a[data-unit-target]").forEach((btn) => {
-      const isTarget = btn.getAttribute("data-unit-target") === targetUnit;
-      btn.classList.toggle("btn--gold", isTarget);
-      btn.classList.toggle("btn--outline", !isTarget);
-    });
+    document.documentElement.setAttribute("data-unit", normalizedTarget);
+    syncThemeAndUnitLogos(normalizedTarget, undefined, { animate: true, mode: "unit" });
+    syncAllUnitSwitchersUI(normalizedTarget);
 
     try {
-      const fetchPromise = fetchUnitDocument(href);
+      const fetchPromise = Promise.all([
+        fetchUnitDocument(href),
+        ensureVerticalStylesheet(normalizedTarget),
+      ]);
       const currentNav = document.getElementById("primary-nav");
       const navOutClass =
-        targetUnit === "locadora" ? "is-nav-out-left" : "is-nav-out-right";
+        normalizedTarget === "locadora" ? "is-nav-out-left" : "is-nav-out-right";
       const navInClass =
-        targetUnit === "locadora" ? "is-nav-in-right" : "is-nav-in-left";
+        normalizedTarget === "locadora" ? "is-nav-in-right" : "is-nav-in-left";
 
       if (currentNav && !reducedMotion) {
         currentNav.classList.remove(
@@ -283,12 +394,14 @@ const initUnitSwitcherTransition = () => {
 
       if (mainContent && !reducedMotion) {
         const exitClass =
-          targetUnit === "locadora" ? "is-exiting-to-locadora" : "is-exiting-to-construtora";
+          normalizedTarget === "locadora"
+            ? "is-exiting-to-locadora"
+            : "is-exiting-to-construtora";
         mainContent.classList.add(exitClass);
         await new Promise((resolve) => window.setTimeout(resolve, 140));
       }
 
-      const htmlText = await fetchPromise;
+      const [htmlText] = await fetchPromise;
       const parser = new DOMParser();
       const nextDoc = parser.parseFromString(htmlText, "text/html");
 
@@ -300,6 +413,12 @@ const initUnitSwitcherTransition = () => {
       if (!nextMain) {
         window.location.assign(href);
         return;
+      }
+
+      // Descarte simétrico ANTES da remoção da subárvore DOM ativa
+      disposeScrollChoreography();
+      if (currentUnit === "construtora") {
+        await disposeConstrutoraModules();
       }
 
       document.title = nextDoc.title || document.title;
@@ -326,7 +445,9 @@ const initUnitSwitcherTransition = () => {
 
         if (!reducedMotion) {
           const enterClass =
-            targetUnit === "locadora" ? "is-entering-from-right" : "is-entering-from-left";
+            normalizedTarget === "locadora"
+              ? "is-entering-from-right"
+              : "is-entering-from-left";
           mainContent.classList.add(enterClass);
           window.setTimeout(() => {
             mainContent.classList.remove(enterClass);
@@ -344,7 +465,7 @@ const initUnitSwitcherTransition = () => {
       const footerLogo = document.getElementById("footer-brand-logo");
       if (footerLogo) {
         const theme = document.documentElement.getAttribute("data-theme") || "dark";
-        const attrName = `data-${targetUnit === "locadora" ? "locadora" : "construtora"}-${
+        const attrName = `data-${normalizedTarget === "locadora" ? "locadora" : "construtora"}-${
           theme === "light" ? "light" : "dark"
         }`;
         const targetSrc = footerLogo.getAttribute(attrName);
@@ -352,7 +473,7 @@ const initUnitSwitcherTransition = () => {
       }
 
       if (pushHistory) {
-        window.history.pushState({ unit: targetUnit, href }, "", href);
+        window.history.pushState({ unit: normalizedTarget, href }, "", href);
       }
 
       window.scrollTo({ top: 0, behavior: "instant" });
@@ -360,11 +481,13 @@ const initUnitSwitcherTransition = () => {
       if (window.htmx) {
         window.htmx.process(document.body);
       }
-      if (typeof window.initScene3dObra === "function") {
-        window.initScene3dObra();
-      }
-      initScrollRevealAndFallbackProgress();
+
+      mountScrollChoreography(mainContent || document);
       initFilterPillsState();
+
+      if (normalizedTarget === "construtora") {
+        await mountConstrutoraModules(mainContent || document);
+      }
     } catch {
       window.location.assign(href);
     } finally {
@@ -388,7 +511,8 @@ const initUnitSwitcherTransition = () => {
     }
 
     const targetUnit = link.getAttribute("data-unit-target");
-    const currentUnit = document.documentElement.getAttribute("data-unit") || "construtora";
+    const currentUnit =
+      document.documentElement.getAttribute("data-unit") || "construtora";
     const href = link.getAttribute("href");
 
     if (!href || !targetUnit || targetUnit === currentUnit) {
@@ -415,7 +539,7 @@ const initMobileDrawer = () => {
   const setOpen = (open) => {
     drawer.hidden = !open;
     openBtn.setAttribute("aria-expanded", String(open));
-    document.body.style.overflow = open ? "hidden" : "";
+    document.body.classList.toggle("is-scroll-locked", open);
   };
 
   openBtn.addEventListener("click", () => {
@@ -436,26 +560,34 @@ const initMobileDrawer = () => {
   });
 };
 
-const initDialogManager = () => {
+const initDialogAndHtmxHooks = () => {
   const dialog = document.getElementById("modal-dinamico");
-  if (!dialog || dialog.dataset.dialogBound === "true") return;
-  dialog.dataset.dialogBound = "true";
+  if (dialog && dialog.dataset.dialogBound !== "true") {
+    dialog.dataset.dialogBound = "true";
 
-  dialog.querySelectorAll("[data-dialog-close]").forEach((btn) => {
-    btn.addEventListener("click", () => dialog.close());
-  });
+    dialog.querySelectorAll("[data-dialog-close]").forEach((btn) => {
+      btn.addEventListener("click", () => dialog.close());
+    });
 
-  dialog.addEventListener("click", (event) => {
-    if (event.target === dialog) {
-      dialog.close();
-    }
-  });
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) {
+        dialog.close();
+      }
+    });
+  }
 
-  document.body.addEventListener("htmx:afterSwap", (event) => {
-    if (event.detail?.target?.id === "modal-conteudo" && !dialog.open) {
-      dialog.showModal();
-    }
-  });
+  if (!window.__rochaHtmxSwapBound) {
+    window.__rochaHtmxSwapBound = true;
+    document.body.addEventListener("htmx:afterSwap", (event) => {
+      const target = event.detail?.target;
+      if (dialog && target?.id === "modal-conteudo" && !dialog.open) {
+        dialog.showModal();
+      }
+      if (target instanceof HTMLElement) {
+        hydrateChoreographySubtree(target);
+      }
+    });
+  }
 };
 
 const bootstrapRochaApp = () => {
@@ -463,14 +595,15 @@ const bootstrapRochaApp = () => {
   initThemeSwitcher();
   initUnitSwitcherTransition();
   initMobileDrawer();
-  initDialogManager();
-  initScrollRevealAndFallbackProgress();
+  initDialogAndHtmxHooks();
+  initScrollProgressFallback();
+  mountScrollChoreography(document.getElementById("conteudo-principal") || document);
   initFilterPillsState();
-  prefetchOtherUnit();
+  schedulePrefetchOtherUnit();
 };
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", bootstrapRochaApp);
+  document.addEventListener("DOMContentLoaded", bootstrapRochaApp, { once: true });
 } else {
   bootstrapRochaApp();
 }

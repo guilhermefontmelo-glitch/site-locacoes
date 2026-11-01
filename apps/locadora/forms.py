@@ -132,4 +132,3 @@ class OrcamentoLocacaoForm(forms.Form):
         """Sanitiza observações opcionais."""
         raw: str = str(self.cleaned_data.get("observacoes") or "")
         return sanitize_plain_text(raw, max_length=200)
-
