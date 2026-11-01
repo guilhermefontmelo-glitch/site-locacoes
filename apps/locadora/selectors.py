@@ -3,7 +3,6 @@
 from dataclasses import dataclass
 
 from django.conf import settings
-from django.templatetags.static import static
 
 from core.security import build_whatsapp_url
 
@@ -266,7 +265,7 @@ def _hidratar_equipamento(raw: dict[str, object], phone: str) -> EquipamentoLoca
         icone=str(raw["icone"]),
         imagem_avif=imagem_avif,
         imagem_webp=imagem_webp,
-        imagem_url=static(imagem_webp),
+        imagem_url=str(raw.get("imagem_url") or imagem_webp),
         whatsapp_url=build_whatsapp_url(phone_e164=phone, message=msg),
     )
 
