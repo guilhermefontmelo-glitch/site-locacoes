@@ -9,7 +9,6 @@ db.sqlite3-journal
 **/tests/
 test_*.py
 *_test.py
-locacoes/
 src/
 node_modules/
 staticfiles/
