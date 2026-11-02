@@ -134,8 +134,30 @@ function setupKineticTypography(root) {
     return;
   }
 
+  /** @type {Map<HTMLElement, { mode: "words" | "chars", units: HTMLElement[] }>} */
+  const prepared = new Map();
+
+  // Pré-dividir fora do callback do observer: evita criar dezenas de nós no mesmo
+  // frame em que a animação começa (causa de engasgo no hero).
+  targets.forEach((el) => {
+    if (!(el instanceof HTMLElement)) return;
+    if (el.dataset.kineticAnimated === "true") return;
+
+    const mode = el.getAttribute("data-kinetic") === "chars" ? "chars" : "words";
+    const units = splitElementKinetic(el, mode);
+    if (!units.length) return;
+
+    prepared.set(el, { mode, units });
+    el.classList.add("is-kinetic-ready");
+  });
+
+  if (!prepared.size) return;
+
+  let observerDelivered = false;
+
   const observer = new IntersectionObserver(
     (entries, obs) => {
+      observerDelivered = true;
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         const host = /** @type {HTMLElement} */ (entry.target);
@@ -143,10 +165,13 @@ function setupKineticTypography(root) {
         if (host.dataset.kineticAnimated === "true") return;
         host.dataset.kineticAnimated = "true";
 
-        const mode = host.getAttribute("data-kinetic") === "chars" ? "chars" : "words";
-        const units = splitElementKinetic(host, mode);
-        host.classList.add("is-kinetic-ready");
+        const entryData = prepared.get(host);
+        if (!entryData) {
+          host.classList.remove("is-kinetic-ready");
+          return;
+        }
 
+        const { mode, units } = entryData;
         const stepDelay = mode === "chars" ? 16 : 38;
         units.forEach((unit, idx) => {
           animateOnce(
@@ -159,22 +184,43 @@ function setupKineticTypography(root) {
               duration: mode === "chars" ? 440 : 580,
               delay: Math.min(idx * stepDelay, 520),
               easing: EASE_EDITORIAL,
-              fill: "both",
+              fill: "backwards",
             },
             choreographyAnimations
           );
         });
+        host.classList.remove("is-kinetic-ready");
       });
     },
     { threshold: 0.15, rootMargin: "0px 0px -32px 0px" }
   );
 
   activeObservers.add(observer);
-  targets.forEach((el) => {
-    if (el instanceof HTMLElement && el.dataset.kineticAnimated !== "true") {
-      observer.observe(el);
-    }
-  });
+  prepared.forEach((_, host) => observer.observe(host));
+
+  // Salvaguarda: se o observer não entregar nenhum callback (documento em segundo plano,
+  // painel sem composição ou navegador sem frames), libera o texto após 1,4 s para nunca
+  // deixar o hero invisível. Hosts fora da viewport preservam o estado inicial para animar
+  // ao entrar em cena; quando o observer funciona normalmente, nada muda.
+  window.setTimeout(() => {
+    const viewportW = window.innerWidth || 0;
+    const viewportH = window.innerHeight || 0;
+
+    prepared.forEach((_, host) => {
+      if (!host.isConnected) return;
+      if (host.dataset.kineticAnimated === "true") return;
+
+      const rect = host.getBoundingClientRect();
+      const inViewport =
+        rect.bottom > 0 &&
+        rect.top < viewportH &&
+        rect.right > 0 &&
+        rect.left < viewportW;
+
+      if (observerDelivered && !inViewport) return;
+      host.classList.remove("is-kinetic-ready");
+    });
+  }, 1400);
 }
 
 /**
@@ -221,7 +267,7 @@ function setupStaggerGroups(root) {
               duration: 540,
               delay: Math.min(idx * 65, 460),
               easing: EASE_EDITORIAL,
-              fill: "both",
+              fill: "backwards",
             },
             choreographyAnimations
           );
@@ -264,7 +310,7 @@ function setupRevealBlocks(root) {
           {
             duration: 560,
             easing: EASE_EDITORIAL,
-            fill: "both",
+            fill: "backwards",
           },
           choreographyAnimations
         );
@@ -314,13 +360,21 @@ function setupHeroCounters(root) {
         const suffix = el.getAttribute("data-count-suffix") || "";
         const duration = 880;
         const start = performance.now();
+        let lastValue = -1;
+        let lastPaint = 0;
 
         const step = (now) => {
           if (!el.isConnected) return;
           const t = Math.min(1, (now - start) / duration);
           const eased = 1 - Math.pow(1 - t, 3);
           const current = Math.round(target * eased);
-          el.textContent = `${current}${suffix}`;
+          // Escreve no máximo a cada ~2 frames e apenas quando o número muda:
+          // evita layout/paint por frame no texto e mantém o contador estável.
+          if (current !== lastValue && (t >= 1 || now - lastPaint >= 32)) {
+            el.textContent = `${current}${suffix}`;
+            lastValue = current;
+            lastPaint = now;
+          }
           if (t < 1) {
             window.requestAnimationFrame(step);
           }

@@ -8,6 +8,24 @@
   overflow: clip;
 }
 
+/* Alinha o bloco de texto ao topo da imagem do hero */
+#inicio-locadora > .split-layout {
+  align-items: start;
+}
+
+/* Cotação rápida: coluna de texto alinhada ao topo e fixa durante a rolagem do formulário */
+#orcamento > .split-layout {
+  align-items: start;
+}
+
+@media (min-width: 60rem) {
+  #orcamento > .split-layout > div:first-child {
+    position: sticky;
+    top: calc(var(--header-height) + 1.25rem);
+    align-self: start;
+  }
+}
+
 .hero-locadora__title {
   font-size: var(--text-display);
   margin-block: var(--space-3) var(--space-4);
