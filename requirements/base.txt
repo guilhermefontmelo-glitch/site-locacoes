@@ -4,3 +4,5 @@ django-environ>=0.12.0
 whitenoise[brotli]>=6.8.2
 django-crispy-forms>=2.3
 crispy-tailwind>=1.0.3
+reportlab>=4.2
+pypdf>=5.0

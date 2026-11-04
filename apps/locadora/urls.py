@@ -18,4 +18,9 @@ urlpatterns: list[URLPattern] = [
         views.solicitar_orcamento_htmx_view,
         name="solicitar_orcamento",
     ),
+    path(
+        "orcamento/pdf/",
+        views.orcamento_pdf_view,
+        name="orcamento_pdf",
+    ),
 ]

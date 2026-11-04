@@ -1,15 +1,28 @@
 """Views enxutas da área Rocha Locações (SSR + filtros, modal e orçamento via HTMX)."""
 
+import json
+from urllib.parse import urlencode
+
 from django.conf import settings
-from django.http import Http404, HttpRequest, HttpResponse
+from django.core import signing
+from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.views.decorators.http import require_GET, require_POST
+from django.urls import reverse
+from django.utils import timezone
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from apps.locadora.forms import FiltroCatalogoForm, OrcamentoLocacaoForm
+from apps.locadora.pdf_caderneta import (
+    gerar_caderneta,
+    gerar_token_caderneta,
+    ler_token_caderneta,
+)
+from apps.locadora.precos import PRECOS
 from apps.locadora.selectors import (
     GRUPOS_CATALOGO,
     listar_como_alugar,
     listar_equipamentos,
+    listar_opcoes_equipamentos_choices,
     obter_equipamento_por_slug,
 )
 from apps.locadora.services import gerar_resumo_orcamento_locacao
@@ -124,8 +137,134 @@ def solicitar_orcamento_htmx_view(request: HttpRequest) -> HttpResponse:
         observacoes=cleaned["observacoes"],
     )
 
+    # Link assinado para o navegador baixar a caderneta automaticamente logo
+    # após a confirmação, sem precisar de uma segunda validação do formulário.
+    token = gerar_token_caderneta(
+        itens=list(resumo.itens_nomes),
+        obra=cleaned["observacoes"] or "Não informada",
+        entrega=resumo.entrega_label,
+        periodo=resumo.periodo_label,
+        data=timezone.localdate(),
+    )
+    pdf_url = f"{reverse('locadora:orcamento_pdf')}?{urlencode({'t': token})}"
+
     return render(
         request,
         "pages/locadora/partials/_resultado_orcamento.html",
-        {"resumo": resumo},
+        {"resumo": resumo, "pdf_url": pdf_url},
     )
+
+
+def _ler_pedido_post(request: HttpRequest) -> tuple[dict[str, object] | None, str | None]:
+    """Lê o pedido em JSON ou no formato do formulário e devolve dados ou erro."""
+    if request.content_type and request.content_type.startswith("application/json"):
+        try:
+            dados = json.loads(request.body.decode("utf-8") or "{}")
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return None, "Não foi possível ler os dados do pedido."
+        if not isinstance(dados, dict):
+            return None, "Formato de pedido inválido."
+
+        itens = [str(nome) for nome in dados.get("itens") or [] if str(nome) in PRECOS]
+        periodo = str(dados.get("periodo") or "").strip()
+        entrega = str(dados.get("entrega") or "").strip()
+        obra = str(dados.get("obra") or "").strip()
+
+        if not itens:
+            return None, "Selecione ao menos um equipamento disponível."
+        if not periodo:
+            return None, "Informe o período estimado de locação."
+        if not entrega:
+            return None, "Informe se a entrega será na obra ou retirada na sede."
+        return (
+            {
+                "itens": itens,
+                "obra": obra or "Não informada",
+                "entrega": entrega,
+                "periodo": periodo,
+                "data": dados.get("data") or timezone.localdate(),
+            },
+            None,
+        )
+
+    form = OrcamentoLocacaoForm(data=request.POST)
+    if not form.is_valid():
+        mensagens = [
+            str(erro)
+            for erros in form.errors.values()
+            for erro in erros
+        ]
+        return None, mensagens[0] if mensagens else "Confira os dados do pedido."
+
+    cleaned = form.cleaned_data
+    nomes_por_slug = dict(listar_opcoes_equipamentos_choices())
+    itens = [nomes_por_slug[slug] for slug in cleaned["equipamentos"] if slug in nomes_por_slug]
+    if not itens:
+        return None, "Selecione ao menos um equipamento disponível."
+
+    resumo = gerar_resumo_orcamento_locacao(
+        nome=cleaned["nome"],
+        telefone=cleaned["telefone"],
+        equipamentos_slugs=list(cleaned["equipamentos"]),
+        periodo=cleaned["periodo"],
+        modalidade_entrega=cleaned["modalidade_entrega"],
+        observacoes=cleaned["observacoes"],
+    )
+    return (
+        {
+            "itens": itens,
+            "obra": cleaned["observacoes"] or "Não informada",
+            "entrega": resumo.entrega_label,
+            "periodo": resumo.periodo_label,
+            "data": timezone.localdate(),
+        },
+        None,
+    )
+
+
+@require_http_methods(["GET", "POST"])
+def orcamento_pdf_view(request: HttpRequest) -> HttpResponse:
+    """Baixa a Caderneta de Contas preenchida (GET assinado ou POST do pedido)."""
+    if request.method == "GET":
+        token = request.GET.get("t", "")
+        if not token:
+            return JsonResponse(
+                {"erro": "Informe o pedido para gerar a caderneta."}, status=400
+            )
+        try:
+            dados = ler_token_caderneta(token)
+        except (signing.BadSignature, signing.SignatureExpired):
+            return JsonResponse(
+                {
+                    "erro": (
+                        "O link da caderneta expirou. Gere o pedido de orçamento "
+                        "novamente para baixar o PDF."
+                    )
+                },
+                status=400,
+            )
+    else:
+        dados, erro = _ler_pedido_post(request)
+        if erro or dados is None:
+            return JsonResponse({"erro": erro or "Pedido inválido."}, status=400)
+
+    itens = dados.get("itens") or []
+    if not itens:
+        return JsonResponse(
+            {"erro": "Selecione ao menos um equipamento para gerar a caderneta."},
+            status=400,
+        )
+
+    pdf = gerar_caderneta(
+        itens=itens,
+        obra=str(dados.get("obra") or "Não informada"),
+        entrega=str(dados.get("entrega") or ""),
+        periodo=str(dados.get("periodo") or ""),
+        data=dados.get("data") or timezone.localdate(),
+    )
+
+    nome_arquivo = f"Orcamento_Rocha_{timezone.localdate():%d-%m-%Y}.pdf"
+    resposta = HttpResponse(pdf, content_type="application/pdf")
+    resposta["Content-Disposition"] = f'attachment; filename="{nome_arquivo}"'
+    resposta["Cache-Control"] = "no-store"
+    return resposta

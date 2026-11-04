@@ -15,6 +15,7 @@ import {
   mountScrollChoreography,
 } from "./scroll-choreography.js";
 import { createProgressScrubber } from "./waapi-driver.js";
+import { initCadernetaDownload } from "./caderneta-download.js";
 
 const PAGE_CACHE_TTL_MS = 30 * 60 * 1000;
 
@@ -600,6 +601,7 @@ const bootstrapRochaApp = () => {
   mountScrollChoreography(document.getElementById("conteudo-principal") || document);
   initFilterPillsState();
   schedulePrefetchOtherUnit();
+  initCadernetaDownload();
 };
 
 if (document.readyState === "loading") {

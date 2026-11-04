@@ -1,4 +1,13 @@
 <div class="card">
+  {% if pdf_url %}
+    <a data-caderneta-pdf
+       href="{{ pdf_url }}"
+       download
+       class="sr-only"
+       tabindex="-1"
+       aria-hidden="true">Baixar caderneta em PDF</a>
+  {% endif %}
+
   <div class="flex items-center gap-2 mb-3">
     {% include "components/_icon.html" with name="check-circle" class="heroicon text-gold" only %}
     <span class="eyebrow">Lista Pronta para Atendimento</span>
@@ -8,6 +17,18 @@
   <p class="text-sm mb-4">
     Confira os equipamentos selecionados abaixo e clique para enviar ao WhatsApp da Rocha Locações:
   </p>
+
+  {% if pdf_url %}
+    <p class="text-sm mb-4">
+      <strong>Orçamento gerado!</strong> Seu PDF foi baixado automaticamente.
+      Se o download não começou,
+      <a class="underline" href="{{ pdf_url }}" download data-caderneta-baixe-aqui>baixe aqui</a>.
+    </p>
+
+    <p class="text-xs mb-4" data-caderneta-erro role="status" aria-live="polite" hidden>
+      Não foi possível gerar o PDF agora. Você ainda pode enviar a lista pelo WhatsApp.
+    </p>
+  {% endif %}
 
   <ul class="grid gap-2 mb-4">
     {% for nome_item in resumo.itens_nomes %}
@@ -24,6 +45,16 @@
   </p>
 
   <div class="flex flex-col gap-3">
+    {% if pdf_url %}
+      <button type="button"
+              class="btn btn--gold w-full"
+              data-caderneta-baixar
+              hidden>
+        {% include "components/_icon.html" with name="arrow-down-tray" class="heroicon" only %}
+        <span>Baixar meu orçamento (PDF)</span>
+      </button>
+    {% endif %}
+
     <a class="btn btn--whatsapp w-full"
        href="{{ resumo.whatsapp_url }}"
        target="_blank"
@@ -33,7 +64,9 @@
       {% include "components/_icon.html" with name="arrow-up-right" class="heroicon heroicon--sm" only %}
     </a>
 
-    <a class="btn btn--outline w-full" href="{% url 'locadora:catalogo' %}#orcamento">
+    <a class="btn btn--outline w-full"
+       href="{% url 'locadora:catalogo' %}#orcamento"
+       data-caderneta-reiniciar>
       Montar outra lista de equipamentos
     </a>
   </div>

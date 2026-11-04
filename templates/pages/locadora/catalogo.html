@@ -194,7 +194,7 @@
       </div>
 
       <div id="orcamento-locadora-box" class="cq-surface" data-reveal>
-        {% include "pages/locadora/partials/_form_orcamento.html" with form_orcamento=form_orcamento only %}
+        {% include "pages/locadora/partials/_form_orcamento.html" with form_orcamento=form_orcamento form_ts_token=form_ts_token csrf_token=csrf_token only %}
 
       </div>
     </div>
