@@ -5,8 +5,7 @@ venv/
 ENV/
 
 # Segredos & Variáveis de Ambiente (NUNCA versionar .env reais)
-.env
-.env.*
+.env*
 !.env.example
 
 # Bytecode Python & Caches de Qualidade/Testes

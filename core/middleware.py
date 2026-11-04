@@ -12,7 +12,7 @@ _STRICT_PERMISSIONS_POLICY: str = (
     "gyroscope=(), hid=(), idle-detection=(), local-fonts=(), magnetometer=(), "
     "microphone=(), midi=(), payment=(), picture-in-picture=(), "
     "publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), "
-    "web-share=(), xr-spatial-tracking=()"
+    "xr-spatial-tracking=()"
 )
 
 

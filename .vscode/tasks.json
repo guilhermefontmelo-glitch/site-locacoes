@@ -1,0 +1,43 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Django: iniciar servidor",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "args": ["manage.py", "runserver", "127.0.0.1:8000"],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "DJANGO_SETTINGS_MODULE": "config.settings.local"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Django: rodar testes",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "args": ["-m", "pytest", "-q"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Django: aplicar migrações",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "args": ["manage.py", "migrate"],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "DJANGO_SETTINGS_MODULE": "config.settings.local"
+        }
+      },
+      "problemMatcher": []
+    }
+  ]
+}

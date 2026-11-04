@@ -539,7 +539,7 @@
       </div>
 
       <div id="container-simulacao" data-reveal>
-        {% include "pages/construtora/partials/_simulador_workspace.html" with form_simulacao=form_simulacao resultado_simulacao=resultado_simulacao only %}
+        {% include "pages/construtora/partials/_simulador_workspace.html" with form_simulacao=form_simulacao resultado_simulacao=resultado_simulacao csrf_token=csrf_token form_ts_token=form_ts_token only %}
 
       </div>
     </div>

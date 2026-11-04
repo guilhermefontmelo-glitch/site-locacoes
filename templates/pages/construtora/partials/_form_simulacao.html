@@ -23,6 +23,6 @@
     </div>
   </div>
 
-  {% include "components/_crispy_form.html" with form=form_simulacao action_url=url_simular form_dom_id="form-simulacao-habitacional" hx_target="#simulador-workspace" hx_swap="outerHTML" hx_indicator="#simulador-loading" submit_label="Recalcular Financiamento Caixa" submit_icon="calculator" reset_enabled=True reset_label="Restaurar padrões" trap_suffix="simulador" only %}
+  {% include "components/_crispy_form.html" with form=form_simulacao action_url=url_simular form_dom_id="form-simulacao-habitacional" hx_target="#simulador-workspace" hx_swap="outerHTML" hx_indicator="#simulador-loading" submit_label="Recalcular Financiamento Caixa" submit_icon="calculator" reset_enabled=True reset_label="Restaurar padrões" trap_suffix="simulador" csrf_token=csrf_token form_ts_token=form_ts_token only %}
 
 </div>

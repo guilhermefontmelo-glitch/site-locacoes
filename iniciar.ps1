@@ -17,7 +17,11 @@ Write-Host 'Ativando o ambiente virtual...' -ForegroundColor Cyan
 & (Join-Path $venv 'Scripts\Activate.ps1')
 
 Write-Host 'Conferindo as dependencias...' -ForegroundColor Cyan
-& $python -m pip install --quiet --disable-pip-version-check -r (Join-Path $PSScriptRoot 'requirements.txt')
+$requirements = Join-Path $PSScriptRoot 'requirements\local.txt'
+if (-not (Test-Path $requirements)) {
+    $requirements = Join-Path $PSScriptRoot 'requirements.txt'
+}
+& $python -m pip install --quiet --disable-pip-version-check -r $requirements
 
 if ($SemServidor) {
     Write-Host "Ambiente pronto: $env:VIRTUAL_ENV" -ForegroundColor Green

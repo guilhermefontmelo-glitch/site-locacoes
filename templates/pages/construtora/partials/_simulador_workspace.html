@@ -3,7 +3,7 @@
      data-simulador-workspace="true">
   <div class="simulador-workspace__grid">
     <div class="simulador-workspace__form-col">
-      {% include "pages/construtora/partials/_form_simulacao.html" with form_simulacao=form_simulacao only %}
+      {% include "pages/construtora/partials/_form_simulacao.html" with form_simulacao=form_simulacao csrf_token=csrf_token form_ts_token=form_ts_token only %}
 
     </div>
 
