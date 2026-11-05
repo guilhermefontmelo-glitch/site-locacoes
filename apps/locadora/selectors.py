@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from django.conf import settings
 
+from apps.locadora.precos import ConfiguracaoEquipamento, formatar_brl, obter_configuracao
 from core.security import build_whatsapp_url
 
 
@@ -25,6 +26,10 @@ class EquipamentoLocacao:
     imagem_webp: str
     imagem_url: str
     whatsapp_url: str
+    preco_diaria: float | None
+    preco_diaria_label: str
+    disponivel: int | None
+    sob_consulta: bool
 
 
 @dataclass(frozen=True, slots=True)
@@ -50,7 +55,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
     {
         "codigo": "01",
         "slug": "andaimes-tubulares",
-        "nome": "Andaimes Tubulares",
+        "nome": "Andaimes Tubulares Pequenos",
         "grupo_slug": "estruturas",
         "grupo_nome": "Estruturas e Acesso",
         "etapa_obra": "Alvenaria, Reboco & Fachada",
@@ -70,8 +75,29 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
     },
     {
         "codigo": "02",
+        "slug": "andaimes-tubulares-grandes",
+        "nome": "Andaimes Tubulares Grandes",
+        "grupo_slug": "estruturas",
+        "grupo_nome": "Estruturas e Acesso",
+        "etapa_obra": "Alvenaria, Reboco & Fachada",
+        "resumo": (
+            "Painéis de maior vão para fachadas amplas, platibandas e serviços em altura."
+        ),
+        "especificacoes": (
+            "Estrutura reforçada para vãos maiores com encaixe rápido (NR-18)",
+            "Compatível com plataformas antiderrapantes, guarda-corpo, sapatas e rodízios",
+            "Inspecionado lote a lote antes do envio ao canteiro",
+        ),
+        "orientacao_uso": "Indicado para fachadas grandes, pintura e reboco em altura.",
+        "icone": "building-office-2",
+        "imagem_avif": "img/locadora/andaime-tubular.avif",
+        "imagem_webp": "img/locadora/andaime-tubular.webp",
+        "imagem_url": "img/locacoes/andaime-tubular.jpg",
+    },
+    {
+        "codigo": "03",
         "slug": "escoras-metalicas",
-        "nome": "Escoras Metálicas",
+        "nome": "Escoras Metálicas Pequenas",
         "grupo_slug": "estruturas",
         "grupo_nome": "Estruturas e Acesso",
         "etapa_obra": "Estrutura, Vigas & Laje",
@@ -88,7 +114,26 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "imagem_url": "img/locacoes/escora-metalica.jpg",
     },
     {
-        "codigo": "03",
+        "codigo": "04",
+        "slug": "escoras-metalicas-grandes",
+        "nome": "Escoras Metálicas Grandes",
+        "grupo_slug": "estruturas",
+        "grupo_nome": "Estruturas e Acesso",
+        "etapa_obra": "Estrutura, Vigas & Laje",
+        "resumo": "Escoramento de maior altura para lajes altas, vigas e fôrmas robustas.",
+        "especificacoes": (
+            "Regulagem milimétrica com rosca e pino de aço para grandes vãos",
+            "Substitui escoramento de madeira com zero desperdício e prumo perfeito",
+            "Alta capacidade de carga axial para lajes maciças e vigas profundas",
+        ),
+        "orientacao_uso": "Ideal para lajes altas, vigas robustas e pés-direitos maiores.",
+        "icone": "shield-check",
+        "imagem_avif": "img/locadora/escora-metalica.avif",
+        "imagem_webp": "img/locadora/escora-metalica.webp",
+        "imagem_url": "img/locacoes/escora-metalica.jpg",
+    },
+    {
+        "codigo": "05",
         "slug": "betoneira-400l",
         "nome": "Betoneira Profissional 400L",
         "grupo_slug": "concretagem",
@@ -107,7 +152,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "imagem_url": "img/locacoes/betoneira.jpg",
     },
     {
-        "codigo": "04",
+        "codigo": "06",
         "slug": "vibrador-de-concreto",
         "nome": "Vibrador de Concreto",
         "grupo_slug": "concretagem",
@@ -126,7 +171,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "imagem_url": "img/locacoes/vibrador-concreto.jpg",
     },
     {
-        "codigo": "05",
+        "codigo": "07",
         "slug": "guincho-eletrico",
         "nome": "Guincho Elétrico de Coluna",
         "grupo_slug": "elevacao",
@@ -145,7 +190,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "imagem_url": "img/locacoes/guincho-coluna.jpg",
     },
     {
-        "codigo": "06",
+        "codigo": "08",
         "slug": "martelete-rompedor",
         "nome": "Martelete Perfurador / Rompedor",
         "grupo_slug": "ferramentas",
@@ -164,7 +209,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "imagem_url": "img/locacoes/martelete-rompedor.jpg",
     },
     {
-        "codigo": "07",
+        "codigo": "09",
         "slug": "esmerilhadeira-profissional",
         "nome": "Esmerilhadeira Angular",
         "grupo_slug": "ferramentas",
@@ -183,7 +228,7 @@ _EQUIPAMENTOS_RAW: tuple[dict[str, object], ...] = (
         "imagem_url": "img/locacoes/esmerilhadeira.jpg",
     },
     {
-        "codigo": "08",
+        "codigo": "10",
         "slug": "serra-circular-madeira",
         "nome": "Serra Circular Profissional",
         "grupo_slug": "ferramentas",
@@ -244,6 +289,7 @@ def _hidratar_equipamento(raw: dict[str, object], phone: str) -> EquipamentoLoca
     nome = str(raw["nome"])
     imagem_avif = str(raw["imagem_avif"])
     imagem_webp = str(raw["imagem_webp"])
+    configuracao = obter_configuracao(nome)
     msg = (
         f"Olá! Vim pela área da Rocha Locações no site e gostaria de um orçamento "
         f"para locação de: {nome}."
@@ -267,6 +313,10 @@ def _hidratar_equipamento(raw: dict[str, object], phone: str) -> EquipamentoLoca
         imagem_webp=imagem_webp,
         imagem_url=str(raw.get("imagem_url") or imagem_webp),
         whatsapp_url=build_whatsapp_url(phone_e164=phone, message=msg),
+        preco_diaria=configuracao.preco_diaria if configuracao else None,
+        preco_diaria_label=formatar_brl(configuracao.preco_diaria if configuracao else None),
+        disponivel=configuracao.disponivel if configuracao else None,
+        sob_consulta=configuracao.sob_consulta if configuracao else True,
     )
 
 
@@ -297,6 +347,14 @@ def obter_equipamento_por_slug(*, slug: str) -> EquipamentoLocacao | None:
     for raw in _EQUIPAMENTOS_RAW:
         if raw["slug"] == slug:
             return _hidratar_equipamento(raw, phone)
+    return None
+
+
+def obter_configuracao_por_slug(slug: str) -> ConfiguracaoEquipamento | None:
+    """Retorna preço e disponibilidade a partir do slug validado do catálogo."""
+    for raw in _EQUIPAMENTOS_RAW:
+        if raw["slug"] == slug:
+            return obter_configuracao(str(raw["nome"]))
     return None
 
 

@@ -18,6 +18,49 @@
           <span class="equip-card__stage">
             Etapa: {{ item.etapa_obra }}
           </span>
+
+          <div class="equip-card__commerce">
+            <p class="equip-card__price">
+              {% if item.sob_consulta %}
+                <strong>Sob consulta</strong>
+              {% else %}
+                <strong>{{ item.preco_diaria_label }}</strong>
+                <span>/ dia</span>
+              {% endif %}
+            </p>
+            {% if item.disponivel %}
+              <span class="equip-card__stock">Disponível: {{ item.disponivel }} un.</span>
+            {% endif %}
+          </div>
+
+          <div class="equip-card__select">
+            <label class="equip-card__toggle">
+              <input type="checkbox" data-equip-toggle value="{{ item.slug }}">
+              <span>Incluir no orçamento</span>
+            </label>
+
+            {% if item.disponivel %}
+              <div class="equip-qty"
+                   data-equip-qty
+                   data-slug="{{ item.slug }}"
+                   data-max="{{ item.disponivel }}"
+                   data-value="1"
+                   hidden>
+                <button type="button"
+                        class="equip-qty__btn"
+                        data-qty-minus
+                        aria-label="Diminuir quantidade de {{ item.nome }}">&minus;</button>
+                <output class="equip-qty__value" data-qty-value aria-live="polite">1</output>
+                <button type="button"
+                        class="equip-qty__btn"
+                        data-qty-plus
+                        aria-label="Aumentar quantidade de {{ item.nome }}">+</button>
+              </div>
+              <span class="equip-qty__aviso" data-qty-aviso role="status" aria-live="polite" hidden>
+                máx. disponível
+              </span>
+            {% endif %}
+          </div>
         </div>
 
         <div class="equip-card__actions">

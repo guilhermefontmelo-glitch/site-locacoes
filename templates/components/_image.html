@@ -27,7 +27,7 @@
     {% endif %}
     <img {% if img_id %}id="{{ img_id }}"{% endif %}
          class="media-frame__img {{ class|default:'' }}"
-         src="{% if webp_src %}{% static webp_src %}{% elif webp_url %}{{ webp_url }}{% else %}{{ src }}{% endif %}"
+         src="{% if src %}{{ src }}{% elif webp_src %}{% static webp_src %}{% elif webp_url %}{{ webp_url }}{% endif %}"
          alt="{{ alt }}"
          width="{{ width|default:'800' }}"
          height="{{ height|default:'500' }}"

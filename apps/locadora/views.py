@@ -22,7 +22,6 @@ from apps.locadora.selectors import (
     GRUPOS_CATALOGO,
     listar_como_alugar,
     listar_equipamentos,
-    listar_opcoes_equipamentos_choices,
     obter_equipamento_por_slug,
 )
 from apps.locadora.services import gerar_resumo_orcamento_locacao
@@ -135,12 +134,17 @@ def solicitar_orcamento_htmx_view(request: HttpRequest) -> HttpResponse:
         periodo=cleaned["periodo"],
         modalidade_entrega=cleaned["modalidade_entrega"],
         observacoes=cleaned["observacoes"],
+        quantidades=cleaned.get("quantidades") or {},
     )
 
     # Link assinado para o navegador baixar a caderneta automaticamente logo
     # após a confirmação, sem precisar de uma segunda validação do formulário.
     token = gerar_token_caderneta(
-        itens=list(resumo.itens_nomes),
+        itens=[
+            {"nome": item.nome, "qtd": item.quantidade}
+            for item in resumo.itens
+        ],
+        recebedor=resumo.nome_cliente,
         obra=cleaned["observacoes"] or "Não informada",
         entrega=resumo.entrega_label,
         periodo=resumo.periodo_label,
@@ -165,10 +169,21 @@ def _ler_pedido_post(request: HttpRequest) -> tuple[dict[str, object] | None, st
         if not isinstance(dados, dict):
             return None, "Formato de pedido inválido."
 
-        itens = [str(nome) for nome in dados.get("itens") or [] if str(nome) in PRECOS]
+        itens: list[dict[str, object]] = []
+        for item in dados.get("itens") or []:
+            if isinstance(item, dict):
+                nome = str(item.get("nome") or item.get("produto") or "").strip()
+                quantidade = item.get("qtd") or item.get("quantidade") or 1
+            else:
+                nome = str(item).strip()
+                quantidade = 1
+            if nome in PRECOS:
+                itens.append({"nome": nome, "qtd": quantidade})
+
         periodo = str(dados.get("periodo") or "").strip()
         entrega = str(dados.get("entrega") or "").strip()
         obra = str(dados.get("obra") or "").strip()
+        recebedor = str(dados.get("recebedor") or dados.get("nome") or "").strip()
 
         if not itens:
             return None, "Selecione ao menos um equipamento disponível."
@@ -179,6 +194,7 @@ def _ler_pedido_post(request: HttpRequest) -> tuple[dict[str, object] | None, st
         return (
             {
                 "itens": itens,
+                "recebedor": recebedor,
                 "obra": obra or "Não informada",
                 "entrega": entrega,
                 "periodo": periodo,
@@ -197,11 +213,6 @@ def _ler_pedido_post(request: HttpRequest) -> tuple[dict[str, object] | None, st
         return None, mensagens[0] if mensagens else "Confira os dados do pedido."
 
     cleaned = form.cleaned_data
-    nomes_por_slug = dict(listar_opcoes_equipamentos_choices())
-    itens = [nomes_por_slug[slug] for slug in cleaned["equipamentos"] if slug in nomes_por_slug]
-    if not itens:
-        return None, "Selecione ao menos um equipamento disponível."
-
     resumo = gerar_resumo_orcamento_locacao(
         nome=cleaned["nome"],
         telefone=cleaned["telefone"],
@@ -209,10 +220,18 @@ def _ler_pedido_post(request: HttpRequest) -> tuple[dict[str, object] | None, st
         periodo=cleaned["periodo"],
         modalidade_entrega=cleaned["modalidade_entrega"],
         observacoes=cleaned["observacoes"],
+        quantidades=cleaned.get("quantidades") or {},
     )
+    if not resumo.itens:
+        return None, "Selecione ao menos um equipamento disponível."
+
     return (
         {
-            "itens": itens,
+            "itens": [
+                {"nome": item.nome, "qtd": item.quantidade}
+                for item in resumo.itens
+            ],
+            "recebedor": resumo.nome_cliente,
             "obra": cleaned["observacoes"] or "Não informada",
             "entrega": resumo.entrega_label,
             "periodo": resumo.periodo_label,
@@ -257,6 +276,7 @@ def orcamento_pdf_view(request: HttpRequest) -> HttpResponse:
 
     pdf = gerar_caderneta(
         itens=itens,
+        recebedor=str(dados.get("recebedor") or ""),
         obra=str(dados.get("obra") or "Não informada"),
         entrega=str(dados.get("entrega") or ""),
         periodo=str(dados.get("periodo") or ""),

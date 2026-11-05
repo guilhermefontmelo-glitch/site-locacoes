@@ -49,6 +49,11 @@
   aspect-ratio: 3 / 2;
 }
 
+.card-fachada__media .media-frame__img {
+  object-fit: cover;
+  object-position: center;
+}
+
 /* Card Informativo Caixa no Hero (Sem animação de mouse no container) */
 .hero-card-3d-wrap {
   position: relative;

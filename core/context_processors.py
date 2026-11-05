@@ -17,6 +17,7 @@ def site_context(request: HttpRequest) -> dict[str, Any]:
         "csp_nonce": getattr(request, "csp_nonce", ""),
         "form_ts_token": generate_form_timestamp_token(scope="public_form"),
         "rocha": {
+            "nome_site": "Rocha Construtora | Obras Financiadas",
             "nome_marca": "Rocha Construtora",
             "nome_construtora": "Rocha Construtora",
             "nome_locadora": "Rocha Locações",

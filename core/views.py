@@ -1,12 +1,29 @@
 """Views transversais: healthcheck operacional e handlers seguros de erros HTTP."""
 
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from pathlib import Path
+
+from django.conf import settings
+from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
+
+FAVICON_PADRAO = Path(settings.BASE_DIR) / "static" / "img" / "favicon" / "favicon.ico"
+FAVICON_COLETADO = Path(settings.STATIC_ROOT) / "img" / "favicon" / "favicon.ico"
 
 
 def healthcheck_view(request: HttpRequest) -> JsonResponse:  # noqa: ARG001
     """Retorna status saudável da aplicação para monitoramento sem expor dados sensíveis."""
     return JsonResponse({"status": "ok", "service": "rocha-construtora"})
+
+
+def favicon_view(request: HttpRequest) -> FileResponse:  # noqa: ARG001
+    """Serve `/favicon.ico` na raiz mesmo com os estáticos sob `/static/`."""
+    caminho = FAVICON_PADRAO if FAVICON_PADRAO.is_file() else FAVICON_COLETADO
+    if not caminho.is_file():
+        raise Http404("Favicon não encontrado.")
+
+    resposta = FileResponse(caminho.open("rb"), content_type="image/x-icon")
+    resposta["Cache-Control"] = "public, max-age=604800, immutable"
+    return resposta
 
 
 def error_400_view(

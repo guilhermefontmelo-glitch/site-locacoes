@@ -52,7 +52,7 @@
 
         <div class="hero-metrics" data-stagger-group>
           <div data-stagger-item>
-            <strong class="hero-metrics__value" data-count-to="8" data-count-suffix=" linhas">8 linhas</strong>
+            <strong class="hero-metrics__value" data-count-to="10" data-count-suffix=" linhas">10 linhas</strong>
             <span class="hero-metrics__label">Frota essencial de canteiro</span>
           </div>
           <div data-stagger-item>
@@ -199,4 +199,10 @@
       </div>
     </div>
   </section>
+{% endblock %}
+
+{% block extra_js %}
+  <script type="module"
+          src="{% static 'js/modules/orcamento-locadora.js' %}"
+          nonce="{{ csp_nonce }}"></script>
 {% endblock %}

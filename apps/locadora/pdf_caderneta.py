@@ -25,7 +25,8 @@ from reportlab.lib.utils import simpleSplit
 from reportlab.pdfgen import canvas
 
 from apps.locadora.forms import PeriodoLocacaoChoices
-from apps.locadora.precos import PRECOS
+from apps.locadora.precos import preco_periodo
+from core.validators import sanitize_plain_text
 
 # Se True, o PDF final começa com a capa e termina com a contracapa do modelo.
 INCLUIR_CAPA = False
@@ -50,8 +51,11 @@ ALTURA_REF = 1314.0
 OBRA_X0, OBRA_X1 = 203.0, 553.0
 OBRA_Y0, OBRA_Y1 = 137.0, 193.0
 
-DATA_TOPO_X0, DATA_TOPO_X1 = 590.0, 873.0
-DATA_TOPO_BASE = 185.0
+# Centros (px) dos três claros de ``___/___/_____`` impressos no modelo. Desenhar
+# apenas os números mantém as barras originais visíveis e evita sobreposição.
+DATA_TOPO_CENTROS_PX = (618.4, 701.6, 813.6)
+DATA_TOPO_BASE = 182.0
+DATA_TOPO_TAMANHO = 17.0
 
 TABELA_TOPO = 273.0
 TABELA_ALTURA = 59.6
@@ -95,7 +99,7 @@ def _label_periodo(periodo: str) -> str:
 
 def _preco_unitario(nome: str, periodo: str) -> float:
     chave = _chave_periodo(periodo)
-    return float(PRECOS.get(nome, {}).get(chave, 0.0) or 0.0)
+    return float(preco_periodo(nome, chave))
 
 
 def _brl(valor: float) -> str:
@@ -139,8 +143,10 @@ def _montar_linhas(
     entrega: str,
     periodo: str,
     data_texto: str,
+    recebedor: str,
 ) -> list[dict[str, Any]]:
     linhas: list[dict[str, Any]] = []
+    nome_recebedor = sanitize_plain_text(str(recebedor or ""), max_length=80)
     for nome, qtd in _normalizar_itens(itens):
         preco = _preco_unitario(nome, periodo)
         total = preco * qtd
@@ -152,7 +158,7 @@ def _montar_linhas(
                 "valor": _brl(preco) if preco > 0 else "A combinar",
                 "qtd": str(qtd),
                 "total": _brl(total) if preco > 0 else "A combinar",
-                "recebedor": "",
+                "recebedor": nome_recebedor,
             }
         )
     linhas.append({"tipo": "info", "texto": f"Período: {_label_periodo(periodo)}"})
@@ -255,13 +261,22 @@ class _Folha:
         )
 
     def desenhar_data_topo(self, data_texto: str) -> None:
-        self.c.setFont(FONTE, 10.5)
+        """Preenche dia, mês e ano nos claros impressos, preservando as barras."""
+        partes = str(data_texto or "").strip().split("/")
+        self.c.setFont(FONTE, DATA_TOPO_TAMANHO)
         self.c.setFillColor(COR_TEXTO)
-        self.c.drawCentredString(
-            self.x((DATA_TOPO_X0 + DATA_TOPO_X1) / 2),
-            self.y(DATA_TOPO_BASE),
-            data_texto,
-        )
+
+        if len(partes) == 3 and all(partes):
+            for centro_px, parte in zip(DATA_TOPO_CENTROS_PX, partes, strict=True):
+                self.c.drawCentredString(
+                    self.x(centro_px),
+                    self.y(DATA_TOPO_BASE),
+                    parte,
+                )
+            return
+
+        centro = (DATA_TOPO_CENTROS_PX[0] + DATA_TOPO_CENTROS_PX[-1]) / 2
+        self.c.drawCentredString(self.x(centro), self.y(DATA_TOPO_BASE), data_texto)
 
     def desenhar_linha(self, indice: int, linha: dict[str, Any]) -> None:
         topo_px = TABELA_TOPO + indice * TABELA_ALTURA
@@ -302,8 +317,19 @@ class _Folha:
         self.c.drawRightString(self.x(COL_VALOR_X1 - MARGEM_INTERNA), base, linha["valor"])
         self.c.drawCentredString(self.x((COL_QTD_X0 + COL_QTD_X1) / 2), base, linha["qtd"])
         self.c.drawRightString(self.x(COL_TOTAL_X1 - MARGEM_INTERNA), base, linha["total"])
-        # A coluna "Recebedor" fica em branco de propósito: é a assinatura
-        # de quem retira o equipamento na entrega.
+
+        recebedor = str(linha.get("recebedor") or "").strip()
+        if recebedor:
+            self.escrever_bloco(
+                texto=recebedor,
+                x_px=COL_RECEBEDOR_X0 + MARGEM_INTERNA,
+                largura_px=(COL_RECEBEDOR_X1 - COL_RECEBEDOR_X0) - 2 * MARGEM_INTERNA,
+                centro_y_px=centro_px,
+                fonte=FONTE,
+                tamanho_max=10.0,
+                tamanho_min=6.5,
+                max_linhas=2,
+            )
 
 
 def _criar_overlay(
@@ -336,6 +362,7 @@ def gerar_caderneta(
     entrega: str,
     periodo: str,
     data: DataPedido,
+    recebedor: str = "",
 ) -> bytes:
     """Monta a caderneta preenchida e devolve os bytes do PDF final."""
     if not MODELO_PDF.is_file():
@@ -343,7 +370,7 @@ def gerar_caderneta(
         raise FileNotFoundError(msg)
 
     data_texto = _data_texto(data)
-    linhas = _montar_linhas(itens, entrega, periodo, data_texto)
+    linhas = _montar_linhas(itens, entrega, periodo, data_texto, recebedor)
 
     leitor = PdfReader(str(MODELO_PDF))
     pagina_modelo = leitor.pages[PAGINA_MODELO]
@@ -385,10 +412,12 @@ def gerar_token_caderneta(
     entrega: str,
     periodo: str,
     data: DataPedido,
+    recebedor: str = "",
 ) -> str:
     """Cria um token assinado com os dados do pedido para o download automático."""
     payload = {
         "itens": _normalizar_itens(itens),
+        "recebedor": sanitize_plain_text(str(recebedor or ""), max_length=80),
         "obra": str(obra or ""),
         "entrega": str(entrega or ""),
         "periodo": str(periodo or ""),

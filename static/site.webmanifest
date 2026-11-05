@@ -1,0 +1,22 @@
+{
+  "name": "Rocha Construtora | Obras Financiadas",
+  "short_name": "Rocha",
+  "description": "Obras financiadas pela Caixa e Minha Casa Minha Vida, com locação de equipamentos para construção civil em Viçosa do Ceará.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b1320",
+  "theme_color": "#0b1320",
+  "icons": [
+    {
+      "src": "/static/img/favicon/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/img/favicon/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

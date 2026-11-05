@@ -15,21 +15,33 @@
     <meta name="view-transition" content="same-origin">
     <meta name="htmx-config"
           content='{"inlineStyleNonce":"{{ csp_nonce }}","includeIndicatorStyles":false,"allowEval":false,"selfRequestsOnly":true}'>
-    <title>{% block title %}Rocha Construtora | Obras Financiadas Caixa &amp; Minha Casa Minha Vida{% endblock %}</title>
+    <title>{% block title %}Rocha Construtora | Obras Financiadas{% endblock %}</title>
     <meta name="description"
           content="{% block meta_description %}Construtora especializada em obras financiadas pela Caixa Habitacional e Minha Casa Minha Vida em Viçosa do Ceará - CE, além de locação de equipamentos para construção civil.{% endblock %}">
     <meta name="keywords"
           content="{% block meta_keywords %}Rocha Construtora, Minha Casa Minha Vida, financiamento Caixa, construção financiada, locação de equipamentos, andaimes, betoneiras, Viçosa do Ceará{% endblock %}">
     <meta name="theme-color" content="#0b1320">
-    <link rel="icon" type="image/png" href="{% static 'img/brand/favicon.png' %}">
+    <link rel="icon" href="{% static 'img/favicon/favicon.ico' %}?v=2" sizes="any">
+    <link rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="{% static 'img/favicon/favicon-32x32.png' %}?v=2">
+    <link rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="{% static 'img/favicon/favicon-16x16.png' %}?v=2">
+    <link rel="apple-touch-icon"
+          sizes="180x180"
+          href="{% static 'img/favicon/apple-touch-icon.png' %}?v=2">
+    <link rel="manifest" href="{% static 'site.webmanifest' %}?v=2">
     <meta name="robots" content="index, follow">
 
     <meta property="og:locale" content="pt_BR">
     <meta property="og:type" content="website">
     <meta property="og:site_name"
-          content="{% if active_unit == 'locadora' %}{{ rocha.nome_locadora }}{% else %}{{ rocha.nome_construtora }}{% endif %}">
+          content="{% if active_unit == 'locadora' %}{{ rocha.nome_locadora }}{% else %}{{ rocha.nome_site }}{% endif %}">
     <meta property="og:title"
-          content="{% block og_title %}Rocha Construtora — Construção Financiada Caixa &amp; Locações{% endblock %}">
+          content="{% block og_title %}Rocha Construtora | Obras Financiadas{% endblock %}">
     <meta property="og:description"
           content="{% block og_description %}Do projeto e aprovação na Caixa até a entrega das chaves, além de locação completa de equipamentos para sua obra.{% endblock %}">
 

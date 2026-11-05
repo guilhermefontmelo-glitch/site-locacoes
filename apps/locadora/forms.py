@@ -2,7 +2,11 @@
 
 from django import forms
 
-from apps.locadora.selectors import GRUPOS_CATALOGO, listar_opcoes_equipamentos_choices
+from apps.locadora.selectors import (
+    GRUPOS_CATALOGO,
+    listar_opcoes_equipamentos_choices,
+    obter_configuracao_por_slug,
+)
 from core.validators import sanitize_plain_text, validate_brazilian_phone
 
 
@@ -132,3 +136,35 @@ class OrcamentoLocacaoForm(forms.Form):
         """Sanitiza observações opcionais."""
         raw: str = str(self.cleaned_data.get("observacoes") or "")
         return sanitize_plain_text(raw, max_length=200)
+
+    def clean(self) -> dict[str, object]:
+        """Valida as quantidades escolhidas contra a disponibilidade real do catálogo."""
+        cleaned = super().clean()
+        equipamentos = cleaned.get("equipamentos") or []
+        quantidades: dict[str, int] = {}
+
+        for slug in equipamentos:
+            configuracao = obter_configuracao_por_slug(str(slug))
+            if configuracao is None:
+                continue
+
+            bruto = str(self.data.get(f"qtd_{slug}") or "1").strip()
+            try:
+                quantidade = max(1, int(bruto))
+            except (TypeError, ValueError):
+                quantidade = 1
+
+            if configuracao.disponivel is not None and quantidade > configuracao.disponivel:
+                self.add_error(
+                    None,
+                    (
+                        f"{configuracao.nome}: o máximo disponível é "
+                        f"{configuracao.disponivel} unidade(s)."
+                    ),
+                )
+                quantidade = configuracao.disponivel
+
+            quantidades[str(slug)] = quantidade
+
+        cleaned["quantidades"] = quantidades
+        return cleaned

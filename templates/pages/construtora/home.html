@@ -66,7 +66,8 @@
       </div>
 
       <div class="hero-card-3d-wrap">
-        {% include "components/_image.html" with avif_src="img/construtora/hero-residencia-ceara.avif" webp_src="img/construtora/hero-residencia-ceara.webp" alt="Residência contemporânea térrea construída pela Rocha Construtora na Serra da Ibiapaba" width=1280 height=854 sizes="(min-width: 1024px) 46vw, 94vw" priority=True wrapper_class="hero-construtora__photo mb-4" only %}
+        {% static "img/construtora/render-casa-moderna.png" as render_hero %}
+        {% include "components/_image.html" with webp_src="img/construtora/render-casa-moderna.webp" src=render_hero alt="Render de casa moderna de dois pavimentos projetada e construída pela Rocha Construtora" width=1402 height=1122 sizes="(min-width: 1024px) 46vw, 94vw" priority=True wrapper_class="hero-construtora__photo mb-4" only %}
 
         <aside class="hero-card-3d"
                id="hero-card-3d"
@@ -585,7 +586,8 @@
         </div>
 
         <div class="card">
-          {% include "components/_image.html" with avif_src="img/construtora/apoio-sinergia-canteiro.avif" webp_src="img/construtora/apoio-sinergia-canteiro.webp" alt="Engenharia Rocha Construtora e andaimes Rocha Locações integrados no canteiro de obras" width=960 height=600 sizes="(min-width: 1024px) 38vw, 94vw" wrapper_class="mb-4 aspect-video" only %}
+          {% static "img/construtora/fachada-rocha.jpg" as fachada_rocha %}
+          {% include "components/_image.html" with src=fachada_rocha alt="Fachada da Rocha Construtora em Viçosa do Ceará" width=1200 height=904 sizes="(min-width: 1024px) 38vw, 94vw" wrapper_class="card-fachada__media mb-4 aspect-video" only %}
 
           <h3 class="heading-lg mb-2">Atendimento Presencial &amp; Digital</h3>
           <p class="text-sm mb-4">

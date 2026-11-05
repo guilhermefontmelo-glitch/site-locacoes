@@ -9,6 +9,7 @@ from django.urls import URLPattern, URLResolver, include, path
 from core import views as core_views
 
 urlpatterns: list[URLPattern | URLResolver] = [
+    path("favicon.ico", core_views.favicon_view, name="favicon"),
     path("healthz/", core_views.healthcheck_view, name="healthcheck"),
     path("locadora/", include("apps.locadora.urls", namespace="locadora")),
     path("", include("apps.construtora.urls", namespace="construtora")),
