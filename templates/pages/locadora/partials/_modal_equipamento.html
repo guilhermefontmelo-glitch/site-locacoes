@@ -24,7 +24,50 @@
     <strong>Aplicação recomendada:</strong> {{ equipamento.orientacao_uso }}
   </p>
 
-  <a class="btn btn--whatsapp w-full"
+  <div class="equip-card__commerce">
+    <p class="equip-card__price">
+      {% if equipamento.sob_consulta %}
+        <strong>Sob consulta</strong>
+      {% else %}
+        <strong>{{ equipamento.preco_diaria_label }}</strong>
+        <span>/ dia</span>
+      {% endif %}
+    </p>
+    {% if equipamento.disponivel %}
+      <span class="equip-card__stock">Disponível: {{ equipamento.disponivel }} un.</span>
+    {% endif %}
+  </div>
+
+  <div class="equip-card__select">
+    <label class="equip-card__toggle">
+      <input type="checkbox" data-equip-toggle value="{{ equipamento.slug }}">
+      <span>Incluir no orçamento</span>
+    </label>
+
+    {% if equipamento.disponivel %}
+      <div class="equip-qty"
+           data-equip-qty
+           data-slug="{{ equipamento.slug }}"
+           data-max="{{ equipamento.disponivel }}"
+           data-value="1">
+        <span class="equip-qty__label">Qtd.</span>
+        <button type="button"
+                class="equip-qty__btn"
+                data-qty-minus
+                aria-label="Diminuir quantidade de {{ equipamento.nome }}">&minus;</button>
+        <output class="equip-qty__value" data-qty-value aria-live="polite">1</output>
+        <button type="button"
+                class="equip-qty__btn"
+                data-qty-plus
+                aria-label="Aumentar quantidade de {{ equipamento.nome }}">+</button>
+      </div>
+      <span class="equip-qty__aviso" data-qty-aviso role="status" aria-live="polite" hidden>
+        máx. disponível
+      </span>
+    {% endif %}
+  </div>
+
+  <a class="btn btn--whatsapp w-full mt-4"
      href="{{ equipamento.whatsapp_url }}"
      target="_blank"
      rel="noopener noreferrer">

@@ -70,12 +70,15 @@
       var wrap = container.querySelector("[data-equip-qty]");
       if (!wrap) return;
 
-      wrap.hidden = !marcado;
+      var slug = wrap.getAttribute("data-slug");
       if (marcado) {
-        var atual = parseInt(wrap.getAttribute("data-value"), 10) || 1;
+        var campo = campoQuantidade(form, slug, false);
+        var atual = campo
+          ? parseInt(campo.value, 10) || 1
+          : parseInt(wrap.getAttribute("data-value"), 10) || 1;
         definirQuantidade(form, container, wrap, atual);
       } else {
-        removerQuantidade(form, wrap.getAttribute("data-slug"));
+        removerQuantidade(form, slug);
         wrap.setAttribute("data-value", "1");
         var saida = wrap.querySelector("[data-qty-value]");
         if (saida) saida.textContent = "1";
@@ -104,9 +107,18 @@
     if (!form || !wrap || !container) return;
 
     evento.preventDefault();
+
+    var toggle = container.querySelector("[data-equip-toggle]");
+    if (toggle && !toggle.checked) {
+      toggle.checked = true;
+      var selecao = campoSelecao(form, toggle.value);
+      if (selecao) selecao.checked = true;
+    }
+
     var atual = parseInt(wrap.getAttribute("data-value"), 10) || 1;
     var delta = botao.hasAttribute("data-qty-plus") ? 1 : -1;
     definirQuantidade(form, container, wrap, atual + delta);
+    sincronizar();
   });
 
   document.addEventListener("change", function (evento) {

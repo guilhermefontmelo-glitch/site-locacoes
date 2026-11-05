@@ -13,7 +13,7 @@
 {% block og_description %}Andaimes, escoras metálicas, betoneiras e ferramentas revisadas prontas para o seu canteiro de obras em Viçosa do Ceará e região.{% endblock %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'css/pages/locadora.css' %}" data-vertical-css="locadora">
+  <link rel="stylesheet" href="{% static 'css/pages/locadora.css' %}?v=3" data-vertical-css="locadora">
 {% endblock %}
 
 {% block content %}
@@ -203,6 +203,6 @@
 
 {% block extra_js %}
   <script type="module"
-          src="{% static 'js/modules/orcamento-locadora.js' %}"
+          src="{% static 'js/modules/orcamento-locadora.js' %}?v=3"
           nonce="{{ csp_nonce }}"></script>
 {% endblock %}
