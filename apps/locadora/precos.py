@@ -33,13 +33,13 @@ class ConfiguracaoEquipamento:
 
 
 EQUIPAMENTOS: dict[str, ConfiguracaoEquipamento] = {
-    "Andaimes Tubulares Pequenos": ConfiguracaoEquipamento(
-        nome="Andaimes Tubulares Pequenos",
+    "Andaime Industrial Pequeno": ConfiguracaoEquipamento(
+        nome="Andaime Industrial Pequeno",
         preco_diaria=0.50,
         disponivel=15,
     ),
-    "Andaimes Tubulares Grandes": ConfiguracaoEquipamento(
-        nome="Andaimes Tubulares Grandes",
+    "Andaime Industrial Grande": ConfiguracaoEquipamento(
+        nome="Andaime Industrial Grande",
         preco_diaria=0.70,
         disponivel=100,
     ),

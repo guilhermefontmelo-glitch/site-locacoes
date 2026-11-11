@@ -40,7 +40,8 @@ class ResumoOrcamentoLocacao:
     periodo_label: str
     periodo_dias: int
     entrega_label: str
-    observacoes: str
+    cidade_obra: str
+    bairro_obra: str
     total_estimado: float | None
     total_estimado_label: str
     tem_sob_consulta: bool
@@ -51,6 +52,11 @@ class ResumoOrcamentoLocacao:
         """Mantém compatibilidade com o token/PDF que espera apenas os nomes."""
         return tuple(item.nome for item in self.itens)
 
+    @property
+    def local_obra_label(self) -> str:
+        """Local da obra no formato pedido pela operação: Bairro, Cidade."""
+        return f"{self.bairro_obra}, {self.cidade_obra}"
+
 
 def gerar_resumo_orcamento_locacao(
     *,
@@ -59,7 +65,8 @@ def gerar_resumo_orcamento_locacao(
     equipamentos_slugs: list[str],
     periodo: str,
     modalidade_entrega: str,
-    observacoes: str = "",
+    cidade_obra: str = "",
+    bairro_obra: str = "",
     quantidades: dict[str, int] | None = None,
 ) -> ResumoOrcamentoLocacao:
     """Monta o resumo comercial validado e o link seguro para o WhatsApp da Locadora."""
@@ -78,6 +85,8 @@ def gerar_resumo_orcamento_locacao(
 
         quantidade = max(1, int(quantidades.get(slug, 1) or 1))
         configuracao = obter_configuracao(nome_equipamento)
+        if configuracao and configuracao.disponivel is not None:
+            quantidade = min(quantidade, max(1, configuracao.disponivel))
         preco_diaria = configuracao.preco_diaria if configuracao else None
 
         if preco_diaria is None:
@@ -122,7 +131,8 @@ def gerar_resumo_orcamento_locacao(
     bloco_total: str = (
         f"\n• Total estimado: {total_label}" if total_final is not None else ""
     )
-    bloco_obs: str = f"\n• Detalhes/Local: {observacoes}" if observacoes else ""
+    local_obra: str = f"{bairro_obra.strip()}, {cidade_obra.strip()}".strip(", ")
+    bloco_obra: str = f"\n• Local da obra: {local_obra}" if local_obra else ""
 
     mensagem_whatsapp: str = (
         f"Olá, Rocha Locações! Solicito orçamento pelo site:\n"
@@ -132,7 +142,7 @@ def gerar_resumo_orcamento_locacao(
         f"{bloco_total}"
         f"{bloco_sob_consulta}"
         f"\n• Logística: {entrega_label}"
-        f"{bloco_obs}"
+        f"{bloco_obra}"
     )
 
     phone_locadora: str = getattr(settings, "ROCHA_WHATSAPP_LOCADORA", "5588994248183")
@@ -148,7 +158,8 @@ def gerar_resumo_orcamento_locacao(
         periodo_label=periodo_label,
         periodo_dias=dias,
         entrega_label=entrega_label,
-        observacoes=observacoes,
+        cidade_obra=cidade_obra,
+        bairro_obra=bairro_obra,
         total_estimado=total_final,
         total_estimado_label=total_label,
         tem_sob_consulta=tem_sob_consulta,

@@ -320,3 +320,22 @@
   background-color: color-mix(in srgb, var(--color-bg-canvas) 55%, transparent);
   cursor: pointer;
 }
+
+/* Cidade e bairro da obra lado a lado no desktop e empilhados no celular */
+@media (min-width: 40rem) {
+  .rocha-crispy-form.orcamento-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-4);
+    align-items: start;
+  }
+
+  .orcamento-form > * {
+    grid-column: 1 / -1;
+  }
+
+  .orcamento-form > #div_id_cidade_obra,
+  .orcamento-form > #div_id_bairro_obra {
+    grid-column: span 1;
+  }
+}

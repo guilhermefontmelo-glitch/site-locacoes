@@ -1,0 +1,307 @@
+{% url 'construtora:simular_simples' as url_simples %}
+
+<div id="simulador-simples-conteudo"
+     class="sim-simples"
+     data-sim-simples="true">
+  <div class="sim-simples__grid">
+    <div class="card simulador-form-card sim-wizard">
+      <div class="sim-wizard__head">
+        <span class="eyebrow">
+          {% include "components/_icon.html" with name="sparkles" class="heroicon heroicon--sm" only %}
+
+          <span>Simulação simples &middot; 6 perguntas</span>
+        </span>
+        <h3 class="heading-xl mt-2">Descubra sua parcela sem planilha e sem cadastro</h3>
+        <p class="text-sm mt-2">
+          Responda no seu ritmo. Usamos exatamente as mesmas taxas, subsídios e limites da
+          simulação avançada, só que em linguagem simples.
+        </p>
+      </div>
+
+      <div class="sim-wizard__progress">
+        <div class="sim-wizard__progress-top">
+          <span class="sim-wizard__step-label" data-sim-step-label>Pergunta 1 de 6</span>
+          <span class="sim-wizard__step-hint">Leva menos de 2 minutos</span>
+        </div>
+        <progress class="sim-wizard__progress-bar"
+                  value="1"
+                  max="6"
+                  aria-label="Progresso da simulação simples"
+                  data-sim-progress>1 de 6</progress>
+      </div>
+
+      <div id="sim-loading-simples" class="htmx-indicator sim-loading-bar" aria-hidden="true">
+        <span>Calculando com as mesmas regras da simulação avançada...</span>
+      </div>
+
+      <form method="post"
+            action="{{ url_simples }}"
+            class="rocha-crispy-form sim-wizard-form"
+            data-sim-wizard="true"
+            hx-post="{{ url_simples }}"
+            hx-target="#simulador-simples-conteudo"
+            hx-swap="outerHTML"
+            hx-indicator="#sim-loading-simples"
+            novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="form_ts_token" value="{{ form_ts_token }}">
+
+        <div class="hp-trap" aria-hidden="true">
+          <label for="id_website_simples">Campo institucional interno</label>
+          <input type="text"
+                 name="website"
+                 id="id_website_simples"
+                 tabindex="-1"
+                 autocomplete="off">
+          <label for="id_website_url_trap_simples">Não preencha este campo</label>
+          <input type="text"
+                 name="website_url_trap"
+                 id="id_website_url_trap_simples"
+                 tabindex="-1"
+                 autocomplete="off">
+        </div>
+
+        {% if form_simples.non_field_errors %}
+          <div class="sim-step__erro sim-step__erro--geral" role="alert">
+            {{ form_simples.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <section class="sim-step" data-sim-step="1" data-sim-label="Pergunta 1 de 6">
+          <h4 class="sim-step__title">Você já tem um terreno para construir?</h4>
+          <p class="sim-step__help">Isso muda a forma como o banco calcula o financiamento.</p>
+
+          <div class="sim-choices">
+            {% for value, label in form_simples.fields.objetivo.choices %}
+              <label class="sim-choice">
+                <input type="radio"
+                       name="objetivo"
+                       value="{{ value }}"
+                       {% if form_simples.objetivo.value == value %}checked{% endif %}>
+                <span class="sim-choice__body">
+                  <span class="sim-choice__title">{{ label }}</span>
+                </span>
+              </label>
+            {% endfor %}
+          </div>
+          {% if form_simples.objetivo.errors %}
+            <div class="sim-step__erro" role="alert">{{ form_simples.objetivo.errors }}</div>
+          {% endif %}
+        </section>
+
+        <section class="sim-step" data-sim-step="2" data-sim-label="Pergunta 2 de 6" hidden>
+          <h4 class="sim-step__title">Que tipo de casa combina com sua família?</h4>
+          <p class="sim-step__help">Escolha o padrão mais próximo. Você pode ajustar depois.</p>
+
+          <div class="sim-choices">
+            {% for value, label in form_simples.fields.tipo_casa.choices %}
+              <label class="sim-choice">
+                <input type="radio"
+                       name="tipo_casa"
+                       value="{{ value }}"
+                       {% if form_simples.tipo_casa.value == value %}checked{% endif %}>
+                <span class="sim-choice__body">
+                  <span class="sim-choice__title">{{ label }}</span>
+                  {% if value == "essencial" %}
+                    <span class="sim-choice__hint">Referência de obra: R$ 190 mil</span>
+                  {% elif value == "conforto" %}
+                    <span class="sim-choice__hint">Referência de obra: R$ 220 mil</span>
+                  {% elif value == "personalizado" %}
+                    <span class="sim-choice__hint">Referência de obra: R$ 350 mil</span>
+                  {% elif value == "valor" %}
+                    <span class="sim-choice__hint">Informe você mesmo o valor da obra</span>
+                  {% endif %}
+                </span>
+              </label>
+            {% endfor %}
+          </div>
+          {% if form_simples.tipo_casa.errors %}
+            <div class="sim-step__erro" role="alert">{{ form_simples.tipo_casa.errors }}</div>
+          {% endif %}
+
+          <div class="sim-conditional"
+               data-sim-show-when="tipo_casa"
+               data-sim-show-value="valor"
+               {% if form_simples.tipo_casa.value != "valor" %}hidden{% endif %}>
+            <label class="sim-field-label" for="{{ form_simples.valor_casa.id_for_label }}">
+              Valor aproximado da obra
+            </label>
+            {{ form_simples.valor_casa }}
+            <span class="sim-field-help">Pode ser um valor aproximado, só para termos uma ideia.</span>
+            {% if form_simples.valor_casa.errors %}
+              <div class="sim-step__erro" role="alert">{{ form_simples.valor_casa.errors }}</div>
+            {% endif %}
+          </div>
+        </section>
+
+        <section class="sim-step" data-sim-step="3" data-sim-label="Pergunta 3 de 6" hidden>
+          <h4 class="sim-step__title">Quanto sua família recebe por mês?</h4>
+          <p class="sim-step__help">
+            Some a renda de todos que vão ajudar a pagar a casa. Isso define a faixa e o subsídio.
+          </p>
+
+          <label class="sim-field-label" for="{{ form_simples.renda_familiar.id_for_label }}">
+            Renda mensal da família
+          </label>
+          {{ form_simples.renda_familiar }}
+          <span class="sim-field-help">Pode digitar valores aproximados, como 3.500,00.</span>
+          {% if form_simples.renda_familiar.errors %}
+            <div class="sim-step__erro" role="alert">{{ form_simples.renda_familiar.errors }}</div>
+          {% endif %}
+        </section>
+
+        <section class="sim-step" data-sim-step="4" data-sim-label="Pergunta 4 de 6" hidden>
+          <h4 class="sim-step__title">Quanto vocês têm guardado para a entrada?</h4>
+          <p class="sim-step__help">
+            Considere poupança, FGTS e ajuda da família. A entrada reduz o valor financiado.
+          </p>
+
+          <div class="sim-choices sim-choices--compact">
+            {% for value, label in form_simples.fields.entrada_faixa.choices %}
+              <label class="sim-choice">
+                <input type="radio"
+                       name="entrada_faixa"
+                       value="{{ value }}"
+                       {% if form_simples.entrada_faixa.value == value %}checked{% endif %}>
+                <span class="sim-choice__body">
+                  <span class="sim-choice__title">{{ label }}</span>
+                </span>
+              </label>
+            {% endfor %}
+          </div>
+          {% if form_simples.entrada_faixa.errors %}
+            <div class="sim-step__erro" role="alert">{{ form_simples.entrada_faixa.errors }}</div>
+          {% endif %}
+
+          <div class="sim-conditional"
+               data-sim-show-when="entrada_faixa"
+               data-sim-show-value="custom"
+               {% if form_simples.entrada_faixa.value != "custom" %}hidden{% endif %}>
+            <label class="sim-field-label" for="{{ form_simples.entrada_valor.id_for_label }}">
+              Quanto você tem para a entrada
+            </label>
+            {{ form_simples.entrada_valor }}
+            {% if form_simples.entrada_valor.errors %}
+              <div class="sim-step__erro" role="alert">{{ form_simples.entrada_valor.errors }}</div>
+            {% endif %}
+          </div>
+        </section>
+
+        <section class="sim-step" data-sim-step="5" data-sim-label="Pergunta 5 de 6" hidden>
+          <h4 class="sim-step__title">Como você prefere pagar?</h4>
+          <p class="sim-step__help">Prazo maior deixa a parcela menor. Prazo menor quita mais rápido.</p>
+
+          <div class="sim-choices">
+            {% for value, label in form_simples.fields.prazo.choices %}
+              <label class="sim-choice">
+                <input type="radio"
+                       name="prazo"
+                       value="{{ value }}"
+                       {% if form_simples.prazo.value|stringformat:"s" == value %}checked{% endif %}>
+                <span class="sim-choice__body">
+                  <span class="sim-choice__title">{{ label }}</span>
+                </span>
+              </label>
+            {% endfor %}
+          </div>
+          {% if form_simples.prazo.errors %}
+            <div class="sim-step__erro" role="alert">{{ form_simples.prazo.errors }}</div>
+          {% endif %}
+        </section>
+
+        <section class="sim-step" data-sim-step="6" data-sim-label="Pergunta 6 de 6" hidden>
+          <h4 class="sim-step__title">Quer que a Rocha te ajude a dar o próximo passo?</h4>
+          <p class="sim-step__help">
+            Nome e WhatsApp são opcionais. Se preencher, já deixamos sua simulação pronta para
+            enviar à nossa equipe.
+          </p>
+
+          <div class="sim-fields">
+            <div class="sim-field">
+              <label class="sim-field-label" for="{{ form_simples.nome.id_for_label }}">
+                Como podemos te chamar?
+              </label>
+              {{ form_simples.nome }}
+              {% if form_simples.nome.errors %}
+                <div class="sim-step__erro" role="alert">{{ form_simples.nome.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="sim-field">
+              <label class="sim-field-label" for="{{ form_simples.telefone.id_for_label }}">
+                Seu WhatsApp (opcional)
+              </label>
+              {{ form_simples.telefone }}
+              {% if form_simples.telefone.errors %}
+                <div class="sim-step__erro" role="alert">{{ form_simples.telefone.errors }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+
+        <div class="sim-wizard__actions">
+          <button type="button"
+                  class="btn btn--outline sim-wizard__back"
+                  data-sim-back
+                  hidden>
+            {% include "components/_icon.html" with name="arrow-right" class="heroicon heroicon--sm sim-icon-back" only %}
+
+            <span>Voltar</span>
+          </button>
+
+          <button type="button"
+                  class="btn btn--gold sim-wizard__next"
+                  data-sim-next>
+            <span>Continuar</span>
+            {% include "components/_icon.html" with name="arrow-right" class="heroicon heroicon--sm" only %}
+
+          </button>
+
+          <button type="submit"
+                  class="btn btn--gold sim-wizard__submit"
+                  data-sim-submit
+                  hidden>
+            {% include "components/_icon.html" with name="calculator" class="heroicon" only %}
+
+            <span>Ver minha simulação</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <aside class="sim-simples__aside">
+      <div class="card sim-simples__promise">
+        <span class="eyebrow">
+          {% include "components/_icon.html" with name="shield-check" class="heroicon heroicon--sm" only %}
+
+          <span>Sem cadastro e sem compromisso</span>
+        </span>
+        <ul class="sim-simples__list">
+          <li>
+            {% include "components/_icon.html" with name="check-circle" class="heroicon heroicon--sm text-gold" only %}
+
+            <span>Mesmas taxas, subsídios e limites da Caixa usados na simulação avançada.</span>
+          </li>
+          <li>
+            {% include "components/_icon.html" with name="check-circle" class="heroicon heroicon--sm text-gold" only %}
+
+            <span>Você vê SAC e PRICE lado a lado, sem precisar entender de planilha.</span>
+          </li>
+          <li>
+            {% include "components/_icon.html" with name="check-circle" class="heroicon heroicon--sm text-gold" only %}
+
+            <span>Pode refazer quantas vezes quiser e baixar um resumo em PDF.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card sim-simples__tip">
+        {% include "components/_icon.html" with name="sparkles" class="heroicon text-gold" only %}
+
+        <p class="text-sm">
+          <strong>Dica da engenharia:</strong> se a parcela ficar acima de 30% da renda,
+          aumente o prazo ou reduza o padrão da casa. Nós mostramos alternativas no resultado.
+        </p>
+      </div>
+    </aside>
+  </div>
+</div>

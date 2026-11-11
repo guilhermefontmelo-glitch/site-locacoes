@@ -50,7 +50,7 @@ def test_home_construtora_headers_seguranca(client: Client) -> None:
     assert "unit-switcher__bubble" in html
     assert "mobile-unit-bar" in html
     assert "etapas-obra-json" in html
-    assert "hero-residencia-ceara.avif" in html
+    assert "render-casa-moderna.webp" in html
     assert "unsplash.com" not in html
     assert 'style="' not in html
     assert "MCMV" not in html
@@ -222,3 +222,90 @@ def test_form_simulacao_labels_sem_sigla_proibida() -> None:
     for field in form.fields.values():
         assert "MCMV" not in str(field.label)
         assert "MCMV" not in str(field.help_text)
+
+
+def test_home_construtora_exibe_abas_simples_e_avancada(client: Client) -> None:
+    """A home abre no modo simples, com aba para o formulário avançado já renderizado."""
+    html = client.get(reverse("construtora:home")).content.decode("utf-8")
+
+    assert "Simulação simples" in html
+    assert "Simulação avançada" in html
+    assert 'data-sim-wizard="true"' in html
+    assert "Pergunta 1 de 6" in html
+    assert "data-sim-progress" in html
+    assert "simulador-simples-conteudo" in html
+    assert "form-simulacao-habitacional" in html
+    assert 'style="' not in html
+
+
+def test_simulacao_simples_calcula_sac_price_whatsapp_e_pdf(client: Client) -> None:
+    """O modo simples devolve comparativo SAC/PRICE, comprometimento, WhatsApp e PDF."""
+    cache.clear()
+    response = client.post(
+        reverse("construtora:simular_simples"),
+        data={
+            "objetivo": "ainda_nao",
+            "tipo_casa": "conforto",
+            "renda_familiar": "R$ 3.500,00",
+            "entrada_faixa": "de_10_a_25",
+            "prazo": "360",
+            "nome": "Maria Silva",
+            "telefone": "(88) 99999-1111",
+        },
+        HTTP_HX_REQUEST="true",
+    )
+    assert response.status_code == 200
+    html = response.content.decode("utf-8")
+
+    assert "Simulação simples concluída" in html
+    assert "SAC" in html
+    assert "PRICE" in html
+    assert "Comprometimento da renda" in html
+    assert "Alternativas para caber no orçamento" in html
+    assert "Próximos passos com a Rocha" in html
+    assert "https://wa.me/" in html
+    assert "simulacao-simples.pdf" in html
+    assert "data-sim-ir-avancado" in html
+    assert 'style="' not in html
+    assert "MCMV" not in html
+
+    import re
+
+    token_url = re.search(r'href="(/simulacao-simples\.pdf[^"]+)"', html)
+    assert token_url is not None
+    pdf = client.get(token_url.group(1))
+    assert pdf.status_code == 200
+    assert pdf.headers["Content-Type"] == "application/pdf"
+    assert pdf.content.startswith(b"%PDF")
+
+
+def test_simulacao_simples_preserva_respostas_e_valida_passo(client: Client) -> None:
+    """Erros de validação devolvem o wizard amigável mantendo as respostas já dadas."""
+    cache.clear()
+    response = client.post(
+        reverse("construtora:simular_simples"),
+        data={
+            "objetivo": "proprio",
+            "tipo_casa": "valor",
+            "renda_familiar": "R$ 5.000,00",
+            "entrada_faixa": "nenhuma",
+            "prazo": "360",
+        },
+        HTTP_HX_REQUEST="true",
+    )
+    assert response.status_code == 200
+    html = response.content.decode("utf-8")
+
+    assert 'data-sim-wizard="true"' in html
+    assert "Digite um valor aproximado para a obra." in html
+    assert "R$ 5.000,00" in html
+    assert "sim-step__erro" in html
+    assert "MCMV" not in html
+
+
+def test_pdf_simulacao_simples_rejeita_token_invalido(client: Client) -> None:
+    """Tokens adulterados ou expirados não geram PDF."""
+    response = client.get(
+        reverse("construtora:simulacao_simples_pdf", kwargs={"token": "invalido"})
+    )
+    assert response.status_code == 404

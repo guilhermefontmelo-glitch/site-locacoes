@@ -1,0 +1,50 @@
+{% comment %}
+  Casca do simulador habitacional: abas "Simulação simples" (padrão) e
+  "Simulação avançada" (workspace SAC/PRICE completo). Ambas compartilham
+  o mesmo motor financeiro no backend.
+{% endcomment %}
+<div id="simulador-app"
+     class="simulador-app"
+     data-simulador-app="true">
+  <div class="sim-tabs" role="tablist" aria-label="Escolha o modo de simulação">
+    <button type="button"
+            class="sim-tab is-active"
+            id="sim-tab-simples"
+            role="tab"
+            aria-selected="true"
+            aria-controls="simulador-simples"
+            data-sim-tab="simples">
+      {% include "components/_icon.html" with name="sparkles" class="heroicon heroicon--sm" only %}
+
+      <span>Simulação simples</span>
+    </button>
+    <button type="button"
+            class="sim-tab"
+            id="sim-tab-avancada"
+            role="tab"
+            aria-selected="false"
+            aria-controls="simulador-avancado"
+            data-sim-tab="avancada">
+      {% include "components/_icon.html" with name="calculator" class="heroicon heroicon--sm" only %}
+
+      <span>Simulação avançada</span>
+    </button>
+  </div>
+
+  <div id="simulador-simples"
+       class="sim-panel is-active"
+       role="tabpanel"
+       aria-labelledby="sim-tab-simples"
+       data-sim-panel="simples">
+    {% include "pages/construtora/partials/_simulador_simples.html" with form_simples=form_simples csrf_token=csrf_token form_ts_token=form_ts_token only %}
+  </div>
+
+  <div id="simulador-avancado"
+       class="sim-panel"
+       role="tabpanel"
+       aria-labelledby="sim-tab-avancada"
+       data-sim-panel="avancada"
+       hidden>
+    {% include "pages/construtora/partials/_simulador_workspace.html" with form_simulacao=form_simulacao resultado_simulacao=resultado_simulacao csrf_token=csrf_token form_ts_token=form_ts_token only %}
+  </div>
+</div>

@@ -107,15 +107,25 @@ class OrcamentoLocacaoForm(forms.Form):
         choices=EntregaLocacaoChoices.CHOICES,
         initial=EntregaLocacaoChoices.ENTREGA_OBRA,
     )
-    observacoes = forms.CharField(
-        label="Quantidade / Bairro da obra (opcional)",
-        max_length=200,
-        required=False,
+    cidade_obra = forms.CharField(
+        label="Cidade da obra",
+        max_length=80,
         strip=True,
-        widget=forms.Textarea(
+        widget=forms.TextInput(
             attrs={
-                "rows": 2,
-                "placeholder": "Ex.: 12 painéis de andaime + 1 betoneira, obra no bairro Centro.",
+                "placeholder": "Ex.: Viçosa do Ceará",
+                "autocomplete": "address-level2",
+            }
+        ),
+    )
+    bairro_obra = forms.CharField(
+        label="Bairro da obra",
+        max_length=80,
+        strip=True,
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Ex.: Centro",
+                "autocomplete": "address-level3",
             }
         ),
     )
@@ -132,10 +142,23 @@ class OrcamentoLocacaoForm(forms.Form):
         """Valida telefone brasileiro com DDD."""
         return validate_brazilian_phone(str(self.cleaned_data["telefone"]))
 
-    def clean_observacoes(self) -> str:
-        """Sanitiza observações opcionais."""
-        raw: str = str(self.cleaned_data.get("observacoes") or "")
-        return sanitize_plain_text(raw, max_length=200)
+    def clean_cidade_obra(self) -> str:
+        """Sanitiza a cidade da obra informada."""
+        raw: str = str(self.cleaned_data.get("cidade_obra") or "")
+        cleaned: str = sanitize_plain_text(raw, max_length=80)
+        if len(cleaned) < 2:
+            msg = "Informe a cidade onde a obra será realizada."
+            raise forms.ValidationError(msg)
+        return cleaned
+
+    def clean_bairro_obra(self) -> str:
+        """Sanitiza o bairro da obra informado."""
+        raw: str = str(self.cleaned_data.get("bairro_obra") or "")
+        cleaned: str = sanitize_plain_text(raw, max_length=80)
+        if len(cleaned) < 2:
+            msg = "Informe o bairro onde a obra será realizada."
+            raise forms.ValidationError(msg)
+        return cleaned
 
     def clean(self) -> dict[str, object]:
         """Valida as quantidades escolhidas contra a disponibilidade real do catálogo."""
@@ -154,15 +177,20 @@ class OrcamentoLocacaoForm(forms.Form):
             except (TypeError, ValueError):
                 quantidade = 1
 
-            if configuracao.disponivel is not None and quantidade > configuracao.disponivel:
-                self.add_error(
-                    None,
-                    (
-                        f"{configuracao.nome}: o máximo disponível é "
-                        f"{configuracao.disponivel} unidade(s)."
-                    ),
-                )
-                quantidade = configuracao.disponivel
+            if configuracao.disponivel is not None:
+                if configuracao.disponivel <= 1:
+                    # Itens com uma única unidade entram sempre com quantidade 1,
+                    # mesmo se o seletor não existir no card.
+                    quantidade = 1
+                elif quantidade > configuracao.disponivel:
+                    self.add_error(
+                        None,
+                        (
+                            f"{configuracao.nome}: o máximo disponível é "
+                            f"{configuracao.disponivel} unidade(s)."
+                        ),
+                    )
+                    quantidade = configuracao.disponivel
 
             quantidades[str(slug)] = quantidade
 

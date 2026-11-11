@@ -68,7 +68,17 @@
       if (!container) return;
 
       var wrap = container.querySelector("[data-equip-qty]");
-      if (!wrap) return;
+      if (!wrap) {
+        // Equipamentos com apenas 1 unidade disponível não têm seletor:
+        // a quantidade é sempre 1 e o campo oculto acompanha o checkbox.
+        var slugFixo = toggle.value;
+        if (marcado) {
+          campoQuantidade(form, slugFixo, true).value = "1";
+        } else {
+          removerQuantidade(form, slugFixo);
+        }
+        return;
+      }
 
       var slug = wrap.getAttribute("data-slug");
       if (marcado) {

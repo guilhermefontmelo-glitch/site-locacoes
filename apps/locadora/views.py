@@ -133,7 +133,8 @@ def solicitar_orcamento_htmx_view(request: HttpRequest) -> HttpResponse:
         equipamentos_slugs=list(cleaned["equipamentos"]),
         periodo=cleaned["periodo"],
         modalidade_entrega=cleaned["modalidade_entrega"],
-        observacoes=cleaned["observacoes"],
+        cidade_obra=cleaned["cidade_obra"],
+        bairro_obra=cleaned["bairro_obra"],
         quantidades=cleaned.get("quantidades") or {},
     )
 
@@ -145,7 +146,7 @@ def solicitar_orcamento_htmx_view(request: HttpRequest) -> HttpResponse:
             for item in resumo.itens
         ],
         recebedor=resumo.nome_cliente,
-        obra=cleaned["observacoes"] or "Não informada",
+        obra=resumo.local_obra_label,
         entrega=resumo.entrega_label,
         periodo=resumo.periodo_label,
         data=timezone.localdate(),
@@ -219,7 +220,8 @@ def _ler_pedido_post(request: HttpRequest) -> tuple[dict[str, object] | None, st
         equipamentos_slugs=list(cleaned["equipamentos"]),
         periodo=cleaned["periodo"],
         modalidade_entrega=cleaned["modalidade_entrega"],
-        observacoes=cleaned["observacoes"],
+        cidade_obra=cleaned["cidade_obra"],
+        bairro_obra=cleaned["bairro_obra"],
         quantidades=cleaned.get("quantidades") or {},
     )
     if not resumo.itens:
@@ -232,7 +234,7 @@ def _ler_pedido_post(request: HttpRequest) -> tuple[dict[str, object] | None, st
                 for item in resumo.itens
             ],
             "recebedor": resumo.nome_cliente,
-            "obra": cleaned["observacoes"] or "Não informada",
+            "obra": resumo.local_obra_label,
             "entrega": resumo.entrega_label,
             "periodo": resumo.periodo_label,
             "data": timezone.localdate(),

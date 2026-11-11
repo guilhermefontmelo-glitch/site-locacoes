@@ -29,7 +29,8 @@ def test_catalogo_locadora_ssr_e_parcial_htmx(client: Client) -> None:
     assert "unit-switcher__bubble" in html
     assert "mobile-unit-bar" in html
     assert "hero-operacao-canteiro.avif" in html
-    assert "andaime-tubular.avif" in html
+    assert "andaime-industrial.avif" in html
+    assert "andaime-tubular.avif" not in html
     assert "betoneira-400l.avif" in html
     assert "unsplash.com" not in html
     assert 'src="/static/js/modules/scene3d-obra.js"' not in html
@@ -41,9 +42,24 @@ def test_catalogo_locadora_ssr_e_parcial_htmx(client: Client) -> None:
     assert "HX-Request" in htmx_resp.headers["Vary"]
     htmx_html = htmx_resp.content.decode("utf-8")
     assert "<!DOCTYPE html>" not in htmx_html
-    assert "Andaimes" in htmx_html
+    assert "Andaime Industrial" in htmx_html
     assert 'style="' not in htmx_html
     assert "MCMV" not in htmx_html
+
+
+def test_card_com_uma_unidade_nao_exibe_seletor_de_quantidade(client: Client) -> None:
+    """Itens com 1 unidade disponível entram no orçamento direto pelo checkbox."""
+    htmx_resp = client.get(
+        reverse("locadora:catalogo"),
+        {"grupo": "ferramentas"},
+        HTTP_HX_REQUEST="true",
+    )
+    assert htmx_resp.status_code == 200
+    html = htmx_resp.content.decode("utf-8")
+
+    assert 'data-slug="serra-circular-madeira"' not in html
+    assert 'data-slug="martelete-rompedor"' not in html
+    assert "Incluir no orçamento" in html
 
 
 def test_detalhe_equipamento_modal_renderiza_picture_local(client: Client) -> None:
@@ -72,10 +88,24 @@ def test_orcamento_locadora_valido_gera_whatsapp(client: Client) -> None:
             "equipamentos": ["andaimes-tubulares", "betoneira-400l"],
             "periodo": "quinzenal",
             "modalidade_entrega": "entrega_obra",
-            "observacoes": "Centro de Viçosa",
+            "cidade_obra": "Viçosa do Ceará",
+            "bairro_obra": "Centro",
         },
     )
     assert response.status_code == 200
     html = response.content.decode("utf-8")
     assert "https://wa.me/" in html
+    assert "Centro, Viçosa do Ceará" in html
     assert "MCMV" not in html
+
+
+def test_cards_de_andaime_usam_a_mesma_imagem_industrial(client: Client) -> None:
+    """Os dois andaimes (pequeno e grande) exibem a mesma foto industrial."""
+    response = client.get(reverse("locadora:catalogo"))
+    html = response.content.decode("utf-8")
+    assert html.count("andaime-industrial.jpg") == 2
+    assert html.count("andaime-industrial.webp") == 2
+    assert html.count("andaime-industrial.avif") == 2
+    assert "andaime-tubular." not in html
+    assert "Andaime Industrial Pequeno" in html
+    assert "Andaime Industrial Grande" in html

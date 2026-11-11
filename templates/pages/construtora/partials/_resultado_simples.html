@@ -1,0 +1,209 @@
+{% url 'construtora:simular_simples' as url_simples %}
+
+<div id="simulador-simples-conteudo"
+     class="sim-simples sim-simples--resultado"
+     data-sim-simples="true"
+     data-sim-resultado="true"
+     data-avancado-modalidade="{{ valores_avancado.modalidade }}"
+     data-avancado-renda="{{ valores_avancado.renda_familiar }}"
+     data-avancado-obra="{{ valores_avancado.valor_obra }}"
+     data-avancado-entrada="{{ valores_avancado.entrada_fgts }}"
+     data-avancado-prazo="{{ valores_avancado.prazo_meses }}">
+  <div class="sim-simples__resultado-header">
+    <div class="flex flex-wrap items-center gap-2">
+      {% include "components/_icon.html" with name="check-circle" class="heroicon text-gold" only %}
+
+      <span class="eyebrow">Simulação simples concluída</span>
+    </div>
+    <h3 class="heading-2xl mt-2 mb-2">Pronto, {{ resultado_sac.nome_cliente }}! Veja o que encontramos.</h3>
+    <p class="text-sm mb-0">
+      Você escolheu <strong>{{ rotulo_casa }}</strong>{% if rotulo_entrada %} e marcou
+      <strong>{{ rotulo_entrada }}</strong> como entrada{% endif %}. Abaixo está o resumo na
+      linguagem mais direta possível.
+    </p>
+  </div>
+
+  <div class="sim-kpi-grid sim-kpi-grid--simples mb-5">
+    <div class="sim-kpi-box sim-kpi-box--highlight">
+      <span class="sim-kpi-box__label">Primeira parcela no SAC</span>
+      <strong class="sim-kpi-box__value text-gold">{{ resultado_sac.primeira_parcela_formatada }}</strong>
+      <span class="sim-kpi-box__sub">Última parcela: {{ resultado_sac.ultima_parcela_formatada }}</span>
+    </div>
+
+    <div class="sim-kpi-box">
+      <span class="sim-kpi-box__label">Valor da obra considerado</span>
+      <strong class="sim-kpi-box__value">{{ resultado_sac.valor_obra_formatado }}</strong>
+      <span class="sim-kpi-box__sub">Renda familiar: {{ resultado_sac.renda_familiar_formatada }}</span>
+    </div>
+
+    <div class="sim-kpi-box">
+      <span class="sim-kpi-box__label">Subsídio estimado</span>
+      <strong class="sim-kpi-box__value text-gold">{{ resultado_sac.subsidio_estimado_formatado }}</strong>
+      <span class="sim-kpi-box__sub">Ajuda que reduz o valor financiado</span>
+    </div>
+
+    <div class="sim-kpi-box">
+      <span class="sim-kpi-box__label">Valor financiado</span>
+      <strong class="sim-kpi-box__value">{{ resultado_sac.valor_financiado_formatado }}</strong>
+      <span class="sim-kpi-box__sub">Teto de financiamento: {{ resultado_sac.ltv_percentual }}%</span>
+    </div>
+  </div>
+
+  <div class="card sim-resultado-bloco mb-5">
+    <h4 class="heading-lg mb-2">SAC ou PRICE: qual cabe melhor no seu bolso?</h4>
+    <p class="text-sm mb-4">
+      O SAC começa mais alto e vai caindo. O PRICE tem a parcela fixa e começa mais baixa.
+      Os dois usam a mesma taxa e o mesmo valor financiado.
+    </p>
+
+    <div class="sim-comparativo">
+      <div class="sim-comparativo__coluna">
+        <span class="sim-badge sim-badge--neutral">SAC &middot; parcelas decrescentes</span>
+        <strong class="sim-comparativo__valor">{{ resultado_sac.primeira_parcela_formatada }}</strong>
+        <span class="text-xs">Primeira parcela</span>
+        <span class="sim-comparativo__linha">Última: {{ resultado_sac.ultima_parcela_formatada }}</span>
+        <span class="sim-comparativo__linha">Total estimado: {{ resultado_sac.total_pago_estimado_formatado }}</span>
+        <span class="sim-comparativo__linha">
+          Comprometimento da renda:
+          <strong class="{% if resultado_sac.primeira_parcela > resultado_sac.parcela_teto %}text-gold{% endif %}">
+            {{ comprometimento_sac }}
+          </strong>
+        </span>
+      </div>
+
+      <div class="sim-comparativo__coluna">
+        <span class="sim-badge sim-badge--neutral">PRICE &middot; parcela fixa</span>
+        <strong class="sim-comparativo__valor">{{ resultado_price.primeira_parcela_formatada }}</strong>
+        <span class="text-xs">Parcela do início ao fim</span>
+        <span class="sim-comparativo__linha">Total estimado: {{ resultado_price.total_pago_estimado_formatado }}</span>
+        <span class="sim-comparativo__linha">
+          Comprometimento da renda:
+          <strong class="{% if resultado_price.primeira_parcela > resultado_price.parcela_teto %}text-gold{% endif %}">
+            {{ comprometimento_price }}
+          </strong>
+        </span>
+      </div>
+    </div>
+
+    <p class="text-xs mt-4 mb-0">
+      O limite orientativo da Caixa é de 30% da renda. Neste cenário, esse limite é
+      {{ resultado_sac.parcela_teto_formatada }} por mês.
+    </p>
+  </div>
+
+  <div class="card sim-resultado-bloco mb-5">
+    <h4 class="heading-lg mb-2">Entrada necessária e o que já está coberto</h4>
+    <div class="sim-summary-strip sim-summary-strip--simples">
+      <div>
+        <span class="text-xs block">Entrada / FGTS informado</span>
+        <strong class="text-sm">{{ resultado_sac.entrada_informada_formatada }}</strong>
+      </div>
+      <div>
+        <span class="text-xs block">Entrada mínima estimada</span>
+        <strong class="text-sm">{{ resultado_sac.entrada_minima_formatada }}</strong>
+      </div>
+      <div>
+        <span class="text-xs block">
+          {% if resultado_sac.viavel_com_entrada_atual %}
+            Situação
+          {% else %}
+            Falta para a entrada
+          {% endif %}
+        </span>
+        <strong class="text-sm text-gold">
+          {% if resultado_sac.viavel_com_entrada_atual %}
+            Entrada compatível
+          {% else %}
+            {{ resultado_sac.deficit_entrada_formatado }}
+          {% endif %}
+        </strong>
+      </div>
+    </div>
+    <p class="text-sm mt-4 mb-0">{{ resultado_sac.orientacao_tecnica }}</p>
+  </div>
+
+  <div class="sim-resultado-bloco mb-5">
+    <h4 class="heading-lg mb-3">Alternativas para caber no orçamento</h4>
+    <div class="sim-alternativas">
+      {% for alternativa in alternativas %}
+        <div class="card sim-alternativa">
+          <span class="sim-badge sim-badge--neutral">{{ alternativa.resultado.prazo_meses }} meses</span>
+          <h5 class="heading-lg mt-2 mb-1">{{ alternativa.titulo }}</h5>
+          <p class="text-xs mb-2">{{ alternativa.descricao }}</p>
+          <strong class="sim-comparativo__valor">{{ alternativa.resultado.primeira_parcela_formatada }}</strong>
+          <span class="text-xs">Primeira parcela no SAC</span>
+          <span class="sim-comparativo__linha">Total: {{ alternativa.resultado.total_pago_estimado_formatado }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card sim-resultado-bloco mb-5">
+    <h4 class="heading-lg mb-2">Próximos passos com a Rocha</h4>
+    <ol class="sim-passos">
+      <li>
+        <span class="sim-passos__numero">1</span>
+        <span>Conversamos sobre sua simulação e conferimos FGTS, documentos e composição de renda.</span>
+      </li>
+      <li>
+        <span class="sim-passos__numero">2</span>
+        <span>A engenharia ajusta o projeto e a planta para o valor que caiba no financiamento.</span>
+      </li>
+      <li>
+        <span class="sim-passos__numero">3</span>
+        <span>Enviamos a proposta para a análise de crédito da Caixa e acompanhamos a aprovação.</span>
+      </li>
+    </ol>
+  </div>
+
+  <div class="sim-aviso-caixa mb-5">
+    {% include "components/_icon.html" with name="shield-check" class="heroicon text-gold" only %}
+
+    <p class="text-sm mb-0">
+      <strong>Aviso importante:</strong> esta é uma simulação orientativa. Os valores finais,
+      o subsídio e a aprovação dependem da análise de crédito e da avaliação da Caixa
+      Econômica Federal.
+    </p>
+  </div>
+
+  <div class="sim-resultado-acoes">
+    <a class="btn btn--whatsapp w-full"
+       href="{{ whatsapp_simples_url }}"
+       target="_blank"
+       rel="noopener noreferrer">
+      {% include "components/_icon.html" with name="whatsapp" class="heroicon" only %}
+
+      <span>Enviar minha simulação no WhatsApp</span>
+      {% include "components/_icon.html" with name="arrow-up-right" class="heroicon heroicon--sm" only %}
+
+    </a>
+
+    <div class="sim-resultado-acoes__secundarias">
+      <a class="btn btn--outline"
+         href="{{ pdf_simples_url }}"
+         download>
+        {% include "components/_icon.html" with name="arrow-down-tray" class="heroicon" only %}
+
+        <span>Baixar PDF</span>
+      </a>
+
+      <button type="button"
+              class="btn btn--outline"
+              hx-get="{{ url_simples }}"
+              hx-target="#simulador-simples-conteudo"
+              hx-swap="outerHTML">
+        {% include "components/_icon.html" with name="sparkles" class="heroicon" only %}
+
+        <span>Refazer simulação</span>
+      </button>
+
+      <button type="button"
+              class="btn btn--outline"
+              data-sim-ir-avancado>
+        {% include "components/_icon.html" with name="calculator" class="heroicon" only %}
+
+        <span>Ver na simulação avançada</span>
+      </button>
+    </div>
+  </div>
+</div>

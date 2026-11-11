@@ -56,6 +56,23 @@ class ResultadoSimulacaoHabitacional:
     beneficio_destaque: str
     orientacao_tecnica: str
     whatsapp_url: str
+    # Valores brutos em `Decimal` usados pelo modo simples (comparativos,
+    # comprometimento de renda, alternativas e PDF).
+    renda_familiar: Decimal
+    valor_obra: Decimal
+    entrada_fgts: Decimal
+    subsidio_estimado: Decimal
+    valor_financiado: Decimal
+    primeira_parcela: Decimal
+    ultima_parcela: Decimal
+    parcela_teto: Decimal
+    entrada_minima: Decimal
+    deficit_entrada: Decimal
+    potencial_obra: Decimal
+    taxa_anual: Decimal
+    total_pago_estimado: Decimal
+    renda_familiar_formatada: str
+    total_pago_estimado_formatado: str
 
 
 def _quantize_money(valor: Decimal) -> Decimal:
@@ -251,18 +268,25 @@ def simular_financiamento_habitacional(
         if base_calculo_parcela <= _ZERO:
             primeira_parcela = _ZERO
             ultima_parcela = _ZERO
+            total_pago_estimado = _ZERO
         elif sistema_norm == SistemaAmortizacaoChoices.SAC:
             amortizacao_mensal = base_calculo_parcela / n_dec
             primeira_parcela = _quantize_money(
                 amortizacao_mensal + (base_calculo_parcela * taxa_mensal)
             )
             ultima_parcela = _quantize_money(amortizacao_mensal * (_ONE + taxa_mensal))
+            # SAC: juros incidem sobre o saldo devedor que cai linearmente.
+            juros_totais = (
+                base_calculo_parcela * taxa_mensal * (n_dec + _ONE) / Decimal("2")
+            )
+            total_pago_estimado = _quantize_money(base_calculo_parcela + juros_totais)
         else:
             parcela_fixa = _quantize_money(
                 base_calculo_parcela * ((taxa_mensal * fator_acumulado) / (fator_acumulado - _ONE))
             )
             primeira_parcela = parcela_fixa
             ultima_parcela = parcela_fixa
+            total_pago_estimado = _quantize_money(parcela_fixa * n_dec)
 
         ltv_percentual: int = int((ltv_max * _HUNDRED).quantize(_ONE, rounding=ROUND_HALF_UP))
 
@@ -341,6 +365,21 @@ def simular_financiamento_habitacional(
         beneficio_destaque=beneficio_destaque,
         orientacao_tecnica=orientacao_tecnica,
         whatsapp_url=whatsapp_url,
+        renda_familiar=renda_familiar,
+        valor_obra=valor_obra,
+        entrada_fgts=entrada_fgts,
+        subsidio_estimado=subsidio_estimado,
+        valor_financiado=valor_financiado,
+        primeira_parcela=primeira_parcela,
+        ultima_parcela=ultima_parcela,
+        parcela_teto=parcela_teto,
+        entrada_minima=entrada_minima,
+        deficit_entrada=deficit_entrada,
+        potencial_obra=potencial_obra,
+        taxa_anual=taxa_anual,
+        total_pago_estimado=total_pago_estimado,
+        renda_familiar_formatada=_format_brl(renda_familiar),
+        total_pago_estimado_formatado=_format_brl(total_pago_estimado),
     )
 
 

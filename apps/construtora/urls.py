@@ -16,4 +16,14 @@ urlpatterns: list[URLPattern] = [
     path("etapas/<slug:slug>/", views.etapa_detalhe_htmx_view, name="etapa_detalhe"),
     path("simular-mcmv/", views.simular_financiamento_view, name="simular_mcmv"),
     path("simular-financiamento/", views.simular_financiamento_view, name="simular_financiamento"),
+    path(
+        "simular-simples/",
+        views.simular_financiamento_simples_view,
+        name="simular_simples",
+    ),
+    path(
+        "simulacao-simples.pdf/<str:token>",
+        views.simulacao_simples_pdf_view,
+        name="simulacao_simples_pdf",
+    ),
 ]

@@ -39,7 +39,7 @@
               <span>Incluir no orçamento</span>
             </label>
 
-            {% if item.disponivel %}
+            {% if item.disponivel and item.disponivel > 1 %}
               <div class="equip-qty"
                    data-equip-qty
                    data-slug="{{ item.slug }}"
