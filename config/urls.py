@@ -11,8 +11,19 @@ from core import views as core_views
 urlpatterns: list[URLPattern | URLResolver] = [
     path("favicon.ico", core_views.favicon_view, name="favicon"),
     path("healthz/", core_views.healthcheck_view, name="healthcheck"),
-    path("locadora/", include("apps.locadora.urls", namespace="locadora")),
-    path("", include("apps.construtora.urls", namespace="construtora")),
+    # Legado: `/locadora/...` redireciona permanentemente (301) para a raiz equivalente.
+    path(
+        "locadora/",
+        core_views.redirect_locadora_legado_view,
+        name="locadora_legado",
+    ),
+    path(
+        "locadora/<path:caminho>",
+        core_views.redirect_locadora_legado_view,
+        name="locadora_legado_subrota",
+    ),
+    path("construtora/", include("apps.construtora.urls", namespace="construtora")),
+    path("", include("apps.locadora.urls", namespace="locadora")),
 ]
 
 if getattr(settings, "ENABLE_DJANGO_ADMIN", False):

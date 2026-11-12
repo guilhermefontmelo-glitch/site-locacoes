@@ -35,15 +35,18 @@
           href="{% static 'img/favicon/apple-touch-icon.png' %}?v=2">
     <link rel="manifest" href="{% static 'site.webmanifest' %}?v=2">
     <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{% block canonical_url %}https://rochaconstrutora.vercel.app{{ request.path }}{% endblock %}">
 
     <meta property="og:locale" content="pt_BR">
     <meta property="og:type" content="website">
     <meta property="og:site_name"
           content="{% if active_unit == 'locadora' %}{{ rocha.nome_locadora }}{% else %}{{ rocha.nome_site }}{% endif %}">
+    <meta property="og:url" content="{% block og_url %}https://rochaconstrutora.vercel.app{{ request.path }}{% endblock %}">
     <meta property="og:title"
           content="{% block og_title %}Rocha Construtora | Obras Financiadas{% endblock %}">
     <meta property="og:description"
           content="{% block og_description %}Do projeto e aprovação na Caixa até a entrega das chaves, além de locação completa de equipamentos para sua obra.{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}https://rochaconstrutora.vercel.app{% static 'img/brand/logo-construtora-dark.png' %}{% endblock %}">
 
     <!-- Preload seletivo das 2 fontes primárias auto-hospedadas acima da dobra -->
     <link rel="preload"

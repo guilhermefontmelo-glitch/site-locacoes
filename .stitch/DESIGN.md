@@ -3,7 +3,7 @@
 ## 1. Visual Theme & Brand Architecture
 **Aesthetic Direction**: *Architectural Dark Blueprint & Solar High-Contrast Field Engineering*.
 **Dual-Vertical Cohesion**:
-- **Rocha Construtora** (`/`) and **Rocha Locações** (`/locadora/`) share 100% of foundational surfaces, typography, spacing, motion curves, and structural tokens (`@layer properties, theme, base, components, animations, utilities`).
+- **Rocha Locações** (`/`) and **Rocha Construtora** (`/construtora/`) share 100% of foundational surfaces, typography, spacing, motion curves, and structural tokens (`@layer properties, theme, base, components, animations, utilities`).
 - Distinction is communicated through editorial accent hierarchy:
   - **Construtora**: Architectural Gold (`--color-gold-500`) + Caixa Blueprint Cyan (`--color-caixa-accent`) for CAD holographic inspection and housing finance clarity.
   - **Locadora**: Architectural Gold (`--color-gold-500`) + Field Safety Contrast for operational equipment readiness and instant WhatsApp quotation.

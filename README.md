@@ -3,8 +3,8 @@
 Landing Page dinâmica de alta conversão desenvolvida com **Python 3.12 + Django 6.1**, **Tailwind CSS v4 + CSS3 3D Moderno**, **Django Crispy Forms**, **Heroicons SVG** e **HTMX 2**, hospedada na **Vercel**.
 
 A plataforma unifica duas frentes sob a mesma identidade de marca em **Viçosa do Ceará - CE e Serra da Ibiapaba**:
-1. **Rocha Construtora (`/`)**: Maquete arquitetônica isométrica 3D sincronizada ao scroll com as **6 etapas da obra**, passo a passo do financiamento **Caixa Habitacional / Minha Casa Minha Vida (MCMV)**, pré-simulador interativo e conversão direta para WhatsApp.
-2. **Rocha Locações (`/locadora/`)**: Catálogo técnico de andaimes, escoras, betoneiras, guinchos e ferramentas elétricas com filtragem em tempo real via HTMX, ficha técnica em `<dialog>` nativo e montador de lista de orçamento para WhatsApp.
+1. **Rocha Locações (`/`)**: Catálogo técnico de andaimes, escoras, betoneiras, guinchos e ferramentas elétricas com filtragem em tempo real via HTMX, ficha técnica em `<dialog>` nativo e montador de lista de orçamento para WhatsApp.
+2. **Rocha Construtora (`/construtora/`)**: Maquete arquitetônica isométrica 3D sincronizada ao scroll com as **6 etapas da obra**, passo a passo do financiamento **Caixa Habitacional / Minha Casa Minha Vida (MCMV)**, pré-simulador interativo e conversão direta para WhatsApp.
 
 ---
 
@@ -51,8 +51,8 @@ npm run css:build
 ```
 
 Acesse:
-- **Construtora & Financiamento Caixa/MCMV**: `http://127.0.0.1:8000/`
-- **Locadora de Equipamentos**: `http://127.0.0.1:8000/locadora/`
+- **Locadora de Equipamentos**: `http://127.0.0.1:8000/`
+- **Construtora & Financiamento Caixa/MCMV**: `http://127.0.0.1:8000/construtora/`
 - **Healthcheck**: `http://127.0.0.1:8000/healthz/`
 
 ---

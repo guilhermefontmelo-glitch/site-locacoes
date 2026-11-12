@@ -11,7 +11,7 @@ Controles obrigatórios de segurança defensiva e hardening para a plataforma **
   - `CSRF_COOKIE_SECURE = True`
   - `CSRF_COOKIE_HTTPONLY = True`
   - `CSRF_COOKIE_SAMESITE = "Lax"`
-  - **Zero Wildcard Vercel**: `.vercel.app` e `https://*.vercel.app` são bloqueados em `ImproperlyConfigured`. Apenas FQDNs RFC 1123 explícitos (`site-locacoes.vercel.app`, `VERCEL_URL`, `VERCEL_PROJECT_PRODUCTION_URL`, `VERCEL_BRANCH_URL` e domínios configurados) são aceitos.
+  - **Zero Wildcard Vercel**: `.vercel.app` e `https://*.vercel.app` são bloqueados em `ImproperlyConfigured`. Apenas FQDNs RFC 1123 explícitos (`rochaconstrutora.vercel.app`, `site-locacoes.vercel.app`, `VERCEL_URL`, `VERCEL_PROJECT_PRODUCTION_URL`, `VERCEL_BRANCH_URL` e domínios configurados) são aceitos.
 - [x] **Padrão HTMX Seguro**: Como `CSRF_COOKIE_HTTPONLY = True` bloqueia acesso via `document.cookie`, o token CSRF é injetado pelo servidor em `<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>` (`templates/base.html`) com `"selfRequestsOnly": true` e `"allowEval": false` em `htmx-config`, além de `{% csrf_token %}` em todo `<form method="post">`.
 
 ---

@@ -22,7 +22,7 @@ site-locacoes/
 ├── config/
 │   ├── asgi.py                           # Entrypoint ASGI
 │   ├── wsgi.py                           # Entrypoint WSGI serverless (Vercel)
-│   ├── urls.py                           # Roteamento raiz (/, /locadora/, /healthz/ e admin condicional)
+│   ├── urls.py                           # Roteamento raiz (/, /construtora/, /healthz/ e admin condicional)
 │   └── settings/
 │       ├── _validators.py                # Validação RFC 1123 sem wildcards para hosts e origens CSRF
 │       ├── base.py                       # Configuração base compartilhada, Argon2, Crispy Tailwind
@@ -73,6 +73,6 @@ site-locacoes/
 1. **Compatibilidade Total com `style-src-attr 'none'` (`waapi-driver.js`)**:
    - Nenhuma animação ou controle interativo muta `element.style.*` nem invoca `Animation.commitStyles()`. Barras de progresso, inclinação 3D, varredura laser e explosão CSS 3D operam diretamente na pilha de composição via `KeyframeEffect` e `Element.animate()`.
 2. **Code-Splitting Estrito por Vertical**:
-   - Visitantes que acessam `/locadora/` baixam apenas `locadora.css` e os módulos globais leves (`app.js`, `scroll-choreography.js`, `waapi-driver.js`). Ao alternar para a Construtora via transição SPA, `app.js` injeta `construtora.css` e importa `scene3d-obra.js` e `simulator-ui.js` sob demanda; ao retornar para a Locadora, `disposeObraStageUI()` libera integralmente geometrias, materiais, texturas, `PMREMGenerator` e contexto WebGL.
+   - Visitantes que acessam `/` baixam apenas `locadora.css` e os módulos globais leves (`app.js`, `scroll-choreography.js`, `waapi-driver.js`). Ao alternar para a Construtora via transição SPA, `app.js` injeta `construtora.css` e importa `scene3d-obra.js` e `simulator-ui.js` sob demanda; ao retornar para a Locadora, `disposeObraStageUI()` libera integralmente geometrias, materiais, texturas, `PMREMGenerator` e contexto WebGL.
 3. **Pipeline `<picture>` AVIF + WebP com Prioridade Cirúrgica de LCP**:
    - Apenas a imagem Hero principal de cada página recebe `fetchpriority="high" loading="eager" decoding="sync"`, enquanto os demais 19 ativos utilizam `loading="lazy" decoding="async"` com `width`/`height` explícitos (`CLS = 0`).

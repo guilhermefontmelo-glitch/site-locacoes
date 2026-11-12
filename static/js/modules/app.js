@@ -3,7 +3,7 @@
  *
  * Responsabilidades:
  * - Alternância instantânea Dark/Light e sincronia de logos sem FOUC;
- * - Transição SPA entre Construtora (`/`) e Locações (`/locadora/`) com cache TTL (`30 min`),
+ * - Transição SPA entre Locações (`/`) e Construtora (`/construtora/`) com cache TTL (`30 min`),
  *   carregamento sob demanda de CSS/JS da vertical alvo e descarte simétrico de memória/WebGL;
  * - Integração com `waapi-driver.js` e `scroll-choreography.js` com zero mutação `element.style.*`
  *   (100% compatível com `Content-Security-Policy: style-src-attr 'none'`).
@@ -103,7 +103,7 @@ const syncThemeAndUnitLogos = (unitOverride, themeOverride, options = {}) => {
 
   const headerBrandLink = document.getElementById("header-brand-link");
   if (headerBrandLink) {
-    headerBrandLink.setAttribute("href", unit === "locadora" ? "/locadora/" : "/");
+    headerBrandLink.setAttribute("href", unit === "locadora" ? "/" : "/construtora/");
     headerBrandLink.setAttribute("aria-label", `${brandName} — Voltar ao início`);
   }
 
@@ -331,7 +331,7 @@ const schedulePrefetchOtherUnit = () => {
   const runPrefetch = () => {
     const currentUnit =
       document.documentElement.getAttribute("data-unit") || "construtora";
-    const otherHref = currentUnit === "locadora" ? "/" : "/locadora/";
+    const otherHref = currentUnit === "locadora" ? "/construtora/" : "/";
     fetchUnitDocument(otherHref).catch(() => {
       // Prefetch silencioso
     });
@@ -526,7 +526,10 @@ const initUnitSwitcherTransition = () => {
 
   window.addEventListener("popstate", () => {
     const path = window.location.pathname;
-    const targetUnit = path.startsWith("/locadora") ? "locadora" : "construtora";
+    const targetUnit =
+      path === "/construtora" || path.startsWith("/construtora/")
+        ? "construtora"
+        : "locadora";
     performUnitSwitch(targetUnit, path, false);
   });
 };

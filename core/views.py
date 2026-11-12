@@ -3,7 +3,14 @@
 from pathlib import Path
 
 from django.conf import settings
-from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
+from django.http import (
+    FileResponse,
+    Http404,
+    HttpRequest,
+    HttpResponse,
+    HttpResponsePermanentRedirect,
+    JsonResponse,
+)
 from django.shortcuts import render
 
 FAVICON_PADRAO = Path(settings.BASE_DIR) / "static" / "img" / "favicon" / "favicon.ico"
@@ -24,6 +31,22 @@ def favicon_view(request: HttpRequest) -> FileResponse:  # noqa: ARG001
     resposta = FileResponse(caminho.open("rb"), content_type="image/x-icon")
     resposta["Cache-Control"] = "public, max-age=604800, immutable"
     return resposta
+
+
+def redirect_locadora_legado_view(
+    request: HttpRequest,
+    caminho: str = "",
+) -> HttpResponsePermanentRedirect:
+    """Redireciona 301 o prefixo antigo `/locadora/` para a rota equivalente na raiz.
+
+    Preserva subrotas (`/locadora/equipamentos/x/` → `/equipamentos/x/`) e a query
+    string (importante para links antigos de PDF da caderneta: `?t=<token>`).
+    """
+    destino = f"/{caminho.lstrip('/')}"
+    query_string = request.META.get("QUERY_STRING", "")
+    if query_string:
+        destino = f"{destino}?{query_string}"
+    return HttpResponsePermanentRedirect(destino)
 
 
 def error_400_view(

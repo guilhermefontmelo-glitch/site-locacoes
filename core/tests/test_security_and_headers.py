@@ -72,8 +72,8 @@ def test_validate_strict_hostname_rejeita_wildcards(bad_host: str) -> None:
     "bad_origin",
     [
         "https://*.vercel.app",
-        "http://site-locacoes.vercel.app",
-        "https://site-locacoes.vercel.app/caminho",
+        "http://rochaconstrutora.vercel.app",
+        "https://rochaconstrutora.vercel.app/caminho",
         "*.vercel.app",
     ],
 )
@@ -91,13 +91,15 @@ def test_resolve_strict_hosts_vercel_sem_wildcard() -> None:
         is_vercel=True,
         environ_map={
             "VERCEL_URL": "site-locacoes-git-main-rocha.vercel.app",
-            "VERCEL_PROJECT_PRODUCTION_URL": "site-locacoes.vercel.app",
+            "VERCEL_PROJECT_PRODUCTION_URL": "rochaconstrutora.vercel.app",
         },
     )
     assert ".vercel.app" not in hosts
     assert "https://*.vercel.app" not in origins
+    assert "rochaconstrutora.vercel.app" in hosts
     assert "site-locacoes.vercel.app" in hosts
     assert "site-locacoes-git-main-rocha.vercel.app" in hosts
+    assert "https://rochaconstrutora.vercel.app" in origins
     assert "https://site-locacoes.vercel.app" in origins
 
 

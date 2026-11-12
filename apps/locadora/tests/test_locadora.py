@@ -36,6 +36,11 @@ def test_catalogo_locadora_ssr_e_parcial_htmx(client: Client) -> None:
     assert 'src="/static/js/modules/scene3d-obra.js"' not in html
     assert 'style="' not in html
     assert "MCMV" not in html
+    canonical = '<link rel="canonical" href="https://rochaconstrutora.vercel.app/">'
+    assert canonical in html
+    og_url = '<meta property="og:url" content="https://rochaconstrutora.vercel.app/">'
+    assert og_url in html
+    assert "https://rochaconstrutora.vercel.app/static/img/brand/logo-locacoes-dark.png" in html
 
     htmx_resp = client.get(f"{url}?grupo=estruturas", HTTP_HX_REQUEST="true")
     assert htmx_resp.status_code == 200
@@ -97,6 +102,37 @@ def test_orcamento_locadora_valido_gera_whatsapp(client: Client) -> None:
     assert "https://wa.me/" in html
     assert "Centro, Viçosa do Ceará" in html
     assert "MCMV" not in html
+
+
+def test_orcamento_locadora_gera_pdf_caderneta(client: Client) -> None:
+    """Valida fluxo completo: orçamento assina token e entrega PDF válido da caderneta."""
+    import re
+
+    cache.clear()
+    response = client.post(
+        reverse("locadora:solicitar_orcamento"),
+        data={
+            "nome": "Mestre Antonio",
+            "telefone": "(88) 99424-8183",
+            "equipamentos": ["andaimes-tubulares", "betoneira-400l"],
+            "periodo": "quinzenal",
+            "modalidade_entrega": "entrega_obra",
+            "cidade_obra": "Viçosa do Ceará",
+            "bairro_obra": "Centro",
+        },
+    )
+    assert response.status_code == 200
+    html = response.content.decode("utf-8")
+    assert "/orcamento/pdf/?t=" in html
+
+    match = re.search(r'href="(/orcamento/pdf/\?t=[^"]+)"', html)
+    assert match is not None
+    pdf_url = match.group(1).replace("&amp;", "&")
+
+    pdf_response = client.get(pdf_url)
+    assert pdf_response.status_code == 200
+    assert pdf_response.headers["Content-Type"] == "application/pdf"
+    assert pdf_response.content.startswith(b"%PDF")
 
 
 def test_cards_de_andaime_usam_a_mesma_imagem_industrial(client: Client) -> None:

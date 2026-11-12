@@ -54,6 +54,10 @@ def test_home_construtora_headers_seguranca(client: Client) -> None:
     assert "unsplash.com" not in html
     assert 'style="' not in html
     assert "MCMV" not in html
+    site_url = "https://rochaconstrutora.vercel.app"
+    assert f'<link rel="canonical" href="{site_url}/construtora/">' in html
+    assert f'<meta property="og:url" content="{site_url}/construtora/">' in html
+    assert f"{site_url}/static/img/brand/logo-construtora-dark.png" in html
 
 
 def test_etapa_detalhe_htmx_parcial(client: Client) -> None:
@@ -271,7 +275,7 @@ def test_simulacao_simples_calcula_sac_price_whatsapp_e_pdf(client: Client) -> N
 
     import re
 
-    token_url = re.search(r'href="(/simulacao-simples\.pdf[^"]+)"', html)
+    token_url = re.search(r'href="(/construtora/simulacao-simples\.pdf[^"]+)"', html)
     assert token_url is not None
     pdf = client.get(token_url.group(1))
     assert pdf.status_code == 200

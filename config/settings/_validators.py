@@ -20,7 +20,7 @@ def validate_strict_hostname(raw_host: str) -> str:
     if not candidate or "*" in candidate or candidate.startswith("."):
         msg = (
             f"Host inválido ou com wildcard proibido em produção: {raw_host!r}. "
-            "Informe apenas FQDNs explícitos (ex.: site-locacoes.vercel.app)."
+            "Informe apenas FQDNs explícitos (ex.: rochaconstrutora.vercel.app)."
         )
         raise ImproperlyConfigured(msg)
     if not _HOSTNAME_RE.fullmatch(candidate):
@@ -72,7 +72,10 @@ def resolve_strict_hosts_and_origins(
                 origins.append(clean_origin)
 
     if is_vercel:
-        vercel_candidates: list[str] = ["site-locacoes.vercel.app"]
+        vercel_candidates: list[str] = [
+            "rochaconstrutora.vercel.app",
+            "site-locacoes.vercel.app",
+        ]
         for vercel_env_var in (
             "VERCEL_URL",
             "VERCEL_PROJECT_PRODUCTION_URL",

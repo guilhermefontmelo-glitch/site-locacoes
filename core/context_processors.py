@@ -41,7 +41,7 @@ def site_context(request: HttpRequest) -> dict[str, Any]:
                 "https://www.google.com/maps/search/?api=1&query="
                 "Rua+Vereador+Luiz+Carlos+de+Sampaio+366+Vi%C3%A7osa+do+Cear%C3%A1+CE"
             ),
-            "url_construtora": "/",
-            "url_locadora": "/locadora/",
+            "url_construtora": "/construtora/",
+            "url_locadora": "/",
         },
     }
